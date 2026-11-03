@@ -5,7 +5,6 @@
 (() => {
   "use strict";
 
-  const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeiGcRaqwTJ955a5DtxYZcWAcJa0fbelGYFspJ6abBgTrVXWQ/viewform?usp=dialog";
   const CSV_URL = document.querySelector('meta[name="bengaloop-directory-csv"]')?.content?.trim() || "";
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
@@ -35,10 +34,10 @@
   const CATEGORY_ALIASES = new Map([
     ["everything", "everything"],
     ["fooddining", "fooddining"], ["food", "fooddining"], ["cafe", "fooddining"], ["cafes", "fooddining"], ["restaurant", "fooddining"], ["restaurants", "fooddining"],
-    ["pgshousing", "pgshousing"], ["pgstay", "pgshousing"], ["pg", "pgshousing"], ["housing", "pgshousing"], ["accommodation", "pgshousing"],
-    ["shopping", "shopping"], ["shops", "shopping"], ["retail", "shopping"], ["business", "business"],
-    ["healthcare", "healthcare"], ["health", "healthcare"], ["medical", "healthcare"], ["pharmacy", "healthcare"],
-    ["beautyfitness", "beautyfitness"], ["wellness", "beautyfitness"], ["beauty", "beautyfitness"], ["fitness", "beautyfitness"], ["salon", "beautyfitness"],
+    ["pgshousing", "pgshousing"], ["pgstay", "pgshousing"], ["pg", "pgshousing"], ["pgs", "pgshousing"], ["housing", "pgshousing"], ["accommodation", "pgshousing"], ["hostel", "pgshousing"], ["hostels", "pgshousing"], ["rentals", "pgshousing"],
+    ["shopping", "shopping"], ["shops", "shopping"], ["retail", "shopping"], ["business", "shopping"], ["store", "shopping"], ["stores", "shopping"], ["grocery", "shopping"], ["supermarket", "shopping"],
+    ["healthcare", "healthcare"], ["health", "healthcare"], ["medical", "healthcare"], ["pharmacy", "healthcare"], ["pharmacies", "healthcare"],
+    ["beautyfitness", "beautyfitness"], ["wellness", "beautyfitness"], ["beauty", "beautyfitness"], ["fitness", "beautyfitness"], ["salon", "beautyfitness"], ["salons", "beautyfitness"], ["gym", "beautyfitness"], ["gyms", "beautyfitness"],
     ["education", "education"], ["tuition", "education"], ["coaching", "education"],
     ["localservices", "localservices"], ["services", "localservices"], ["repair", "localservices"], ["laundry", "localservices"],
     ["transport", "transport"], ["automotive", "transport"], ["bankingutilities", "bankingutilities"], ["other", "other"]
@@ -244,7 +243,10 @@
 
     const body = document.createElement("div");
     body.className = "listing-body";
-    body.appendChild(makeText("div", "listing-card-top", item.category || "Local business"));
+    const categoryTop = document.createElement("div");
+    categoryTop.className = "listing-card-top";
+    categoryTop.appendChild(makeText("span", "listing-category", item.category || "Local business"));
+    body.appendChild(categoryTop);
     body.appendChild(makeText("h3", "listing-name", item.name));
 
     if (item.description) body.appendChild(makeText("p", "listing-description", item.description));
@@ -270,12 +272,17 @@
 
   function filteredListings() {
     const term = currentQuery();
+    const normalizedTerm = normalise(term);
+    const queryCategory = canonicalCategory(term);
+    const isCategoryShortcut = CATEGORY_ALIASES.has(normalizedTerm);
     const wantedCategory = canonicalCategory(activeCategory);
     const result = approvedListings.filter(item => {
       const category = canonicalCategory(item.category);
       const categoryMatch = wantedCategory === "everything" || category === wantedCategory;
       const haystack = [item.name, item.category, item.description, item.address, item.hours].join(" ").toLocaleLowerCase("en-IN");
-      return categoryMatch && (!term || haystack.includes(term));
+      const textMatch = !term || haystack.includes(term);
+      const categoryShortcutMatch = isCategoryShortcut && category === queryCategory;
+      return categoryMatch && (textMatch || categoryShortcutMatch);
     });
 
     const sort = elements.sort?.value || "default";
@@ -381,6 +388,7 @@
       approvedListings = rowsToListings(csvText);
       renderListings();
     } catch (error) {
+      console.warn("[BENGALOOP] Could not load the public directory feed:", error);
       if (!approvedListings.length && empty && emptyTitle && result) {
         grid.hidden = true;
         empty.hidden = false;
