@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="116" viewBox="0 0 480 116" role="img" aria-labelledby="title desc">
+  <title id="title">BENGALOOP</title><desc id="desc">BENGALOOP — Your Bengaluru, in the loop.</desc>
+  <g transform="translate(0 2) scale(.86)">
+    <rect x="0" y="0" width="128" height="128" rx="34" fill="#173a2e"/>
+    <path d="M64 12C35 12 12 34 12 61c0 37 52 72 52 72s52-35 52-72C116 34 93 12 64 12Z" fill="#f7f5ee"/>
+    <path d="M37 60c7-14 18-14 27 0s20 14 27 0M37 76c7-14 18-14 27 0s20 14 27 0" fill="none" stroke="#b96e4b" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="64" cy="68" r="4" fill="#173a2e"/>
+  </g>
+  <text x="130" y="57" fill="#173a2e" font-family="Arial,Helvetica,sans-serif" font-size="39" font-weight="800" letter-spacing="2.3">BENGALOOP</text>
+  <path d="M132 70h283" stroke="#b96e4b" stroke-width="2"/>
+  <text x="132" y="91" fill="#738273" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="700" letter-spacing="3.3">YOUR BENGALURU, IN THE LOOP</text>
+</svg>

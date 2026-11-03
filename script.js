@@ -1,246 +1,471 @@
-// S.G. PALYA live public directory
-// Reads only the published PUBLIC DIRECTORY tab and displays rows marked "Approved".
-const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeiGcRaqwTJ955a5DtxYZcWAcJa0fbelGYFspJ6abBgTrVXWQ/viewform?usp=dialog";
-const CSV_URL = document.querySelector('meta[name="sgpalya-directory-csv"]')?.content || "";
+/* BENGALOOP — S.G. Palya Edition
+   Reads only the published PUBLIC DIRECTORY CSV and renders rows marked Approved.
+   Private Form Responses and internal master data are never requested by this script.
+*/
+(() => {
+  "use strict";
 
-const menu = document.getElementById("menu");
-const nav = document.getElementById("nav");
-if (menu && nav) menu.addEventListener("click", () => nav.classList.toggle("open"));
+  const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeiGcRaqwTJ955a5DtxYZcWAcJa0fbelGYFspJ6abBgTrVXWQ/viewform?usp=dialog";
+  const CSV_URL = document.querySelector('meta[name="bengaloop-directory-csv"]')?.content?.trim() || "";
+  const $ = (selector, root = document) => root.querySelector(selector);
+  const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
 
-const grid = document.getElementById("listingGrid");
-const emptyBox = document.getElementById("listingsEmpty");
-const emptyTitle = document.getElementById("emptyTitle");
-const resultText = document.getElementById("result");
-const countText = document.getElementById("listingCount");
-const statusPill = document.getElementById("listingStatus");
-const queryInput = document.getElementById("q");
-const refreshButton = document.getElementById("refreshListings");
+  const elements = {
+    menu: $("#menu"),
+    nav: $("#nav"),
+    searchForm: $("#searchForm"),
+    query: $("#q"),
+    directorySearch: $("#directorySearch"),
+    sort: $("#sortListings"),
+    refresh: $("#refreshListings"),
+    grid: $("#listingGrid"),
+    empty: $("#listingsEmpty"),
+    emptyTitle: $("#emptyTitle"),
+    result: $("#result"),
+    count: $("#listingCount"),
+    status: $("#listingStatus"),
+    year: $("#year")
+  };
 
-let approvedListings = [];
-let activeCategory = "Everything";
+  let approvedListings = [];
+  let activeCategory = "Everything";
+  let requestInProgress = false;
+  let searchTimer = 0;
 
-function normaliseHeader(value) {
-  return String(value || "").trim().toLowerCase().replace(/[^a-z0-9]/g, "");
-}
+  const CATEGORY_ALIASES = new Map([
+    ["everything", "everything"],
+    ["fooddining", "fooddining"], ["food", "fooddining"], ["cafe", "fooddining"], ["cafes", "fooddining"], ["restaurant", "fooddining"], ["restaurants", "fooddining"],
+    ["pgshousing", "pgshousing"], ["pgstay", "pgshousing"], ["pg", "pgshousing"], ["housing", "pgshousing"], ["accommodation", "pgshousing"],
+    ["shopping", "shopping"], ["shops", "shopping"], ["retail", "shopping"], ["business", "business"],
+    ["healthcare", "healthcare"], ["health", "healthcare"], ["medical", "healthcare"], ["pharmacy", "healthcare"],
+    ["beautyfitness", "beautyfitness"], ["wellness", "beautyfitness"], ["beauty", "beautyfitness"], ["fitness", "beautyfitness"], ["salon", "beautyfitness"],
+    ["education", "education"], ["tuition", "education"], ["coaching", "education"],
+    ["localservices", "localservices"], ["services", "localservices"], ["repair", "localservices"], ["laundry", "localservices"],
+    ["transport", "transport"], ["automotive", "transport"], ["bankingutilities", "bankingutilities"], ["other", "other"]
+  ]);
 
-function parseCSV(text) {
-  const rows = [];
-  let row = [], field = "", quoted = false;
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
-    if (quoted) {
-      if (ch === '"') {
-        if (text[i + 1] === '"') { field += '"'; i++; }
-        else quoted = false;
-      } else field += ch;
-    } else {
-      if (ch === '"') quoted = true;
-      else if (ch === ",") { row.push(field); field = ""; }
-      else if (ch === "\n") {
-        row.push(field); rows.push(row); row = []; field = "";
-      } else if (ch !== "\r") field += ch;
+  function normalise(value) {
+    return String(value ?? "").replace(/^\uFEFF/, "").trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+  }
+
+  function canonicalCategory(value) {
+    const key = normalise(value);
+    return CATEGORY_ALIASES.get(key) || key;
+  }
+
+  function parseCSV(text) {
+    // Handles quoted commas, escaped quotes, CRLF/LF and a possible UTF-8 BOM.
+    const source = String(text ?? "").replace(/^\uFEFF/, "");
+    const rows = [];
+    let row = [];
+    let field = "";
+    let quoted = false;
+
+    for (let i = 0; i < source.length; i += 1) {
+      const ch = source[i];
+      if (quoted) {
+        if (ch === '"') {
+          if (source[i + 1] === '"') {
+            field += '"';
+            i += 1;
+          } else {
+            quoted = false;
+          }
+        } else {
+          field += ch;
+        }
+      } else if (ch === '"' && field.length === 0) {
+        quoted = true;
+      } else if (ch === ",") {
+        row.push(field);
+        field = "";
+      } else if (ch === "\n") {
+        row.push(field);
+        rows.push(row);
+        row = [];
+        field = "";
+      } else if (ch !== "\r") {
+        field += ch;
+      }
+    }
+
+    if (field.length || row.length) {
+      row.push(field);
+      rows.push(row);
+    }
+    return rows.filter(cells => cells.some(cell => String(cell).trim() !== ""));
+  }
+
+  function fieldValue(record, names) {
+    for (const name of names) {
+      const key = normalise(name);
+      if (record[key] !== undefined) {
+        const value = String(record[key] ?? "").trim();
+        if (value) return value;
+      }
+    }
+    return "";
+  }
+
+  function rowsToListings(csvText) {
+    const rows = parseCSV(csvText);
+    if (rows.length < 2) return [];
+
+    const headers = rows[0].map(normalise);
+    if (!headers.includes("businessname") || !headers.includes("listingstatus")) {
+      throw new Error("Required directory columns were not found.");
+    }
+
+    return rows.slice(1).map(cells => {
+      const record = {};
+      headers.forEach((header, index) => { record[header] = cells[index] ?? ""; });
+      return {
+        name: fieldValue(record, ["Business Name", "Name"]),
+        category: fieldValue(record, ["Category", "Business Category"]),
+        description: fieldValue(record, ["Description", "About"]),
+        address: fieldValue(record, ["Address", "Location"]),
+        phone: fieldValue(record, ["Contact Number", "Phone", "Mobile"]),
+        whatsapp: fieldValue(record, ["WhatsApp Number", "WhatsApp", "WhatsApp Contact"]),
+        map: fieldValue(record, ["Google Maps Link", "Maps Link", "Google Maps"]),
+        hours: fieldValue(record, ["Opening Hours", "Hours", "Business Hours"]),
+        photo: fieldValue(record, ["Business Photo URL", "Photo URL", "Image URL"]),
+        status: fieldValue(record, ["Listing Status", "Status"])
+      };
+    }).filter(item => item.name && normalise(item.status) === "approved");
+  }
+
+  function safeHttpsURL(value) {
+    const raw = String(value ?? "").trim();
+    if (!raw) return "";
+    try {
+      const url = new URL(raw);
+      return url.protocol === "https:" ? url.href : "";
+    } catch {
+      return "";
     }
   }
-  if (field.length || row.length) { row.push(field); rows.push(row); }
-  return rows.filter(r => r.some(cell => String(cell).trim() !== ""));
-}
 
-function safeURL(value) {
-  const raw = String(value || "").trim();
-  if (!raw) return "";
-  try {
-    const url = new URL(raw);
-    return (url.protocol === "https:" || url.protocol === "http:") ? url.href : "";
-  } catch { return ""; }
-}
-
-function fieldValue(record, names) {
-  for (const name of names) {
-    const key = normaliseHeader(name);
-    if (record[key] !== undefined && String(record[key]).trim() !== "") return String(record[key]).trim();
-  }
-  return "";
-}
-
-function rowsToListings(csvText) {
-  const rows = parseCSV(csvText);
-  if (!rows.length) return [];
-  const headers = rows[0].map(normaliseHeader);
-  if (!headers.includes("businessname") || !headers.includes("listingstatus")) {
-    throw new Error("The published tab must contain the Business Name and Listing Status columns. Check that the PUBLIC DIRECTORY tab is the one published as CSV.");
-  }
-  return rows.slice(1).map(row => {
-    const record = {};
-    headers.forEach((header, i) => { record[header] = row[i] || ""; });
-    return {
-      name: fieldValue(record, ["Business Name"]),
-      category: fieldValue(record, ["Category"]),
-      description: fieldValue(record, ["Description"]),
-      address: fieldValue(record, ["Address"]),
-      phone: fieldValue(record, ["Contact Number"]),
-      whatsapp: fieldValue(record, ["WhatsApp Number"]),
-      map: fieldValue(record, ["Google Maps Link"]),
-      hours: fieldValue(record, ["Opening Hours"]),
-      photo: fieldValue(record, ["Business Photo URL"]),
-      status: fieldValue(record, ["Listing Status"])
-    };
-  }).filter(item => item.name && item.status.toLowerCase() === "approved");
-}
-
-function makeText(tag, className, value) {
-  const el = document.createElement(tag);
-  if (className) el.className = className;
-  el.textContent = value;
-  return el;
-}
-
-function makeLink(label, href, className) {
-  if (!href) return null;
-  const a = document.createElement("a");
-  a.className = className || "listing-link";
-  a.href = href;
-  a.target = "_blank";
-  a.rel = "noopener noreferrer";
-  a.textContent = label;
-  return a;
-}
-
-function phoneDigits(value) {
-  return String(value || "").replace(/\D/g, "");
-}
-
-function whatsappDigits(value) {
-  let digits = phoneDigits(value);
-  // India: convert a plain 10-digit mobile number to international format.
-  if (digits.length === 10) digits = "91" + digits;
-  else if (digits.length === 11 && digits.startsWith("0")) digits = "91" + digits.slice(1);
-  else if (digits.startsWith("00")) digits = digits.slice(2);
-  return digits;
-}
-
-function renderListings() {
-  if (!grid || !emptyBox) return;
-  const term = (queryInput?.value || "").trim().toLowerCase();
-  const shown = approvedListings.filter(item => {
-    const categoryMatch = activeCategory === "Everything" ||
-      item.category.toLowerCase() === activeCategory.toLowerCase();
-    const haystack = [item.name, item.category, item.description, item.address].join(" ").toLowerCase();
-    return categoryMatch && (!term || haystack.includes(term));
-  });
-
-  grid.replaceChildren();
-  const hasResults = shown.length > 0;
-  emptyBox.hidden = hasResults;
-  grid.hidden = !hasResults;
-
-  if (!approvedListings.length) {
-    emptyTitle.textContent = "Your next local favourite belongs here.";
-    resultText.textContent = "We're building the S.G. Palya directory. Approved business listings will appear here as they are reviewed. Local businesses can register for free.";
-    statusPill.textContent = "LISTINGS OPENING SOON";
-  } else if (!hasResults) {
-    emptyTitle.textContent = "No matching businesses yet.";
-    resultText.textContent = "Try another search or category. You can also register a local business to help grow the directory.";
-    statusPill.textContent = `${approvedListings.length} APPROVED LISTINGS`;
-  } else {
-    statusPill.textContent = `${approvedListings.length} APPROVED LISTINGS`;
+  function phoneHref(value) {
+    let digits = String(value ?? "").replace(/[^\d+]/g, "");
+    if (digits.startsWith("00")) digits = `+${digits.slice(2)}`;
+    if (/^\d{10}$/.test(digits)) digits = `+91${digits}`;
+    if (!/^\+?\d{8,15}$/.test(digits)) return "";
+    return `tel:${digits}`;
   }
 
-  shown.forEach(item => {
-    const card = document.createElement("article");
-    card.className = "listing-card";
+  function whatsappHref(value) {
+    let digits = String(value ?? "").replace(/\D/g, "");
+    if (digits.length === 10) digits = `91${digits}`;
+    else if (digits.length === 11 && digits.startsWith("0")) digits = `91${digits.slice(1)}`;
+    else if (digits.startsWith("00")) digits = digits.slice(2);
+    if (!/^\d{11,15}$/.test(digits)) return "";
+    return `https://wa.me/${digits}`;
+  }
 
-    const imageURL = safeURL(item.photo);
-    if (imageURL) {
+  function makeText(tag, className, value) {
+    const element = document.createElement(tag);
+    if (className) element.className = className;
+    element.textContent = value;
+    return element;
+  }
+
+  function makeAction(label, href, className, options = {}) {
+    if (!href) return null;
+    const link = document.createElement("a");
+    link.className = className || "listing-action";
+    link.href = href;
+    link.textContent = label;
+    if (options.external) {
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+    }
+    return link;
+  }
+
+  function makeDetail(value, icon, label) {
+    if (!value) return null;
+    const line = document.createElement("p");
+    line.className = "listing-detail";
+    const symbol = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    symbol.setAttribute("viewBox", "0 0 24 24");
+    symbol.setAttribute("aria-hidden", "true");
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", icon);
+    symbol.appendChild(path);
+    line.append(symbol, document.createTextNode(`${label}${value}`));
+    return line;
+  }
+
+  function makePhoto(item) {
+    const wrap = document.createElement("div");
+    wrap.className = "listing-photo-wrap";
+    const approved = makeText("span", "listing-approved", "Reviewed listing");
+    const photoURL = safeHttpsURL(item.photo);
+
+    if (photoURL) {
       const image = document.createElement("img");
       image.className = "listing-photo";
-      image.src = imageURL;
-      image.alt = `${item.name} photograph`;
+      image.src = photoURL;
+      image.alt = `${item.name} business photograph`;
       image.loading = "lazy";
-      image.onerror = () => image.remove();
-      card.appendChild(image);
+      image.decoding = "async";
+      image.referrerPolicy = "no-referrer";
+      image.addEventListener("error", () => {
+        image.remove();
+        const placeholder = document.createElement("div");
+        placeholder.className = "listing-photo-placeholder";
+        placeholder.setAttribute("aria-label", "No business photo provided");
+        placeholder.appendChild(makeText("span", "", "B."));
+        wrap.insertBefore(placeholder, approved);
+      }, { once: true });
+      wrap.appendChild(image);
     } else {
-      card.appendChild(makeText("div", "listing-photo listing-photo-placeholder", "✳"));
+      const placeholder = document.createElement("div");
+      placeholder.className = "listing-photo-placeholder";
+      placeholder.setAttribute("aria-label", "No business photo provided");
+      placeholder.appendChild(makeText("span", "", "B."));
+      wrap.appendChild(placeholder);
     }
+    wrap.appendChild(approved);
+    return wrap;
+  }
+
+  function mapSearchURL(item) {
+    const supplied = safeHttpsURL(item.map);
+    if (supplied) return supplied;
+    const query = [item.name, item.address, "S.G. Palya, Bengaluru"].filter(Boolean).join(", ");
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+  }
+
+  function buildCard(item) {
+    const card = document.createElement("article");
+    card.className = "listing-card";
+    card.appendChild(makePhoto(item));
 
     const body = document.createElement("div");
     body.className = "listing-body";
-    const top = document.createElement("div");
-    top.className = "listing-card-top";
-    top.appendChild(makeText("span", "listing-category", item.category || "Local business"));
-    body.appendChild(top);
+    body.appendChild(makeText("div", "listing-card-top", item.category || "Local business"));
     body.appendChild(makeText("h3", "listing-name", item.name));
 
     if (item.description) body.appendChild(makeText("p", "listing-description", item.description));
-    if (item.address) body.appendChild(makeText("p", "listing-detail", `⌖  ${item.address}`));
-    if (item.hours) body.appendChild(makeText("p", "listing-detail", `◷  ${item.hours}`));
+    const address = makeDetail(item.address, "M12 21s7-5.1 7-11a7 7 0 1 0-14 0c0 5.9 7 11 7 11Z M12 10a2.2 2.2 0 1 0 0-4.4A2.2 2.2 0 0 0 12 10Z", "");
+    const hours = makeDetail(item.hours, "M12 7v5l3 2 M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z", "");
+    if (address) body.appendChild(address);
+    if (hours) body.appendChild(hours);
 
     const actions = document.createElement("div");
     actions.className = "listing-actions";
-    const phone = phoneDigits(item.phone);
-    const whatsapp = whatsappDigits(item.whatsapp || item.phone);
-    const phoneLink = phone ? makeLink("Call", `tel:${phone}`, "listing-action") : null;
-    const whatsLink = whatsapp ? makeLink("WhatsApp", `https://wa.me/${whatsapp}`, "listing-action listing-action-primary") : null;
-    const mapLink = makeLink("Directions ↗", safeURL(item.map), "listing-action");
-    [phoneLink, whatsLink, mapLink].filter(Boolean).forEach(link => actions.appendChild(link));
+    const call = makeAction("Call", phoneHref(item.phone), "listing-action");
+    const whatsapp = makeAction("WhatsApp", whatsappHref(item.whatsapp || item.phone), "listing-action listing-action-primary", { external: true });
+    const directions = makeAction("Directions ↗", mapSearchURL(item), "listing-action", { external: true });
+    [call, whatsapp, directions].filter(Boolean).forEach(action => actions.appendChild(action));
     if (actions.childElementCount) body.appendChild(actions);
-
     card.appendChild(body);
-    grid.appendChild(card);
-  });
-
-  countText.textContent = `${shown.length} matching approved listing${shown.length === 1 ? "" : "s"} · ${approvedListings.length} approved in total`;
-}
-
-async function loadListings() {
-  if (!CSV_URL) {
-    resultText.textContent = "The public directory feed has not been configured yet.";
-    countText.textContent = "Directory feed unavailable";
-    return;
+    return card;
   }
-  if (statusPill) statusPill.textContent = "UPDATING DIRECTORY";
-  if (resultText && approvedListings.length === 0) resultText.textContent = "Loading approved S.G. Palya listings…";
-  if (refreshButton) refreshButton.disabled = true;
-  try {
-    const response = await fetch(CSV_URL, { cache: "no-store" });
-    if (!response.ok) throw new Error(`Google Sheets returned HTTP ${response.status}.`);
-    const csvText = await response.text();
-    const responseStart = csvText.trimStart().slice(0, 40).toLowerCase();
-    if (responseStart.startsWith("<!doctype") || responseStart.startsWith("<html")) {
-      throw new Error("Google did not return CSV data. Confirm that the PUBLIC DIRECTORY tab is published as CSV.");
-    }
-    approvedListings = rowsToListings(csvText);
-    renderListings();
-  } catch (error) {
-    if (approvedListings.length === 0) {
-      emptyBox.hidden = false;
-      emptyTitle.textContent = "The directory could not load just now.";
-      resultText.textContent = "Please refresh in a moment. If this keeps happening, check that the PUBLIC DIRECTORY tab is published to the web as CSV.";
-    }
-    statusPill.textContent = "DIRECTORY TEMPORARILY UNAVAILABLE";
-    countText.textContent = `Could not refresh the directory: ${error.message}`;
-  } finally {
-    if (refreshButton) refreshButton.disabled = false;
+
+  function currentQuery() {
+    return String(elements.query?.value || elements.directorySearch?.value || "").trim().toLocaleLowerCase("en-IN");
   }
-}
 
-document.querySelectorAll(".categories button").forEach(button => {
-  button.addEventListener("click", () => {
-    document.querySelectorAll(".categories button").forEach(item => item.classList.remove("active"));
-    button.classList.add("active");
-    activeCategory = button.dataset.cat || "Everything";
-    if (queryInput) queryInput.value = "";
+  function filteredListings() {
+    const term = currentQuery();
+    const wantedCategory = canonicalCategory(activeCategory);
+    const result = approvedListings.filter(item => {
+      const category = canonicalCategory(item.category);
+      const categoryMatch = wantedCategory === "everything" || category === wantedCategory;
+      const haystack = [item.name, item.category, item.description, item.address, item.hours].join(" ").toLocaleLowerCase("en-IN");
+      return categoryMatch && (!term || haystack.includes(term));
+    });
+
+    const sort = elements.sort?.value || "default";
+    if (sort === "name") result.sort((a, b) => a.name.localeCompare(b.name, "en-IN", { sensitivity: "base" }));
+    if (sort === "category") result.sort((a, b) => (a.category || "").localeCompare(b.category || "", "en-IN") || a.name.localeCompare(b.name, "en-IN"));
+    return result;
+  }
+
+  function updateActiveFilters() {
+    $$('[data-filter]').forEach(button => {
+      const selected = canonicalCategory(button.dataset.filter) === canonicalCategory(activeCategory);
+      button.classList.toggle("active", selected && button.classList.contains("filter-chip"));
+      button.setAttribute("aria-pressed", selected ? "true" : "false");
+    });
+  }
+
+  function renderListings() {
+    const { grid, empty, emptyTitle, result, count, status } = elements;
+    if (!grid || !empty || !emptyTitle || !result || !count || !status) return;
+
+    const visible = filteredListings();
+    grid.replaceChildren();
+    grid.setAttribute("aria-busy", "false");
+
+    if (!approvedListings.length) {
+      grid.hidden = true;
+      empty.hidden = false;
+      emptyTitle.textContent = "A few good finds are on their way.";
+      result.textContent = "Approved S.G. Palya listings will appear here as they are reviewed. Know a good local business? Invite them to join BENGALOOP.";
+      status.textContent = "LISTINGS OPENING";
+      count.textContent = "No approved public listings yet.";
+    } else if (!visible.length) {
+      grid.hidden = true;
+      empty.hidden = false;
+      emptyTitle.textContent = "No local match just yet.";
+      result.textContent = "Try a different search or category. You can also invite a local business to join the directory.";
+      status.textContent = `${approvedListings.length} APPROVED`;
+      count.textContent = `0 matching listings · ${approvedListings.length} approved in total`;
+    } else {
+      visible.forEach(item => grid.appendChild(buildCard(item)));
+      grid.hidden = false;
+      empty.hidden = true;
+      status.textContent = `${approvedListings.length} APPROVED`;
+      count.textContent = `${visible.length} matching listing${visible.length === 1 ? "" : "s"} · ${approvedListings.length} approved in total`;
+    }
+  }
+
+  function syncSearch(source) {
+    if (source === elements.query && elements.directorySearch) elements.directorySearch.value = elements.query.value;
+    if (source === elements.directorySearch && elements.query) elements.query.value = elements.directorySearch.value;
+    window.clearTimeout(searchTimer);
+    searchTimer = window.setTimeout(renderListings, 80);
+  }
+
+  function setCategory(category, shouldScroll = true) {
+    activeCategory = category || "Everything";
+    updateActiveFilters();
     renderListings();
-    document.getElementById("directory")?.scrollIntoView({ behavior: "smooth" });
-  });
-});
+    if (shouldScroll) {
+      document.querySelector("#directory")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
 
-function runSearch() {
-  renderListings();
-  document.getElementById("directory")?.scrollIntoView({ behavior: "smooth" });
-}
-document.getElementById("search")?.addEventListener("click", runSearch);
-queryInput?.addEventListener("keydown", event => { if (event.key === "Enter") runSearch(); });
-refreshButton?.addEventListener("click", loadListings);
+  async function loadListings() {
+    if (requestInProgress) return;
+    const { refresh, status, count, result, grid, empty, emptyTitle } = elements;
+    if (!CSV_URL) {
+      if (status) status.textContent = "FEED NOT CONFIGURED";
+      if (count) count.textContent = "The public directory feed has not been configured.";
+      return;
+    }
 
-// Load the public CSV at startup and allow a manual refresh.
-loadListings();
+    requestInProgress = true;
+    if (refresh) refresh.disabled = true;
+    if (status) status.textContent = "UPDATING LISTINGS";
+    if (grid) {
+      grid.setAttribute("aria-busy", "true");
+      if (!approvedListings.length) grid.hidden = true;
+    }
+    if (!approvedListings.length && empty && emptyTitle && result) {
+      empty.hidden = false;
+      emptyTitle.textContent = "Finding local places…";
+      result.textContent = "Loading approved public listings for S.G. Palya. This usually takes a moment.";
+    }
+
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 16000);
+
+    try {
+      const response = await fetch(CSV_URL, {
+        method: "GET",
+        mode: "cors",
+        cache: "no-store",
+        credentials: "omit",
+        signal: controller.signal
+      });
+      if (!response.ok) throw new Error(`Directory feed returned HTTP ${response.status}.`);
+      const csvText = await response.text();
+      const preview = csvText.trimStart().slice(0, 80).toLowerCase();
+      if (preview.startsWith("<!doctype") || preview.startsWith("<html")) {
+        throw new Error("The published URL returned a webpage instead of CSV data.");
+      }
+      approvedListings = rowsToListings(csvText);
+      renderListings();
+    } catch (error) {
+      if (!approvedListings.length && empty && emptyTitle && result) {
+        grid.hidden = true;
+        empty.hidden = false;
+        emptyTitle.textContent = "The directory couldn't refresh just now.";
+        result.textContent = error.name === "AbortError"
+          ? "The connection took too long. Please try Refresh listings in a moment."
+          : "Please try again shortly. If the issue continues, check that the PUBLIC DIRECTORY tab is still published as CSV.";
+      }
+      if (status) status.textContent = "FEED TEMPORARILY UNAVAILABLE";
+      if (count) count.textContent = approvedListings.length
+        ? `Showing ${approvedListings.length} previously loaded approved listing${approvedListings.length === 1 ? "" : "s"}. Refresh to try again.`
+        : "Could not connect to the public directory feed.";
+      if (grid) grid.setAttribute("aria-busy", "false");
+    } finally {
+      window.clearTimeout(timeoutId);
+      requestInProgress = false;
+      if (refresh) refresh.disabled = false;
+    }
+  }
+
+  function initialiseNavigation() {
+    const { menu, nav } = elements;
+    if (!menu || !nav) return;
+    const closeMenu = () => {
+      nav.classList.remove("open");
+      menu.setAttribute("aria-expanded", "false");
+      menu.setAttribute("aria-label", "Open navigation");
+    };
+    menu.addEventListener("click", () => {
+      const open = !nav.classList.contains("open");
+      nav.classList.toggle("open", open);
+      menu.setAttribute("aria-expanded", open ? "true" : "false");
+      menu.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+    });
+    $$('a', nav).forEach(link => link.addEventListener("click", closeMenu));
+    document.addEventListener("keydown", event => { if (event.key === "Escape") closeMenu(); });
+    document.addEventListener("click", event => {
+      if (nav.classList.contains("open") && !nav.contains(event.target) && !menu.contains(event.target)) closeMenu();
+    });
+  }
+
+  function initialiseSearch() {
+    elements.searchForm?.addEventListener("submit", event => {
+      event.preventDefault();
+      if (elements.directorySearch && elements.query) elements.directorySearch.value = elements.query.value;
+      renderListings();
+      document.querySelector("#directory")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    elements.query?.addEventListener("input", () => syncSearch(elements.query));
+    elements.directorySearch?.addEventListener("input", () => syncSearch(elements.directorySearch));
+    elements.sort?.addEventListener("change", renderListings);
+    $$('[data-search-term]').forEach(button => {
+      button.addEventListener("click", () => {
+        const value = button.dataset.searchTerm || "";
+        if (elements.query) elements.query.value = value;
+        if (elements.directorySearch) elements.directorySearch.value = value;
+        setCategory("Everything", false);
+        document.querySelector("#directory")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+  }
+
+  function initialiseFilters() {
+    $$('[data-filter]').forEach(button => {
+      button.addEventListener("click", () => {
+        if (elements.query) elements.query.value = "";
+        if (elements.directorySearch) elements.directorySearch.value = "";
+        setCategory(button.dataset.filter || "Everything", true);
+      });
+    });
+    updateActiveFilters();
+  }
+
+  function initialise() {
+    if (elements.year) elements.year.textContent = String(new Date().getFullYear());
+    initialiseNavigation();
+    initialiseSearch();
+    initialiseFilters();
+    elements.refresh?.addEventListener("click", loadListings);
+    loadListings();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initialise, { once: true });
+  } else {
+    initialise();
+  }
+})();
