@@ -44,7 +44,7 @@
   ]);
 
   function normalise(value) {
-    return String(value ?? "").replace(/^\uFEFF/, "").trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+    return String(value ?? "").replace(/^\uFEFF/, "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toLowerCase().replace(/[^a-z0-9]/g, "");
   }
 
   function canonicalCategory(value) {
@@ -279,8 +279,8 @@
     const result = approvedListings.filter(item => {
       const category = canonicalCategory(item.category);
       const categoryMatch = wantedCategory === "everything" || category === wantedCategory;
-      const haystack = [item.name, item.category, item.description, item.address, item.hours].join(" ").toLocaleLowerCase("en-IN");
-      const textMatch = !term || haystack.includes(term);
+      const haystack = normalise([item.name, item.category, item.description, item.address, item.hours].join(" "));
+      const textMatch = !normalizedTerm || haystack.includes(normalizedTerm);
       const categoryShortcutMatch = isCategoryShortcut && category === queryCategory;
       return categoryMatch && (textMatch || categoryShortcutMatch);
     });
