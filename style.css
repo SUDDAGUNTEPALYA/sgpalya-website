@@ -238,9 +238,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 /* Founder */
 .founder-section { display: grid; grid-template-columns: minmax(240px,.72fr) minmax(0,1.28fr); gap: clamp(45px, 8vw, 110px); align-items: center; padding: 82px 12%; background: var(--forest); color: white; }
-.founder-photo-wrap { position: relative; max-width: 335px; width: 100%; padding: 0 15px 15px 0; }
+.founder-photo-wrap { position: relative; width: 100%; max-width: 335px; aspect-ratio: 1 / 1; padding: 0; }
 .founder-photo-wrap::before { content: ""; position: absolute; z-index: 0; inset: 15px 0 0 15px; border: 1px solid rgba(228,204,156,.66); }
-.founder-photo-wrap img { position: relative; z-index: 1; display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; object-position: center 24%; background: #f1eee5; }
+.founder-photo-wrap img { position: absolute; inset: 0; z-index: 1; display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 24%; background: #f1eee5; }
 .founder-photo-tag { position: absolute; z-index: 2; left: -13px; bottom: 32px; padding: 9px 12px; background: #e4d2ad; color: var(--forest); font-size: 7px; font-weight: 850; letter-spacing: 1.5px; }
 .founder-copy .section-kicker { color: #d7c18f; }
 .founder-copy h2 { margin-top: 17px; color: white; font-size: clamp(32px,3.5vw,46px); }
@@ -377,7 +377,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .history-item::before { left: -23px; }
   .founder-section { grid-template-columns: 1fr; gap: 32px; padding: 56px 8%; }
   .founder-photo-wrap { max-width: 280px; margin: 0 auto; }
-  .founder-photo-wrap img { height: auto; aspect-ratio: 1 / 1; }
   .founder-copy h2 { font-size: 33px; }
   .site-footer { padding: 34px 6% 18px; }
   .footer-top { grid-template-columns: 1fr; gap: 22px; }
