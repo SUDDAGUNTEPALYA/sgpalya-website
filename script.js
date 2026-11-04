@@ -414,34 +414,104 @@
     const backdrop = $("#navBackdrop");
     const closeButton = $("#navClose");
     if (!menu || !nav) return;
-    const closeMenu = () => {
-      nav.classList.remove("open");
-      nav.setAttribute("aria-hidden", "true");
+
+    let closeTimer = 0;
+    const transitionMs = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 340;
+
+    function finishClose() {
+      if (nav.classList.contains("open")) return;
       nav.inert = true;
+      nav.setAttribute("aria-hidden", "true");
+      if (backdrop) {
+        backdrop.hidden = true;
+        backdrop.classList.remove("is-visible");
+      }
+    }
+
+    function closeMenu({ restoreFocus = false } = {}) {
+      if (!nav.classList.contains("open")) {
+        finishClose();
+        if (restoreFocus) menu.focus();
+        return;
+      }
+
+      window.clearTimeout(closeTimer);
+      nav.classList.remove("open");
       menu.setAttribute("aria-expanded", "false");
       menu.setAttribute("aria-label", "Open navigation");
-      backdrop?.setAttribute("hidden", "");
       document.body.classList.remove("nav-open");
-    };
-    const openMenu = () => {
-      nav.classList.add("open");
-      nav.setAttribute("aria-hidden", "false");
+
+      if (backdrop) backdrop.classList.remove("is-visible");
+      closeTimer = window.setTimeout(finishClose, transitionMs + 40);
+
+      if (restoreFocus) menu.focus();
+    }
+
+    function openMenu() {
+      window.clearTimeout(closeTimer);
+      nav.hidden = false;
       nav.inert = false;
+      nav.setAttribute("aria-hidden", "false");
+      if (backdrop) {
+        backdrop.hidden = false;
+        // Give the browser a frame to apply the initial transparent state before fading in.
+        requestAnimationFrame(() => backdrop.classList.add("is-visible"));
+      }
+      requestAnimationFrame(() => nav.classList.add("open"));
       menu.setAttribute("aria-expanded", "true");
       menu.setAttribute("aria-label", "Close navigation");
-      backdrop?.removeAttribute("hidden");
       document.body.classList.add("nav-open");
       closeButton?.focus();
-    };
+    }
+
+    // The drawer starts closed. Keep it out of keyboard navigation until opened.
     nav.inert = true;
-    menu.addEventListener("click", () => nav.classList.contains("open") ? closeMenu() : openMenu());
-    closeButton?.addEventListener("click", closeMenu);
-    backdrop?.addEventListener("click", closeMenu);
-    $$("a", nav).forEach(link => link.addEventListener("click", closeMenu));
+    nav.setAttribute("aria-hidden", "true");
+
+    menu.addEventListener("click", () => {
+      if (nav.classList.contains("open")) closeMenu();
+      else openMenu();
+    });
+    closeButton?.addEventListener("click", () => closeMenu({ restoreFocus: true }));
+    backdrop?.addEventListener("click", () => closeMenu({ restoreFocus: true }));
+
+    // Do not make a clicked link inert before the browser follows it to another page.
+    // That was causing the side-navigation links to feel unreliable.
+    $$("a", nav).forEach(link => {
+      link.addEventListener("click", () => {
+        const destination = new URL(link.href, window.location.href);
+        const isSameDocument = destination.origin === window.location.origin
+          && destination.pathname === window.location.pathname;
+        if (isSameDocument) closeMenu();
+        // Cross-page links navigate normally. The next page opens with its own drawer closed.
+      });
+    });
+
+    nav.addEventListener("keydown", event => {
+      if (event.key !== "Tab" || !nav.classList.contains("open")) return;
+      const focusable = $$('a[href], button:not([disabled])', nav)
+        .filter(element => element.offsetParent !== null);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+
     document.addEventListener("keydown", event => {
       if (event.key === "Escape" && nav.classList.contains("open")) {
-        closeMenu();
-        menu.focus();
+        closeMenu({ restoreFocus: true });
+      }
+    });
+
+    nav.addEventListener("transitionend", event => {
+      if (event.target === nav && event.propertyName === "transform") {
+        finishClose();
       }
     });
   }
