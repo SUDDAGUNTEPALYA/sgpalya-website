@@ -638,6 +638,6 @@ a.community-card:hover {
 }
 @media(prefers-reduced-motion:reduce){
 .department-card,.department-card-arrow,.department-explorer,.department-explorer-body,.department-role-option,.department-role-arrow,.explorer-close{transition:none!important}
-.role-detail-content,.department-selection-status{animation:none!important}
+.role-detail-content{animation:none!important}
 .department-card:hover,.department-role-option:hover{transform:none!important}
 }
