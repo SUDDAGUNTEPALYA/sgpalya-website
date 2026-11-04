@@ -546,3 +546,115 @@ a.community-card:hover {
 .volunteer-registration-note{margin:0;color:#788278;font-size:10px;line-height:1.6}
 @media(max-width:900px){.team-section{padding-left:6%;padding-right:6%}.team-heading{gap:26px}.team-grid{gap:12px}.team-card{padding:22px 19px}.volunteer-panel{padding:26px 23px}}
 @media(max-width:600px){.team-section{padding:54px 5% 58px}.team-heading{grid-template-columns:1fr;gap:15px;margin-bottom:23px}.team-heading h2{font-size:34px}.team-heading>p{margin:0;font-size:11px}.team-grid{grid-template-columns:1fr;gap:12px}.team-card{padding:21px 19px}.team-profile-image{width:90px;height:90px;flex-basis:90px}.team-card-top{min-height:90px}.team-designation{font-size:10px}.team-description{font-size:10.5px}.volunteer-panel{margin-top:23px;padding:21px 17px}.volunteer-heading{grid-template-columns:1fr;gap:13px;margin-bottom:18px}.volunteer-heading>p{font-size:10.5px}.volunteer-cta-wrap{align-items:flex-start;flex-direction:column;gap:10px}}
+
+
+/* BENGALOOP recruitment explorer */
+.recruitment-intro{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:end;gap:28px;margin:30px 0 18px}
+.recruitment-kicker{display:inline-block;color:#9a674e;font-size:9px;font-weight:850;letter-spacing:1.45px;line-height:1.5}
+.recruitment-intro h4{margin:8px 0 0;color:var(--forest);font:500 clamp(23px,2.5vw,30px)/1.16 var(--serif)}
+.recruitment-intro h4 em{color:var(--terracotta);font-weight:400}
+.recruitment-intro>p{max-width:590px;margin:0;color:#69776d;font-size:11px;line-height:1.85}
+.recruitment-steps{display:flex;align-items:center;gap:13px;margin:0 0 17px;padding:12px 14px;background:#e8ece2;border:1px solid #dfe5d8}
+.recruitment-steps span{display:flex;align-items:center;gap:8px;color:#536456;font-size:9px;font-weight:700;letter-spacing:.2px}
+.recruitment-steps b{color:#a36a4e;font:italic 13px var(--serif)}
+.recruitment-steps i{width:22px;height:1px;background:#c4cdbd}
+.department-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+.department-card{position:relative;display:flex;min-width:0;min-height:178px;flex-direction:column;align-items:stretch;gap:0;padding:18px 18px 15px;text-align:left;color:var(--forest);background:#fffefa;border:1px solid #dfe5da;border-radius:4px;cursor:pointer;transition:transform .28s cubic-bezier(.2,.7,.2,1),border-color .28s ease,background .28s ease,box-shadow .28s ease}
+.department-card:focus-visible,.department-role-option:focus-visible,.explorer-close:focus-visible,.department-select-button:focus-visible{outline:3px solid #b96e4b;outline-offset:3px}
+.department-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:17px}
+.department-number{color:#a46d52;font:italic 15px var(--serif);letter-spacing:.3px}
+.department-number i{color:#a0aa9c;font-size:12px;font-style:normal}
+.department-selection-label{display:none;color:#55715a;font-size:7px;font-weight:850;letter-spacing:1.1px}
+.department-card.is-selected .department-selection-label{display:inline-block}
+.department-card-title{display:block;max-width:260px;color:var(--forest);font:500 19px/1.18 var(--serif);letter-spacing:-.15px}
+.department-card-summary{display:block;margin-top:9px;color:#748075;font-size:10px;line-height:1.7}
+.department-card-action{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto;padding-top:16px;color:#647466;font-size:8px;font-weight:850;letter-spacing:1px;text-transform:uppercase}
+.department-card-arrow{display:grid;width:27px;height:27px;place-items:center;color:var(--forest);background:#edf0e8;border-radius:50%;font-size:14px;transition:transform .28s ease,background .28s ease,color .28s ease}
+.department-card.is-active{border-color:#8d9d89;background:#f9fbf6}
+.department-card.is-active .department-card-arrow{color:#fffefa;background:var(--forest);transform:rotate(45deg)}
+.department-card.is-selected:not(.is-active){border-color:#c5d2c2}
+.department-explorer{margin-top:15px;padding:24px;background:#f7f8f3;border:1px solid #dce3d8;border-radius:4px;opacity:0;transform:translateY(11px);transition:opacity .32s ease,transform .38s cubic-bezier(.2,.7,.2,1)}
+.department-explorer[hidden]{display:none}
+.department-explorer.is-open{opacity:1;transform:translateY(0)}
+.department-explorer.is-switching .department-explorer-body{opacity:.42;transform:translateY(4px)}
+.department-explorer-body{display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);gap:19px;transition:opacity .2s ease,transform .2s ease}
+.department-explorer-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding-bottom:18px;margin-bottom:19px;border-bottom:1px solid #e0e5dc}
+.department-explorer-heading h4{margin:7px 0 5px;color:var(--forest);font:500 clamp(23px,2.6vw,31px)/1.15 var(--serif)}
+.department-explorer-heading p{max-width:700px;margin:0;color:#6e7b70;font-size:10px;line-height:1.7}
+.explorer-close{display:grid;flex:0 0 34px;width:34px;height:34px;place-items:center;border:1px solid #dce3d8;border-radius:50%;color:var(--forest);background:#fffefa;font-size:23px;line-height:1;cursor:pointer;transition:background .2s ease,transform .2s ease}
+.role-list-heading{display:flex;justify-content:space-between;gap:10px;margin:2px 0 10px;color:#788378;font-size:8px;font-weight:850;letter-spacing:1.15px}
+.role-list-heading span:last-child{color:#a16d50}
+.department-role-list{display:grid;gap:7px}
+.department-role-option{display:flex;width:100%;min-width:0;align-items:center;justify-content:space-between;gap:12px;padding:12px 13px;text-align:left;border:1px solid #e1e6dc;border-radius:3px;color:var(--forest);background:#fffefa;cursor:pointer;transition:border-color .22s ease,background .22s ease,transform .22s ease}
+.department-role-copy{display:grid;gap:4px;min-width:0}
+.department-role-copy strong{font-size:10px;font-weight:800;line-height:1.4}
+.department-role-copy small{color:#788378;font-size:9px;line-height:1.55}
+.department-role-arrow{flex:0 0 auto;color:#a36d51;font-size:15px;transition:transform .22s ease}
+.department-role-option.is-active{border-color:#a4b39e;background:#edf1e8}
+.department-role-option.is-active .department-role-arrow{transform:translate(2px,-2px)}
+.role-detail-panel{position:relative;min-height:292px;padding:21px 22px;background:#fffefa;border:1px solid #e0e6dc;border-radius:3px}
+.role-detail-empty{display:flex;min-height:248px;flex-direction:column;justify-content:center;align-items:flex-start;padding:10px}
+.role-detail-empty h5{margin:10px 0 7px;color:var(--forest);font:500 23px/1.2 var(--serif)}
+.role-detail-empty p{max-width:320px;margin:0;color:#758176;font-size:10px;line-height:1.8}
+.role-detail-content{animation:recruitmentDetailIn .34s cubic-bezier(.2,.7,.2,1) both}
+@keyframes recruitmentDetailIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.role-detail-topline{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.role-detail-department{color:#8b968b;font-size:8px;line-height:1.4}
+.role-detail-content h5{margin:10px 0 8px;color:var(--forest);font:500 24px/1.15 var(--serif)}
+.role-detail-overview{margin:0 0 18px;color:#657267;font-size:10px;line-height:1.8}
+.role-detail-sections{display:grid;gap:14px}
+.role-detail-sections section>span{display:block;margin-bottom:6px;color:#9a674e;font-size:8px;font-weight:850;letter-spacing:1.05px}
+.role-detail-sections p,.role-detail-sections ul{margin:0;color:#68766b;font-size:9.5px;line-height:1.75}
+.role-detail-sections ul{padding-left:17px}
+.role-detail-sections li+li{margin-top:4px}
+.department-explorer-footer{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:20px;padding-top:17px;border-top:1px solid #e0e5dc}
+.department-explorer-footer>div{display:grid;gap:4px;max-width:560px}
+.department-explorer-footer strong{color:var(--forest);font-size:10px}
+.department-explorer-footer span{color:#748075;font-size:9px;line-height:1.6}
+.department-select-button{display:inline-flex;flex:0 0 auto;min-height:42px;align-items:center;justify-content:center;gap:14px;padding:0 16px;border:1px solid var(--forest);border-radius:3px;color:#fffefa;background:var(--forest);font-size:8px;font-weight:850;letter-spacing:.9px;text-transform:uppercase;cursor:pointer;transition:background .22s ease,border-color .22s ease,transform .22s ease}
+.department-select-button span{color:#e8cda2;font-size:15px}
+.department-select-button:disabled{color:#fffefa;background:#637969;border-color:#637969;cursor:default}
+.department-selection-status{display:grid;gap:4px;margin-top:13px;padding:13px 16px;border:1px solid #dce5d8;background:#eaf0e7;border-radius:3px;animation:recruitmentDetailIn .3s ease both}
+.department-selection-status[hidden]{display:none}
+.department-selection-status strong{color:#385a43;font-size:10px}
+.department-selection-status span{color:#68776a;font-size:9px;line-height:1.6}
+.volunteer-registration-note{margin:17px 0 0;color:#788278;font-size:9px;line-height:1.7}
+@media(hover:hover) and (pointer:fine){
+.department-card:hover{transform:translateY(-3px);border-color:#a8b5a3;box-shadow:0 8px 20px rgba(23,58,46,.055)}
+.department-role-option:hover{transform:translateX(2px);border-color:#b7c3b1;background:#f7f9f3}
+.explorer-close:hover{background:#edf1e8;transform:rotate(90deg)}
+.department-select-button:not(:disabled):hover{background:#294d3c;transform:translateY(-1px)}
+}
+@media(max-width:900px){
+.recruitment-intro{grid-template-columns:1fr;gap:12px}
+.department-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.department-explorer-body{grid-template-columns:1fr}
+.role-detail-panel{min-height:240px}
+.role-detail-empty{min-height:190px}
+}
+@media(max-width:600px){
+.recruitment-intro{margin:24px 0 15px}
+.recruitment-intro h4{font-size:24px}
+.recruitment-intro>p{font-size:10px}
+.recruitment-steps{align-items:flex-start;flex-direction:column;gap:8px;padding:12px}
+.recruitment-steps i{display:none}
+.department-grid{grid-template-columns:1fr;gap:8px}
+.department-card{min-height:0;padding:16px}
+.department-card-top{margin-bottom:10px}
+.department-card-title{max-width:none;font-size:19px}
+.department-card-summary{font-size:10px}
+.department-card-action{padding-top:12px}
+.department-explorer{padding:17px 13px}
+.department-explorer-heading{margin-bottom:14px;padding-bottom:14px}
+.department-explorer-heading h4{font-size:24px}
+.department-explorer-body{gap:13px}
+.role-detail-panel{padding:17px 15px}
+.role-detail-content h5{font-size:22px}
+.department-explorer-footer{align-items:stretch;flex-direction:column}
+.department-select-button{width:100%;min-height:46px}
+}
+@media(prefers-reduced-motion:reduce){
+.department-card,.department-card-arrow,.department-explorer,.department-explorer-body,.department-role-option,.department-role-arrow,.explorer-close,.department-select-button{transition:none!important}
+.role-detail-content,.department-selection-status{animation:none!important}
+.department-card:hover,.department-role-option:hover,.department-select-button:hover{transform:none!important}
+}
