@@ -333,25 +333,15 @@
             <div class="section-kicker">A CHRIST UNIVERSITY STUDENT INITIATIVE</div>
             <h3>Build BENGALOOP <em>with us.</em></h3>
           </div>
-          <p>Help us make local discovery more connected, inclusive and useful. Choose one department that interests you, explore the work involved and see where your strengths could contribute. You do not need prior professional experience — curiosity, reliability and a willingness to learn matter most.</p>
+          <p>Help us make local discovery more connected, inclusive and useful. Choose one department that interests you, explore the work involved and see where your strengths could contribute. Prior professional experience is not required — curiosity, reliability and a willingness to learn matter most.</p>
         </div>
-
         <div class="recruitment-intro">
-          <div>
-            <span class="recruitment-kicker">FIND YOUR PLACE IN THE LOOP</span>
-            <h4>One team. <em>Six ways to contribute.</em></h4>
-          </div>
-          <p>Start by choosing a department. Open any role to understand its responsibilities, helpful skills and learning opportunities. Your department will work together, with tasks shared according to members' interests and abilities.</p>
+          <div><span class="recruitment-kicker">FIND YOUR PLACE IN THE LOOP</span><h4>One team. <em>Six ways to contribute.</em></h4></div>
+          <p>Start by choosing a department. Open any role to understand its responsibilities, helpful skills and learning opportunities. Members work together, with tasks shared according to their interests and abilities.</p>
         </div>
-
         <div class="recruitment-steps" aria-label="How department selection works">
-          <span><b>01</b> Choose a department</span>
-          <i aria-hidden="true"></i>
-          <span><b>02</b> Explore the roles</span>
-          <i aria-hidden="true"></i>
-          <span><b>03</b> Select your area</span>
+          <span><b>01</b> Choose a department</span><i aria-hidden="true"></i><span><b>02</b> Explore the roles</span><i aria-hidden="true"></i><span><b>03</b> Select your area</span>
         </div>
-
         <div class="department-grid" id="departmentGrid" aria-label="BENGALOOP departments">
           <button class="department-card" type="button" data-department-id="business" aria-expanded="false" aria-controls="departmentExplorer">
             <span class="department-card-top"><span class="department-number">01 <i>/ 06</i></span><span class="department-selection-label">SELECTED</span></span>
@@ -390,46 +380,22 @@
             <span class="department-card-action"><span>Explore department</span><span class="department-card-arrow" aria-hidden="true">↗</span></span>
           </button>
         </div>
-
         <section class="department-explorer" id="departmentExplorer" aria-label="Department roles" aria-hidden="true" inert hidden>
           <div class="department-explorer-heading">
-            <div>
-              <span class="recruitment-kicker" id="explorerDepartmentNumber">DEPARTMENT 01 / 06</span>
-              <h4 id="explorerDepartmentTitle">Department title</h4>
-              <p id="explorerDepartmentSummary"></p>
-            </div>
+            <div><span class="recruitment-kicker" id="explorerDepartmentNumber"></span><h4 id="explorerDepartmentTitle"></h4><p id="explorerDepartmentSummary"></p></div>
             <button class="explorer-close" id="closeDepartmentExplorer" type="button" aria-label="Close department details">×</button>
           </div>
-
           <div class="department-explorer-body">
-            <div class="department-role-column">
-              <div class="role-list-heading"><span>ROLES IN THIS DEPARTMENT</span><span id="explorerRoleCount"></span></div>
-              <div class="department-role-list" id="departmentRoleList"></div>
-            </div>
-            <div class="role-detail-panel" id="roleDetailPanel" aria-live="polite" aria-atomic="true">
-              <div class="role-detail-empty">
-                <span class="recruitment-kicker">ROLE PROFILE</span>
-                <h5>Explore a role.</h5>
-                <p>Select any role from the list to view its responsibilities, helpful skills and what you can learn.</p>
-              </div>
-            </div>
+            <div class="department-role-column"><div class="role-list-heading"><span>ROLES IN THIS DEPARTMENT</span><span id="explorerRoleCount"></span></div><div class="department-role-list" id="departmentRoleList"></div></div>
+            <div class="role-detail-panel" id="roleDetailPanel" aria-live="polite" aria-atomic="true"><div class="role-detail-empty"><span class="recruitment-kicker">ROLE PROFILE</span><h5>Explore a role.</h5><p>Select any role from the list to view its responsibilities, helpful skills and what you can learn.</p></div></div>
           </div>
-
           <div class="department-explorer-footer">
-            <div>
-              <strong>Interested in this department?</strong>
-              <span>Choose the department as your preferred area. The team will help allocate responsibilities based on interests and strengths.</span>
-            </div>
+            <div><strong>Interested in this department?</strong><span>Choose the department as your preferred area. The team will share responsibilities based on members' interests and strengths.</span></div>
             <button class="department-select-button" id="selectDepartmentButton" type="button">Select this department <span aria-hidden="true">→</span></button>
           </div>
         </section>
-
-        <div class="department-selection-status" id="departmentSelectionStatus" role="status" aria-live="polite" hidden>
-          <strong id="departmentSelectionTitle">Department selected</strong>
-          <span id="departmentSelectionNote">Your selection is a preview only; no application has been submitted. Student registration details will be shared separately.</span>
-        </div>
-
-        <div class="volunteer-registration-note">BENGALOOP is a student-led initiative. This page helps you explore and select a preferred department; the student registration process will be shared separately.</div>
+        <div class="department-selection-status" id="departmentSelectionStatus" role="status" aria-live="polite" hidden><strong id="departmentSelectionTitle"></strong><span>Your selection is a preview only; no application has been submitted. Student registration details will be shared separately.</span></div>
+        <div class="volunteer-registration-note">This page helps you explore and select a preferred department. The student registration process will be shared separately.</div>
       </div>
     </section>
   </main>
@@ -468,5 +434,6 @@
   </footer>
 
   <script src="script.js" defer></script>
+  <script src="recruitment.js?v=20261104-team" defer></script>
 </body>
 </html>
