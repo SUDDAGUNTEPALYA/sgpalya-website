@@ -468,7 +468,7 @@
 
   function initialiseFilters() {
     const params = new URLSearchParams(window.location.search);
-    const requestedCategory = params.get("category");
+    const requestedCategory = params.get("category") || (window.location.pathname.endsWith("/pg-housing.html") ? "PGs & Housing" : "");
     const requestedSearch = params.get("q");
     if (requestedCategory) activeCategory = requestedCategory;
     if (requestedSearch && elements.directorySearch) {
