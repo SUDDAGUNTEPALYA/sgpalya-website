@@ -73,13 +73,9 @@
   const roleCount = root.querySelector("#explorerRoleCount");
   const roleList = root.querySelector("#departmentRoleList");
   const roleDetail = root.querySelector("#roleDetailPanel");
-  const selectButton = root.querySelector("#selectDepartmentButton");
-  const selectionStatus = root.querySelector("#departmentSelectionStatus");
-  const selectionTitle = root.querySelector("#departmentSelectionTitle");
-  if (!panel || !roleList || !roleDetail || !selectButton) return;
+  if (!panel || !roleList || !roleDetail) return;
 
   let activeDepartmentId = "";
-  let selectedDepartmentId = "";
   let closeTimer = 0;
 
   const getDepartment = id => departments.find(department => department.id === id);
@@ -88,9 +84,7 @@
     cards.forEach(card => {
       const id = card.dataset.departmentId;
       const active = id === activeDepartmentId && !panel.hidden;
-      const selected = id === selectedDepartmentId;
       card.classList.toggle("is-active", active);
-      card.classList.toggle("is-selected", selected);
       card.setAttribute("aria-expanded", active ? "true" : "false");
     });
   }
@@ -128,6 +122,13 @@
         </div>
       </div>`;
     requestAnimationFrame(() => roleDetail.classList.add("is-entering"));
+    // On smaller screens the detail panel sits below the role list; reveal it after selection.
+    if (window.matchMedia("(max-width: 900px)").matches) {
+      window.setTimeout(() => roleDetail.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        block: "start"
+      }), 80);
+    }
   }
 
   function openDepartment(id) {
@@ -152,11 +153,6 @@
       </button>`).join("");
     roleDetail.classList.remove("is-entering");
     roleDetail.innerHTML = '<div class="role-detail-empty"><span class="recruitment-kicker">ROLE PROFILE</span><h5>Explore a role.</h5><p>Select any role from the list to view its responsibilities, helpful skills and what you can learn.</p></div>';
-    selectButton.disabled = selectedDepartmentId === id;
-    selectButton.innerHTML = selectButton.disabled
-      ? 'Department selected <span aria-hidden="true">✓</span>'
-      : 'Select this department <span aria-hidden="true">→</span>';
-
     if (wasHidden) {
       panel.hidden = false;
       panel.inert = false;
@@ -171,6 +167,12 @@
       requestAnimationFrame(() => requestAnimationFrame(() => panel.classList.remove("is-switching")));
     }
     updateCards();
+    // Bring the expanded role list into view so the user never has to hunt for it.
+    window.setTimeout(() => {
+      if (!panel.hidden && activeDepartmentId === id) {
+        panel.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+      }
+    }, 110);
   }
 
   cards.forEach(card => card.addEventListener("click", () => openDepartment(card.dataset.departmentId || "")));
@@ -185,14 +187,4 @@
 
   closeButton?.addEventListener("click", closeExplorer);
 
-  selectButton.addEventListener("click", () => {
-    const department = getDepartment(activeDepartmentId);
-    if (!department) return;
-    selectedDepartmentId = department.id;
-    selectionTitle.textContent = "Preferred department selected: " + department.name;
-    selectionStatus.hidden = false;
-    selectButton.disabled = true;
-    selectButton.innerHTML = 'Department selected <span aria-hidden="true">✓</span>';
-    updateCards();
-  });
 })();
