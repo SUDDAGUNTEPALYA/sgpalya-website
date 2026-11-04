@@ -560,20 +560,17 @@ a.community-card:hover {
 .recruitment-steps i{width:22px;height:1px;background:#c4cdbd}
 .department-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
 .department-card{position:relative;display:flex;min-width:0;min-height:178px;flex-direction:column;align-items:stretch;gap:0;padding:18px 18px 15px;text-align:left;color:var(--forest);background:#fffefa;border:1px solid #dfe5da;border-radius:4px;cursor:pointer;transition:transform .28s cubic-bezier(.2,.7,.2,1),border-color .28s ease,background .28s ease,box-shadow .28s ease}
-.department-card:focus-visible,.department-role-option:focus-visible,.explorer-close:focus-visible,.department-select-button:focus-visible{outline:3px solid #b96e4b;outline-offset:3px}
+.department-card:focus-visible,.department-role-option:focus-visible,.explorer-close:focus-visible{outline:3px solid #b96e4b;outline-offset:3px}
 .department-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:17px}
 .department-number{color:#a46d52;font:italic 15px var(--serif);letter-spacing:.3px}
 .department-number i{color:#a0aa9c;font-size:12px;font-style:normal}
-.department-selection-label{display:none;color:#55715a;font-size:7px;font-weight:850;letter-spacing:1.1px}
-.department-card.is-selected .department-selection-label{display:inline-block}
 .department-card-title{display:block;max-width:260px;color:var(--forest);font:500 19px/1.18 var(--serif);letter-spacing:-.15px}
 .department-card-summary{display:block;margin-top:9px;color:#748075;font-size:10px;line-height:1.7}
 .department-card-action{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto;padding-top:16px;color:#647466;font-size:8px;font-weight:850;letter-spacing:1px;text-transform:uppercase}
 .department-card-arrow{display:grid;width:27px;height:27px;place-items:center;color:var(--forest);background:#edf0e8;border-radius:50%;font-size:14px;transition:transform .28s ease,background .28s ease,color .28s ease}
 .department-card.is-active{border-color:#8d9d89;background:#f9fbf6}
 .department-card.is-active .department-card-arrow{color:#fffefa;background:var(--forest);transform:rotate(45deg)}
-.department-card.is-selected:not(.is-active){border-color:#c5d2c2}
-.department-explorer{margin-top:15px;padding:24px;background:#f7f8f3;border:1px solid #dce3d8;border-radius:4px;opacity:0;transform:translateY(11px);transition:opacity .32s ease,transform .38s cubic-bezier(.2,.7,.2,1)}
+.department-explorer{scroll-margin-top:100px;margin-top:15px;padding:24px;background:#f7f8f3;border:1px solid #dce3d8;border-radius:4px;opacity:0;transform:translateY(11px);transition:opacity .32s ease,transform .38s cubic-bezier(.2,.7,.2,1)}
 .department-explorer[hidden]{display:none}
 .department-explorer.is-open{opacity:1;transform:translateY(0)}
 .department-explorer.is-switching .department-explorer-body{opacity:.42;transform:translateY(4px)}
@@ -592,7 +589,7 @@ a.community-card:hover {
 .department-role-arrow{flex:0 0 auto;color:#a36d51;font-size:15px;transition:transform .22s ease}
 .department-role-option.is-active{border-color:#a4b39e;background:#edf1e8}
 .department-role-option.is-active .department-role-arrow{transform:translate(2px,-2px)}
-.role-detail-panel{position:relative;min-height:292px;padding:21px 22px;background:#fffefa;border:1px solid #e0e6dc;border-radius:3px}
+.role-detail-panel{scroll-margin-top:100px;position:relative;min-height:292px;padding:21px 22px;background:#fffefa;border:1px solid #e0e6dc;border-radius:3px}
 .role-detail-empty{display:flex;min-height:248px;flex-direction:column;justify-content:center;align-items:flex-start;padding:10px}
 .role-detail-empty h5{margin:10px 0 7px;color:var(--forest);font:500 23px/1.2 var(--serif)}
 .role-detail-empty p{max-width:320px;margin:0;color:#758176;font-size:10px;line-height:1.8}
@@ -607,23 +604,11 @@ a.community-card:hover {
 .role-detail-sections p,.role-detail-sections ul{margin:0;color:#68766b;font-size:9.5px;line-height:1.75}
 .role-detail-sections ul{padding-left:17px}
 .role-detail-sections li+li{margin-top:4px}
-.department-explorer-footer{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:20px;padding-top:17px;border-top:1px solid #e0e5dc}
-.department-explorer-footer>div{display:grid;gap:4px;max-width:560px}
-.department-explorer-footer strong{color:var(--forest);font-size:10px}
-.department-explorer-footer span{color:#748075;font-size:9px;line-height:1.6}
-.department-select-button{display:inline-flex;flex:0 0 auto;min-height:42px;align-items:center;justify-content:center;gap:14px;padding:0 16px;border:1px solid var(--forest);border-radius:3px;color:#fffefa;background:var(--forest);font-size:8px;font-weight:850;letter-spacing:.9px;text-transform:uppercase;cursor:pointer;transition:background .22s ease,border-color .22s ease,transform .22s ease}
-.department-select-button span{color:#e8cda2;font-size:15px}
-.department-select-button:disabled{color:#fffefa;background:#637969;border-color:#637969;cursor:default}
-.department-selection-status{display:grid;gap:4px;margin-top:13px;padding:13px 16px;border:1px solid #dce5d8;background:#eaf0e7;border-radius:3px;animation:recruitmentDetailIn .3s ease both}
-.department-selection-status[hidden]{display:none}
-.department-selection-status strong{color:#385a43;font-size:10px}
-.department-selection-status span{color:#68776a;font-size:9px;line-height:1.6}
 .volunteer-registration-note{margin:17px 0 0;color:#788278;font-size:9px;line-height:1.7}
 @media(hover:hover) and (pointer:fine){
 .department-card:hover{transform:translateY(-3px);border-color:#a8b5a3;box-shadow:0 8px 20px rgba(23,58,46,.055)}
 .department-role-option:hover{transform:translateX(2px);border-color:#b7c3b1;background:#f7f9f3}
 .explorer-close:hover{background:#edf1e8;transform:rotate(90deg)}
-.department-select-button:not(:disabled):hover{background:#294d3c;transform:translateY(-1px)}
 }
 @media(max-width:900px){
 .recruitment-intro{grid-template-columns:1fr;gap:12px}
@@ -650,11 +635,9 @@ a.community-card:hover {
 .department-explorer-body{gap:13px}
 .role-detail-panel{padding:17px 15px}
 .role-detail-content h5{font-size:22px}
-.department-explorer-footer{align-items:stretch;flex-direction:column}
-.department-select-button{width:100%;min-height:46px}
 }
 @media(prefers-reduced-motion:reduce){
-.department-card,.department-card-arrow,.department-explorer,.department-explorer-body,.department-role-option,.department-role-arrow,.explorer-close,.department-select-button{transition:none!important}
+.department-card,.department-card-arrow,.department-explorer,.department-explorer-body,.department-role-option,.department-role-arrow,.explorer-close{transition:none!important}
 .role-detail-content,.department-selection-status{animation:none!important}
-.department-card:hover,.department-role-option:hover,.department-select-button:hover{transform:none!important}
+.department-card:hover,.department-role-option:hover{transform:none!important}
 }
