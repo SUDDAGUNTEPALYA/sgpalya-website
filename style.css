@@ -461,9 +461,12 @@ a.community-card:hover {
   font-size: 20px;
   font-weight: 700;
 }
-.community-instagram-icon { background: #a76549; font-size: 27px; }
-.community-whatsapp-icon { background: #52785c; font-size: 26px; }
-.community-facebook-icon { background: #526a82; font-size: 24px; }
+.community-icon svg { display: block; width: 21px; height: 21px; fill: currentColor; }
+.community-instagram-icon svg { width: 23px; height: 23px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+.community-instagram-icon .instagram-dot { fill: currentColor; stroke: none; }
+.community-instagram-icon { background: #a76549; }
+.community-whatsapp-icon { background: #52785c; }
+.community-facebook-icon { background: #526a82; }
 .community-card-copy { display: grid; min-width: 0; gap: 5px; }
 .community-card-copy strong { font-size: 13px; font-weight: 700; line-height: 1.25; }
 .community-card-copy small { color: #778078; font-size: 10px; line-height: 1.5; }
