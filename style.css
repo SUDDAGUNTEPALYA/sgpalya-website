@@ -1059,3 +1059,73 @@ body.nav-open{overflow:hidden}
     padding-bottom: 16px;
   }
 }
+
+
+/* Business registration form — layout preview pending secure Excel connection */
+.business-registration-wrap{max-width:1320px;margin:0 auto;padding:38px 5.4% 86px}
+.registration-intro-bar{display:flex;align-items:center;gap:16px;margin:0 0 24px;padding:15px 18px;background:#f8eee5;border:1px solid #ead9cc}
+.registration-preview-badge{display:inline-flex;align-items:center;gap:8px;flex:0 0 auto;color:#9a5d3f;font-size:8px;font-weight:850;letter-spacing:1.3px}
+.registration-preview-badge i{width:7px;height:7px;border-radius:50%;background:#bb8058}
+.registration-intro-bar p{margin:0;color:#856f5f;font-size:10px;line-height:1.7}
+.registration-layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(270px,.65fr);align-items:start;gap:22px}
+.business-registration-form{min-width:0;padding:clamp(22px,3.3vw,42px);background:#fffefa;border:1px solid var(--line);box-shadow:0 15px 45px rgba(23,58,46,.045)}
+.registration-form-heading{margin-bottom:30px}
+.registration-form-heading h2{margin:11px 0 8px;color:var(--forest);font:500 clamp(29px,3.5vw,40px)/1.1 var(--serif)}
+.registration-form-heading h2 em{color:var(--terracotta);font-weight:400}
+.registration-form-heading p{margin:0;color:#7a867a;font-size:10px}
+.registration-fieldset{min-width:0;margin:0 0 25px;padding:0 0 25px;border:0;border-bottom:1px solid #e9e8df}
+.registration-fieldset legend{display:flex;align-items:center;gap:12px;width:100%;margin:0 0 17px;padding:0;color:var(--forest);font:500 21px var(--serif)}
+.registration-fieldset legend span{display:grid;width:28px;height:28px;place-items:center;border:1px solid #d6ddcf;border-radius:50%;color:var(--terracotta);font:italic 13px var(--serif)}
+.registration-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.registration-field{display:flex;min-width:0;flex-direction:column;gap:7px;color:#405548;font-size:10px;font-weight:750}
+.registration-field-wide{grid-column:1/-1}
+.registration-field b,.registration-check b{color:var(--terracotta)}
+.registration-field input,.registration-field select,.registration-field textarea{width:100%;min-height:47px;padding:12px 13px;border:1px solid #dfe3d9;border-radius:3px;background:#fcfcf8;color:var(--ink);font:400 11px/1.5 var(--sans);outline:none;transition:border-color .18s,box-shadow .18s}
+.registration-field textarea{min-height:92px;resize:vertical}
+.registration-field input:focus,.registration-field select:focus,.registration-field textarea:focus{border-color:#91a78e;box-shadow:0 0 0 3px rgba(33,77,61,.08)}
+.registration-field input::placeholder,.registration-field textarea::placeholder{color:#9aa397}
+.registration-field small{color:#92998e;font-size:8px;font-weight:450}
+.registration-consent{margin-bottom:18px;padding-bottom:12px;border-bottom:0}
+.registration-check{display:grid;grid-template-columns:18px minmax(0,1fr);gap:11px;align-items:start;color:#58685d;font-size:10px;line-height:1.8}
+.registration-check input{width:16px;height:16px;margin:2px 0 0;accent-color:var(--forest)}
+.registration-consent>p{margin:12px 0 0 29px;color:#879187;font-size:9px;line-height:1.7}
+.registration-form-actions{display:flex;flex-wrap:wrap;align-items:center;gap:16px}
+.registration-submit{border:0;cursor:pointer}
+.registration-back-link{color:#637368;font-size:10px;font-weight:750}
+.registration-back-link:hover{color:var(--terracotta)}
+.registration-form-status{min-height:18px;margin:14px 0 0;color:#a26447;font-size:10px;line-height:1.6}
+.registration-side-panel{position:sticky;top:112px;padding:27px 24px;background:var(--forest);color:#fffefa}
+.registration-side-top{display:flex;align-items:center;justify-content:space-between}
+.registration-side-top .section-kicker{color:#ddc894}
+.registration-side-mark{display:grid;width:38px;height:38px;place-items:center;border:1px solid rgba(255,255,255,.27);border-radius:50%;color:#e5d1a5;font:500 17px var(--serif)}
+.registration-side-panel h3{margin:19px 0 23px;color:#fff;font:500 28px/1.15 var(--serif)}
+.registration-side-panel h3 em{color:#e0c18b;font-weight:400}
+.registration-process{display:grid;gap:0}
+.registration-process article{display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;padding:17px 0;border-top:1px solid rgba(255,255,255,.17)}
+.registration-process article>span{color:#dfc18b;font:italic 16px var(--serif)}
+.registration-process strong{display:block;margin-bottom:5px;color:#fff;font-size:11px}
+.registration-process p{margin:0;color:#c5d0c6;font-size:9px;line-height:1.7}
+.registration-fairness{margin-top:16px;padding:18px;background:rgba(255,255,255,.08)}
+.registration-fairness .section-kicker{color:#dfc18b}
+.registration-fairness p{margin:9px 0 0;color:#f1eee4;font:italic 17px/1.45 var(--serif)}
+@media(max-width:900px){
+ .registration-layout{grid-template-columns:1fr}
+ .registration-side-panel{position:static;display:grid;grid-template-columns:1fr 1fr;gap:0 25px}
+ .registration-side-top,.registration-side-panel h3{grid-column:1/-1}
+ .registration-process{grid-column:1/-1;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+ .registration-process article{grid-template-columns:1fr;align-content:start}
+ .registration-fairness{grid-column:1/-1}
+}
+@media(max-width:600px){
+ .business-registration-wrap{padding:24px 5% 54px}
+ .registration-intro-bar{align-items:flex-start;flex-direction:column;gap:7px;padding:13px}
+ .business-registration-form{padding:21px 16px}
+ .registration-fields{grid-template-columns:1fr;gap:13px}
+ .registration-field-wide{grid-column:auto}
+ .registration-fieldset legend{font-size:19px}
+ .registration-side-panel{display:block;padding:23px 19px}
+ .registration-process{grid-template-columns:1fr;gap:0}
+ .registration-process article{grid-template-columns:32px minmax(0,1fr)}
+ .registration-consent>p{margin-left:0}
+ .registration-form-actions{align-items:flex-start;flex-direction:column}
+}
