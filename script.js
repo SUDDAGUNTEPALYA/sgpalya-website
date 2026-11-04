@@ -411,25 +411,40 @@
 
   function initialiseNavigation() {
     const { menu, nav } = elements;
+    const backdrop = $("#navBackdrop");
+    const closeButton = $("#navClose");
     if (!menu || !nav) return;
     const closeMenu = () => {
       nav.classList.remove("open");
+      nav.setAttribute("aria-hidden", "true");
+      nav.inert = true;
       menu.setAttribute("aria-expanded", "false");
       menu.setAttribute("aria-label", "Open navigation");
+      backdrop?.setAttribute("hidden", "");
+      document.body.classList.remove("nav-open");
     };
-    menu.addEventListener("click", () => {
-      const open = !nav.classList.contains("open");
-      nav.classList.toggle("open", open);
-      menu.setAttribute("aria-expanded", open ? "true" : "false");
-      menu.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
-    });
-    $$('a', nav).forEach(link => link.addEventListener("click", closeMenu));
-    document.addEventListener("keydown", event => { if (event.key === "Escape") closeMenu(); });
-    document.addEventListener("click", event => {
-      if (nav.classList.contains("open") && !nav.contains(event.target) && !menu.contains(event.target)) closeMenu();
+    const openMenu = () => {
+      nav.classList.add("open");
+      nav.setAttribute("aria-hidden", "false");
+      nav.inert = false;
+      menu.setAttribute("aria-expanded", "true");
+      menu.setAttribute("aria-label", "Close navigation");
+      backdrop?.removeAttribute("hidden");
+      document.body.classList.add("nav-open");
+      closeButton?.focus();
+    };
+    nav.inert = true;
+    menu.addEventListener("click", () => nav.classList.contains("open") ? closeMenu() : openMenu());
+    closeButton?.addEventListener("click", closeMenu);
+    backdrop?.addEventListener("click", closeMenu);
+    $$("a", nav).forEach(link => link.addEventListener("click", closeMenu));
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && nav.classList.contains("open")) {
+        closeMenu();
+        menu.focus();
+      }
     });
   }
-
   function initialiseSearch() {
     elements.searchForm?.addEventListener("submit", event => {
       event.preventDefault();
@@ -452,7 +467,15 @@
   }
 
   function initialiseFilters() {
-    $$('[data-filter]').forEach(button => {
+    const params = new URLSearchParams(window.location.search);
+    const requestedCategory = params.get("category");
+    const requestedSearch = params.get("q");
+    if (requestedCategory) activeCategory = requestedCategory;
+    if (requestedSearch && elements.directorySearch) {
+      elements.directorySearch.value = requestedSearch;
+      if (elements.query) elements.query.value = requestedSearch;
+    }
+    $('[data-filter]').forEach(button => {
       button.addEventListener("click", () => {
         if (elements.query) elements.query.value = "";
         if (elements.directorySearch) elements.directorySearch.value = "";
