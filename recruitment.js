@@ -61,7 +61,7 @@
   ];
 
   const escapeHTML = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  const root = document.querySelector("#team");
+  const root = document.querySelector("#departments");
   if (!root) return;
 
   const cards = Array.from(root.querySelectorAll(".department-card"));
