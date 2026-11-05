@@ -431,24 +431,22 @@
     }
 
     function closeMenu({ restoreFocus = false } = {}) {
+      // Stop pending animations before resetting every part of the drawer state.
       if (openFrame) window.cancelAnimationFrame(openFrame);
       if (backdropFrame) window.cancelAnimationFrame(backdropFrame);
       openFrame = 0;
       backdropFrame = 0;
-      if (!nav.classList.contains("open")) {
-        finishClose();
-        if (restoreFocus) menu.focus();
-        return;
-      }
-
       window.clearTimeout(closeTimer);
+
+      const wasOpen = nav.classList.contains("open");
       nav.classList.remove("open");
       menu.setAttribute("aria-expanded", "false");
       menu.setAttribute("aria-label", "Open navigation");
       document.body.classList.remove("nav-open");
-
       if (backdrop) backdrop.classList.remove("is-visible");
-      closeTimer = window.setTimeout(finishClose, transitionMs + 40);
+
+      if (wasOpen) closeTimer = window.setTimeout(finishClose, transitionMs + 50);
+      else finishClose();
 
       if (restoreFocus) menu.focus();
     }
