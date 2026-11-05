@@ -1214,3 +1214,15 @@ body.nav-open{overflow:hidden}
   .explore-search-form input{font-size:11px}
   .explore-search-form button{gap:7px;padding:0 11px;font-size:9px}
 }
+
+
+/* BENGALOOP technical leadership — same profile card system, separate from co-founders */
+.team-leadership{margin:64px 0 70px;padding-top:52px;border-top:1px solid rgba(23,58,46,.12)}
+.team-leadership .team-heading{margin-bottom:24px}
+.team-grid-single{max-width:470px;grid-template-columns:minmax(0,1fr)}
+.team-grid-single .team-card{min-height:100%}
+@media(max-width:600px){
+  .team-leadership{margin:48px 0 46px;padding-top:38px}
+  .team-leadership .team-heading{margin-bottom:23px}
+  .team-grid-single{max-width:none}
+}
