@@ -1231,3 +1231,10 @@ body.nav-open{overflow:hidden}
 /* Non-clickable LinkedIn placeholder for profiles without a supplied URL */
 .team-linkedin-placeholder{cursor:default;pointer-events:none;opacity:.82}
 .team-linkedin-placeholder:hover{background:rgba(255,255,255,.55);border-color:rgba(23,58,46,.18);transform:none}
+
+
+/* Separate the team directory from the department explorer. */
+.departments-section{padding:72px max(7%,calc((100% - 1120px)/2)) 82px;background:#f3f5ee;border-top:1px solid rgba(23,58,46,.09)}
+.departments-section .volunteer-panel{max-width:1120px;margin:0 auto}
+@media(max-width:900px){.departments-section{padding-left:6%;padding-right:6%}}
+@media(max-width:600px){.departments-section{padding:54px 5% 58px}.departments-section .volunteer-panel{margin-top:0}}
