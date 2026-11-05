@@ -1226,3 +1226,8 @@ body.nav-open{overflow:hidden}
   .team-leadership .team-heading{margin-bottom:23px}
   .team-grid-single{max-width:none}
 }
+
+
+/* Non-clickable LinkedIn placeholder for profiles without a supplied URL */
+.team-linkedin-placeholder{cursor:default;pointer-events:none;opacity:.82}
+.team-linkedin-placeholder:hover{background:rgba(255,255,255,.55);border-color:rgba(23,58,46,.18);transform:none}
