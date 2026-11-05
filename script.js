@@ -416,10 +416,12 @@
     if (!menu || !nav) return;
 
     let closeTimer = 0;
+    let openFrame = 0;
+    let backdropFrame = 0;
     const transitionMs = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 340;
 
     function finishClose() {
-      if (nav.classList.contains("open")) return;
+      if (menu.getAttribute("aria-expanded") === "true" || nav.classList.contains("open")) return;
       nav.inert = true;
       nav.setAttribute("aria-hidden", "true");
       if (backdrop) {
@@ -429,6 +431,10 @@
     }
 
     function closeMenu({ restoreFocus = false } = {}) {
+      if (openFrame) window.cancelAnimationFrame(openFrame);
+      if (backdropFrame) window.cancelAnimationFrame(backdropFrame);
+      openFrame = 0;
+      backdropFrame = 0;
       if (!nav.classList.contains("open")) {
         finishClose();
         if (restoreFocus) menu.focus();
@@ -455,9 +461,15 @@
       if (backdrop) {
         backdrop.hidden = false;
         // Give the browser a frame to apply the initial transparent state before fading in.
-        requestAnimationFrame(() => backdrop.classList.add("is-visible"));
+        backdropFrame = window.requestAnimationFrame(() => {
+          backdropFrame = 0;
+          if (menu.getAttribute("aria-expanded") === "true") backdrop.classList.add("is-visible");
+        });
       }
-      requestAnimationFrame(() => nav.classList.add("open"));
+      openFrame = window.requestAnimationFrame(() => {
+        openFrame = 0;
+        if (menu.getAttribute("aria-expanded") === "true") nav.classList.add("open");
+      });
       menu.setAttribute("aria-expanded", "true");
       menu.setAttribute("aria-label", "Close navigation");
       document.body.classList.add("nav-open");
@@ -469,7 +481,7 @@
     nav.setAttribute("aria-hidden", "true");
 
     menu.addEventListener("click", () => {
-      if (nav.classList.contains("open")) closeMenu();
+      if (menu.getAttribute("aria-expanded") === "true") closeMenu();
       else openMenu();
     });
     closeButton?.addEventListener("click", () => closeMenu({ restoreFocus: true }));
