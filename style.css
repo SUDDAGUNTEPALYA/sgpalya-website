@@ -17,7 +17,7 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 92px; }
+html { scroll-behavior: smooth; scroll-padding-top: 92px; overflow-x: clip; }
 body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 img, svg { max-width: 100%; }
 img { display: block; }
@@ -1233,8 +1233,21 @@ body.nav-open{overflow:hidden}
 .team-linkedin-placeholder:hover{background:rgba(255,255,255,.55);border-color:rgba(23,58,46,.18);transform:none}
 
 
-/* Separate the team directory from the department explorer. */
-.departments-section{padding:72px max(7%,calc((100% - 1120px)/2)) 82px;background:#f3f5ee;border-top:1px solid rgba(23,58,46,.09)}
-.departments-section .volunteer-panel{max-width:1120px;margin:0 auto}
-@media(max-width:900px){.departments-section{padding-left:6%;padding-right:6%}}
-@media(max-width:600px){.departments-section{padding:54px 5% 58px}.departments-section .volunteer-panel{margin-top:0}}
+/* Dedicated department-page wall: one continuous background band with a single inner panel. */
+.departments-section{
+  padding:34px max(5.4%,calc((100% - 1120px)/2)) 68px;
+  background:#f3f5ee;
+  border-top:1px solid rgba(23,58,46,.09);
+}
+.departments-section .volunteer-panel{
+  width:100%;
+  max-width:1120px;
+  margin:0 auto;
+}
+@media(max-width:900px){
+  .departments-section{padding:30px 6% 58px}
+}
+@media(max-width:600px){
+  .departments-section{padding:24px 5% 44px}
+  .departments-section .volunteer-panel{margin:0 auto}
+}
