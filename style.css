@@ -530,6 +530,7 @@ a.community-card:hover {
 .team-card-cofounder .team-status{color:#fff8f5;background:#a9433b}
 .team-card-top{display:flex;min-height:104px;align-items:center;justify-content:space-between;gap:12px}
 .team-profile-image{display:block;width:104px;height:104px;flex:0 0 104px;object-fit:cover;object-position:center 24%;background:#eeeae0;border:3px solid #fffefa;border-radius:50%;box-shadow:0 0 0 1px rgba(23,58,46,.14)}
+.team-profile-initials{display:flex;align-items:center;justify-content:center;color:var(--forest);background:#e9e5d9;font:500 28px/1 var(--serif);letter-spacing:1px}
 .team-status{align-self:flex-start;margin-top:8px;padding:7px 9px;color:#58705a;background:#edf1e7;border-radius:2px;font-size:8px;font-weight:800;letter-spacing:1.25px}
 .team-card h3{margin:19px 0 6px;color:var(--forest);font:500 26px/1.15 var(--serif)}
 .team-designation{margin:0 0 7px;color:#a56549;font-size:11px;font-weight:750;line-height:1.65}
