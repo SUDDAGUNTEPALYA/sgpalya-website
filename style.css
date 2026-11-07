@@ -1537,7 +1537,7 @@ body { padding-top: 112px; }
 .menu-toggle { width: 52px; height: 52px; }
 .nav-backdrop { z-index: 140 !important; }
 .site-nav.drawer-nav {
-  top: 12px; right: max(4.2%, calc((100vw - 1380px) / 2)); left: auto;
+  top: -1px; right: max(4.2%, calc((100vw - 1380px) / 2)); left: auto;
   width: min(420px,91vw); height: calc(100dvh - 24px); min-height: 0; max-height: calc(100vh - 24px);
   border: 1px solid rgba(23,58,46,.12); border-radius: 24px;
 }
@@ -1547,7 +1547,7 @@ body { padding-top: 112px; }
   .header-inner { min-height: 80px; padding: 0 16px; gap: 14px; }
   .brand img { width: 220px; }
   .brand-edition { padding-left: 60px; }
-  .site-nav.drawer-nav { top: 8px; right: 4%; height: calc(100dvh - 16px); max-height: calc(100vh - 16px); }
+  .site-nav.drawer-nav { top: -1px; right: 4%; height: calc(100dvh - 16px); max-height: calc(100vh - 16px); }
 }
 @media (max-width: 600px) {
   body { padding-top: 92px; }
@@ -1556,7 +1556,7 @@ body { padding-top: 112px; }
   .brand img { width: min(210px,59vw); }
   .brand-edition { padding-left: 57px; font-size: 12px; letter-spacing: 1.3px; }
   .menu-toggle { width: 48px; height: 48px; }
-  .site-nav.drawer-nav { top: 8px; right: 4%; width: min(420px,92vw); height: calc(100dvh - 16px); max-height: calc(100vh - 16px); }
+  .site-nav.drawer-nav { top: -1px; right: 4%; width: min(420px,92vw); height: calc(100dvh - 16px); max-height: calc(100vh - 16px); }
 }
 
 /* Explicit people hierarchy: Founder → Co-founders → Members. */
