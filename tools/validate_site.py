@@ -282,7 +282,7 @@ def main() -> int:
     registration_html = html_sources.get(ROOT / "business-registration.html", "")
     if 'business-registration.js?' not in registration_html:
         fail(errors, "business-registration.html does not load its preview script")
-    if "Preview only" not in registration_js or "not been sent or saved" not in registration_js:
+    if "Preview only" not in registration_js or "No information has been sent or saved" not in registration_js:
         fail(errors, "registration workflow status changed; verify its data-handling boundary deliberately")
 
     if "prefers-reduced-motion: reduce" not in css:
