@@ -32,12 +32,38 @@ async function openPage(viewport, label) {
 }
 
 async function noHorizontalOverflow(page, label) {
-  const size = await page.evaluate(() => ({
-    viewport: document.documentElement.clientWidth,
-    content: document.documentElement.scrollWidth
-  }));
+  const size = await page.evaluate(() => {
+    const viewport = document.documentElement.clientWidth;
+    const offenders = Array.from(document.querySelectorAll("body *"))
+      .filter(element => !element.closest('[aria-hidden="true"], [hidden]'))
+      .map(element => {
+        const rect = element.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        return {
+          element: element.tagName.toLowerCase()
+            + (element.id ? "#" + element.id : "")
+            + (element.classList?.length ? "." + Array.from(element.classList).slice(0, 2).join(".") : ""),
+          left: Math.round(rect.left),
+          right: Math.round(rect.right),
+          width: Math.round(rect.width),
+          position: style.position,
+          visibility: style.visibility
+        };
+      })
+      .filter(item => item.width > 0 && item.visibility !== "hidden"
+        && (item.left < -1 || item.right > viewport + 1))
+      .sort((a, b) => Math.max(Math.abs(b.left), b.right - viewport)
+        - Math.max(Math.abs(a.left), a.right - viewport))
+      .slice(0, 12);
+    return {
+      viewport,
+      content: document.documentElement.scrollWidth,
+      offenders
+    };
+  });
   assert.ok(size.content <= size.viewport + 1,
-    label + " horizontal overflow: content " + size.content + "px > viewport " + size.viewport + "px");
+    label + " horizontal overflow: content " + size.content + "px > viewport " + size.viewport
+      + "px. Edge elements: " + JSON.stringify(size.offenders));
 }
 
 try {
