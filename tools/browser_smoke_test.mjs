@@ -53,10 +53,18 @@ try {
   await desktop.locator('#nav a[href="#team"]').click();
   await desktop.waitForFunction(() => location.hash === "#team");
   await desktop.waitForFunction(() => !document.querySelector("#nav").classList.contains("open"));
-  const teamTop = await desktop.locator("#team").evaluate(element => element.getBoundingClientRect().top);
-  const headerBottom = await desktop.locator(".site-header").evaluate(element => element.getBoundingClientRect().bottom);
-  assert.ok(teamTop >= headerBottom - 2 && teamTop <= headerBottom + 110,
-    "team anchor should land clear of the sticky header");
+  await desktop.waitForTimeout(500);
+  const anchorGeometry = await desktop.evaluate(() => ({
+    teamTop: document.querySelector("#team").getBoundingClientRect().top,
+    headerBottom: document.querySelector(".site-header").getBoundingClientRect().bottom,
+    scrollY: window.scrollY,
+    scrollPaddingTop: getComputedStyle(document.documentElement).scrollPaddingTop,
+    headerPosition: getComputedStyle(document.querySelector(".site-header")).position
+  }));
+  console.log("Desktop section-anchor geometry: " + JSON.stringify(anchorGeometry));
+  assert.ok(anchorGeometry.teamTop >= anchorGeometry.headerBottom - 2
+    && anchorGeometry.teamTop <= anchorGeometry.headerBottom + 110,
+    "team anchor should land clear of the sticky header: " + JSON.stringify(anchorGeometry));
 
   await desktop.locator('button.explore-category-card[data-filter="Healthcare"]').click();
   await desktop.waitForFunction(() => document.querySelectorAll("#listingGrid .listing-card").length === 1
