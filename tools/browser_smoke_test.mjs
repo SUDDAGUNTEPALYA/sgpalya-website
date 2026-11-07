@@ -100,7 +100,7 @@ try {
     "non-approved listings must never render");
   await capture(desktop, "desktop-home.png");
 
-  for (const section of ["home", "explore", "directory", "housing", "for-businesses", "what-we-do", "story", "team", "departments"]) {
+  for (const section of ["home", "explore", "directory", "housing", "for-businesses", "what-we-do", "vision", "story", "team", "departments", "app-launch"]) {
     await desktop.locator("#menu").click();
     await desktop.waitForFunction(() => document.querySelector("#nav").classList.contains("open"));
     await desktop.locator('#nav a[href="#' + section + '"]').first().click();
@@ -119,11 +119,14 @@ try {
         scrollPaddingTop: getComputedStyle(document.documentElement).scrollPaddingTop,
         headerPosition: getComputedStyle(document.querySelector(".site-header")).position
       }));
+      assert.equal(anchorGeometry.headerPosition, "fixed", "the navigation must remain fixed while scrolling");
       console.log("Desktop section-anchor geometry: " + JSON.stringify(anchorGeometry));
     }
   }
   await desktop.locator("#menu").click();
   await desktop.waitForFunction(() => document.querySelector("#nav").classList.contains("open"));
+  const drawerAlignment = await desktop.evaluate(() => ({ drawerTop: document.querySelector("#nav").getBoundingClientRect().top, headerInnerTop: document.querySelector(".header-inner").getBoundingClientRect().top }));
+  assert.ok(Math.abs(drawerAlignment.drawerTop - drawerAlignment.headerInnerTop) <= 3, "drawer must align with the fixed navigation surface");
   await desktop.keyboard.press("Escape");
   await desktop.waitForFunction(() => !document.querySelector("#nav").classList.contains("open")
     && document.activeElement === document.querySelector("#menu"));
@@ -158,7 +161,9 @@ try {
   await desktop.waitForFunction(() => document.querySelectorAll("#listingGrid .listing-card").length === 3);
   await captureSection(desktop, "#explore", "desktop-explore.png");
   await captureSection(desktop, "#directory", "desktop-directory.png");
+  await captureSection(desktop, "#vision", "desktop-vision.png");
   await captureSection(desktop, "#team", "desktop-team.png");
+  await captureSection(desktop, "#app-launch", "desktop-app-launch.png");
   await captureSection(desktop, "#departments", "desktop-departments.png");
   await desktop.goto(baseURL + "/index.html", { waitUntil: "domcontentloaded" });
   await desktop.waitForFunction(() => document.querySelectorAll("#listingGrid .listing-card").length === 3);
