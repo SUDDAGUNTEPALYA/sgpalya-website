@@ -197,6 +197,10 @@ def main() -> int:
           "team leadership contract changed: Rhythm and Yuval must remain the only co-founders")
     check(errors, 'id="technical-leadership-title"' in html and "Subhankar Raj Gupta" in html,
           "technical leadership section is missing")
+    check(errors, 'aria-label="Initials for Rajath R.">RR</div>' in html,
+          "team profiles without photographs must use a clear initials placeholder")
+    check(errors, 'class="page-masthead"><div class="page-masthead-inner"><div class="section-kicker">THE BENGALOOP MODEL' not in html,
+          "the What We Do section must not repeat its main heading in a redundant masthead")
 
     check(errors, "RECRUITMENT OPEN" in html and "19 current roles" in html
           and "co-founders, managers, team members and volunteers" in html
