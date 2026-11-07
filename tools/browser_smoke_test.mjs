@@ -12,14 +12,10 @@ async function capture(page, filename, fullPage = false) {
 }
 
 async function captureSection(page, selector, filename) {
-  await page.evaluate(targetSelector => {
-    const target = document.querySelector(targetSelector);
-    if (!target) throw new Error("Screenshot target not found: " + targetSelector);
-    document.documentElement.style.setProperty("scroll-behavior", "auto", "important");
-    const topInset = Number.parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
-    const top = Math.max(0, target.getBoundingClientRect().top + window.scrollY - topInset);
-    window.scrollTo(0, top);
-  }, selector);
+  // Re-open the canonical page at a real fragment URL so Chromium performs
+  // the same anchor positioning a visitor gets from the navigation drawer.
+  await page.goto(baseURL + "/index.html" + selector, { waitUntil: "domcontentloaded" });
+  await page.waitForFunction(() => document.querySelectorAll("#listingGrid .listing-card").length === 3);
   await page.waitForTimeout(250);
   const geometry = await page.evaluate(targetSelector => ({
     sectionTop: document.querySelector(targetSelector).getBoundingClientRect().top,
@@ -157,16 +153,14 @@ try {
   await desktop.locator("#businessRegistrationForm").evaluate(form =>
     form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
   await desktop.waitForFunction(() => document.querySelector("#registrationFormStatus").textContent.includes("No information has been sent or saved"));
-  await desktop.locator('.filter-chip[data-filter="Everything"]').click();
-  await desktop.waitForFunction(() => document.querySelectorAll("#listingGrid .listing-card").length === 3);
+  await desktop.screenshot({ path: path.join(screenshotDir, "desktop-department-role-detail.png") });
   await captureSection(desktop, "#explore", "desktop-explore.png");
   await captureSection(desktop, "#directory", "desktop-directory.png");
   await captureSection(desktop, "#team", "desktop-team.png");
   await captureSection(desktop, "#departments", "desktop-departments.png");
-  await desktop.locator("#closeDepartmentExplorer").click();
+  await desktop.goto(baseURL + "/index.html", { waitUntil: "domcontentloaded" });
+  await desktop.waitForFunction(() => document.querySelectorAll("#listingGrid .listing-card").length === 3);
   await desktop.addStyleTag({ content: "html{scroll-behavior:auto!important} .site-header{position:relative!important;top:auto!important} .scroll-reveal{opacity:1!important;transform:none!important;filter:none!important} *{animation:none!important;transition:none!important}" });
-  await desktop.evaluate(() => window.scrollTo(0, 0));
-  await desktop.waitForTimeout(150);
   await capture(desktop, "desktop-full-page.png", true);
   await noHorizontalOverflow(desktop, "desktop");
   await desktop.close();
@@ -182,11 +176,9 @@ try {
   await mobile.waitForFunction(() => !document.querySelector("#nav").classList.contains("open"));
   await mobile.waitForFunction(() => getComputedStyle(document.querySelector("#nav")).visibility === "hidden");
   await captureSection(mobile, "#departments", "mobile-departments-390.png");
-  await mobile.locator('.filter-chip[data-filter="Everything"]').click();
+  await mobile.goto(baseURL + "/index.html", { waitUntil: "domcontentloaded" });
   await mobile.waitForFunction(() => document.querySelectorAll("#listingGrid .listing-card").length === 3);
   await mobile.addStyleTag({ content: "html{scroll-behavior:auto!important} .site-header{position:relative!important;top:auto!important} .scroll-reveal{opacity:1!important;transform:none!important;filter:none!important} *{animation:none!important;transition:none!important}" });
-  await mobile.evaluate(() => window.scrollTo(0, 0));
-  await mobile.waitForTimeout(150);
   await capture(mobile, "mobile-full-page-390.png", true);
   await noHorizontalOverflow(mobile, "mobile 390px");
   await mobile.close();
