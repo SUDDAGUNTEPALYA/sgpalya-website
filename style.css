@@ -1496,11 +1496,13 @@ button:disabled, input:disabled, select:disabled, textarea:disabled, [aria-disab
 
 
 /* Single-page navigation and same-page category shortcuts — November 2026 */
+/* The root scroll-padding accounts for the sticky header. Avoid a second
+   scroll margin here, which would double the offset on fragment navigation. */
 main > section[id],
 main [id].directory-section,
 main [id].team-section,
 main [id].departments-section,
-main [id].what-we-do-section { scroll-margin-top: 116px; }
+main [id].what-we-do-section { scroll-margin-top: 0; }
 button.explore-category-card {
   width: 100%; font: inherit; color: var(--forest); text-align: left;
   cursor: pointer; appearance: none;
