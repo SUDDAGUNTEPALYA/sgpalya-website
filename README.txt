@@ -1,32 +1,14 @@
-BENGALOOP — S.G. Palya Edition
-=================================
+BENGALOOP — S.G. Palya, Bengaluru
 
-BENGALOOP is a static neighbourhood discovery website for S.G. Palya, Bengaluru.
+The mobile-first homepage focuses on the BENGALOOP model and student recruitment,
+then introduces the Founder and Co-founders. The full Member directory is separate.
 
-The canonical user experience is one long-scrolling page:
-  index.html
+Pages: index.html, what-we-do.html, departments.html, our-team.html, explore.html,
+directory.html, pg-housing.html, for-businesses.html, business-registration.html,
+our-story.html. 15 current Members, six recruitment departments and 19 current roles.
 
-Main navigation links scroll to section anchors on that page. Former page URLs
-remain as lightweight noindex redirects so existing bookmarks and shared links
-continue to work.
+The public directory only renders Approved CSV rows. The business registration
+form remains preview-only and does not send or save entered information.
 
-Core files:
-  index.html                 Canonical single-page website
-  style.css                  Shared design system and responsive components
-  script.js                  Navigation, search, directory and scroll behaviour
-  recruitment.js             Six departments and 19 role profiles
-  business-registration.js   Preview-only business registration interaction
-  tools/validate_site.py      Structural and integration checks
-
-Directory data:
-The public business directory reads the published public CSV configured in the
-index.html meta tag. Only rows marked Approved are displayed. Private form data
-is not requested by the directory script.
-
-Run quality checks from the repository root:
-  python tools/validate_site.py
-  node --check script.js
-  node --check recruitment.js
-  node --check business-registration.js
-
-See ARCHITECTURE.md for section anchors, integrations and release safeguards.
+Run: python tools/validate_site.py
+Run: node --check script.js && node --check recruitment.js

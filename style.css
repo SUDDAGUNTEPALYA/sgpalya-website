@@ -1766,3 +1766,21 @@ body { padding-top: 112px; }
     height: auto;
   }
 }
+
+/* Mobile-first information architecture: member hand-off and standalone page headings. */
+.page-masthead h1{max-width:900px;margin:17px 0 15px;color:var(--forest);font:500 clamp(42px,5.3vw,68px)/1.02 var(--serif);letter-spacing:-2px}
+.page-masthead h1 em{color:var(--terracotta);font-weight:400}
+.team-members-count-link{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;align-items:center;gap:18px;max-width:960px;margin:26px auto 0;padding:20px 23px;color:var(--forest);text-decoration:none;background:#edf2e9;border:1px solid #dce5d9;border-radius:5px;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+.team-members-count-link:hover{transform:translateY(-2px);border-color:#a9bca8;box-shadow:0 12px 28px rgba(23,58,46,.08)}
+.team-members-count-kicker{color:#8b6a4f;font-size:10px;font-weight:700;letter-spacing:1.4px}
+.team-members-count-link strong{display:flex;align-items:baseline;gap:7px;white-space:nowrap;font-size:12px;letter-spacing:1px}
+.team-members-count-link strong span{color:var(--terracotta);font:500 34px/1 var(--serif);letter-spacing:-1px}
+.team-members-count-copy{color:#68766c;font-size:12px;line-height:1.5}
+.team-members-count-link b{display:inline-flex;align-items:center;gap:9px;white-space:nowrap;color:var(--forest);font-size:12px}
+.team-directory-section{padding-top:44px}
+.team-directory-heading{max-width:780px;margin:0 auto 28px;text-align:center}
+.team-directory-heading h2{margin:10px 0 8px;color:var(--forest);font:500 clamp(31px,3.5vw,44px)/1.12 var(--serif)}
+.team-directory-heading p{max-width:620px;margin:0 auto;color:var(--muted);font-size:13px;line-height:1.75}
+.team-directory-section .team-level-members{max-width:1120px;margin:0 auto}
+@media(max-width:900px){.team-members-count-link{grid-template-columns:auto minmax(0,1fr) auto;gap:12px}.team-members-count-kicker{grid-column:1/-1}}
+@media(max-width:600px){.page-masthead{padding-top:50px;padding-bottom:42px}.page-masthead h1{font-size:clamp(36px,10vw,48px);letter-spacing:-1.2px}.team-members-count-link{grid-template-columns:auto minmax(0,1fr);gap:8px 13px;padding:17px 16px}.team-members-count-kicker{grid-column:1/-1}.team-members-count-link strong{grid-column:1;grid-row:2}.team-members-count-copy{grid-column:2;grid-row:2}.team-members-count-link b{grid-column:1/-1;justify-content:space-between;padding-top:10px;border-top:1px solid #d9e2d5}}

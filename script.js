@@ -647,10 +647,12 @@ const links = $$('nav#nav a[href^="#"]');
     initialiseScrollExperience();
     initialiseNavigation();
     initialiseSectionNavigation();
-    initialiseSearch();
-    initialiseFilters();
-    elements.refresh?.addEventListener("click", loadListings);
-    loadListings();
+    if (elements.grid) {
+      initialiseSearch();
+      initialiseFilters();
+      elements.refresh?.addEventListener("click", loadListings);
+      loadListings();
+    }
   }
 
   if (document.readyState === "loading") {
