@@ -198,6 +198,12 @@ def main() -> int:
     check(errors, 'id="technical-leadership-title"' in html and "Subhankar Raj Gupta" in html,
           "technical leadership section is missing")
 
+    check(errors, "RECRUITMENT OPEN" in html and "19 current roles" in html
+          and "co-founders, managers, team members and volunteers" in html
+          and "students from across campus" in html,
+          "homepage recruitment message must identify the audience, role groups and 19 current opportunities")
+    check(errors, "Six departments." in html and "More roles may be introduced as BENGALOOP grows." in html,
+          "department recruitment section must communicate the six-department / growing-role structure")
     check(errors, 'id="businessRegistrationForm"' in html,
           "business registration preview form is missing")
     check(errors, "Preview only" in registration
