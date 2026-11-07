@@ -242,7 +242,7 @@ def main() -> int:
           "section reveal must support long mobile sections without a 12% visibility threshold")
     check(errors, 'class="brand-edition"' not in html and 'width="310" height="75"' in html,
           "the primary navigation must not show the S.G. Palya edition label and must use the larger logo")
-    check(errors, not re.search(r"\\bBANGALOOP\\b", html, re.I),
+    check(errors, not re.search(r"\bBANGALOOP\b", html, re.I),
           "the incorrect BANGALOOP spelling must not appear in the canonical page")
     check(errors, "prefers-reduced-motion: reduce" in css,
           "shared stylesheet is missing reduced-motion support")
