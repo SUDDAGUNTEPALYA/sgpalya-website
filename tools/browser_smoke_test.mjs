@@ -131,10 +131,13 @@ try {
   await mobile.waitForFunction(() => !document.querySelector("#nav").classList.contains("open"));
   await mobile.waitForFunction(() => getComputedStyle(document.querySelector("#nav")).visibility === "hidden");
   await noHorizontalOverflow(mobile, "mobile 390px");
-  await mobile.setViewportSize({ width: 360, height: 800 });
-  await noHorizontalOverflow(mobile, "mobile 360px");
   await mobile.close();
-  console.log("PASS: mobile menu, section navigation and 390px/360px layout overflow checks.");
+
+  // Open a fresh 360px page rather than resizing an already-laid-out 390px viewport.
+  const narrow = await openPage({ width: 360, height: 800 }, "mobile 360px");
+  await noHorizontalOverflow(narrow, "mobile 360px");
+  await narrow.close();
+  console.log("PASS: mobile menu, section navigation and fresh 390px/360px layout checks.");
 
   const legacy = await browser.newPage({ viewport: { width: 1280, height: 800 }, reducedMotion: "reduce" });
   await watch(legacy, "legacy route");
