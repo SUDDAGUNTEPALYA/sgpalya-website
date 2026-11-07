@@ -128,6 +128,8 @@ async function inspectDirectory(browser) {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true });
   const page = await context.newPage();
   const pageErrors = [];
+  const seenRequests = [];
+  page.on("request", request => seenRequests.push(request.url()));
   page.on("console", message => { if (message.type() === "error" || message.type() === "warning") pageErrors.push(message.text()); });
   page.on("requestfailed", request => pageErrors.push("REQUEST FAILED: " + request.url() + " :: " + request.failure()?.errorText));
   const fixtureHitCount = await installDirectoryFixture(page);
@@ -143,7 +145,7 @@ async function inspectDirectory(browser) {
     gridHidden: document.querySelector("#listingGrid")?.hidden,
     cardCount: document.querySelectorAll("#listingGrid .listing-card").length
   }));
-  assert.equal(fixtureHitCount(), 1, "directory CSV fixture was not requested; state=" + JSON.stringify(state) + "; errors=" + pageErrors.join(" | "));
+  assert.equal(fixtureHitCount(), 1, "directory CSV fixture was not requested; state=" + JSON.stringify(state) + "; requests=" + seenRequests.join(" | ") + "; errors=" + pageErrors.join(" | "));
   assert.equal(state.cardCount, 2, "expected two approved fixture listings; state=" + JSON.stringify(state) + "; errors=" + pageErrors.join(" | "));
   await page.locator("#directorySearch").fill("Cafe");
   await page.waitForFunction(() => document.querySelectorAll("#listingGrid .listing-card").length === 1);
