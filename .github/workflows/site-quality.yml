@@ -39,3 +39,33 @@ jobs:
           node --check script.js
           node --check recruitment.js
           node --check business-registration.js
+
+      - name: Run desktop and mobile Chromium interaction checks
+        run: |
+          npm install --no-save --no-audit --no-fund playwright
+          npx playwright install --with-deps chromium
+          nohup python -m http.server 8000 --bind 127.0.0.1 > /tmp/bengaloop-http.log 2>&1 </dev/null &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          server_ready=0
+          for attempt in $(seq 1 20); do
+            if curl -fsS http://127.0.0.1:8000/index.html >/dev/null; then
+              server_ready=1
+              break
+            fi
+            sleep 1
+          done
+          if [ "$server_ready" -ne 1 ]; then
+            cat /tmp/bengaloop-http.log
+            exit 1
+          fi
+          node tools/browser_smoke_test.mjs
+
+      - name: Upload desktop and mobile visual QA screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bengaloop-visual-qa
+          path: artifacts/*.png
+          if-no-files-found: warn
+          retention-days: 7

@@ -3,83 +3,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#173a2e">
-  <meta name="description" content="Browse cafés, shops, healthcare, PGs, housing and everyday services in S.G. Palya, Bengaluru.">
-  <meta name="robots" content="index,follow,max-image-preview:large">
-  <link rel="canonical" href="https://sgpalya.in/explore.html">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="bengaloop-avatar.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261107-premium-system">
-  
-  <title>Explore local places in S.G. Palya | BENGALOOP</title>
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="BENGALOOP">
-  <meta property="og:title" content="Explore local places in S.G. Palya | BENGALOOP">
-  <meta property="og:description" content="Browse cafés, shops, healthcare, PGs, housing and everyday services in S.G. Palya, Bengaluru.">
-  <meta property="og:url" content="https://sgpalya.in/explore.html">
-  <meta property="og:image" content="https://sgpalya.in/bengaloop-social.jpg">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Explore local places in S.G. Palya | BENGALOOP">
-  <meta name="twitter:description" content="Browse cafés, shops, healthcare, PGs, housing and everyday services in S.G. Palya, Bengaluru.">
+  <meta name="robots" content="noindex,follow">
+  <link rel="canonical" href="https://sgpalya.in/">
+  <meta http-equiv="refresh" content="0;url=index.html#explore">
+  <title>Explore | BENGALOOP</title>
+  <script>
+    (() => {
+      const destination = new URL("index.html", window.location.href);
+      const params = new URLSearchParams(window.location.search);
+      
+      destination.search = params.toString();
+      destination.hash = "explore";
+      window.location.replace(destination.toString());
+    })();
+  </script>
 </head>
 <body>
-<div class="site-shell">
-
-<a class="skip-link" href="#main">Skip to content</a>
-<header class="site-header" id="top">
-  <div class="header-inner">
-    <a class="brand" href="index.html" aria-label="BENGALOOP home">
-      <img src="bengaloop-logo.svg" width="226" height="52" alt="BENGALOOP — Bengaluru local discovery">
-      <span class="brand-edition">S.G. PALYA EDITION</span>
-    </a>
-    <button class="menu-toggle" id="menu" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="nav">
-      <span></span><span></span>
-    </button>
-    <nav class="site-nav drawer-nav" id="nav" aria-label="Main navigation" aria-hidden="true" inert>
-      <div class="drawer-heading"><span class="section-kicker">BENGALOOP / S.G. PALYA</span><button class="drawer-close" id="navClose" type="button" aria-label="Close navigation">×</button></div>
-      <div class="drawer-links">
-        <a href="index.html">Home<span aria-hidden="true">↗</span></a><a href="explore.html" aria-current="page">Explore<span aria-hidden="true">↗</span></a><a href="directory.html">Business directory<span aria-hidden="true">↗</span></a><a href="pg-housing.html">PG & housing<span aria-hidden="true">↗</span></a><a href="for-businesses.html">For businesses<span aria-hidden="true">↗</span></a><a href="what-we-do.html">What we do<span aria-hidden="true">↗</span></a><a href="our-story.html">Our story<span aria-hidden="true">↗</span></a><a href="our-team.html#team">Our team<span aria-hidden="true">↗</span></a><a href="departments.html">Our departments<span aria-hidden="true">↗</span></a>
-      </div>
-      <a class="nav-cta" href="for-businesses.html">List your business <span aria-hidden="true">↗</span></a>
-      <p class="drawer-note">Your neighbourhood,<br><em>in the loop.</em></p>
-    </nav>
-  </div>
-</header>
-<div class="nav-backdrop" id="navBackdrop" hidden></div>
-<main id="main">
-<section class="page-masthead"><div class="page-masthead-inner"><div class="section-kicker">EXPLORE S.G. PALYA</div><h1>Find what you need.<br><em>Find it close by.</em></h1><p>Browse the neighbourhood by category, then open the full directory to see approved local listings and contact details.</p></div></section>
-<section class="explore-directory-landing">
-  <div class="explore-search-panel">
-    <div class="explore-search-copy">
-      <span class="section-kicker">LOOKING FOR SOMETHING SPECIFIC?</span>
-      <h2>Search the <em>neighbourhood.</em></h2>
-      <p>Find a business, service or local essential without having to browse every category.</p>
-    </div>
-    <form class="explore-search-form" action="directory.html" method="get" role="search">
-      <label class="sr-only" for="exploreSearch">Search local businesses and services</label>
-      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 4.5 4.5"></path></svg>
-      <input id="exploreSearch" type="search" name="q" placeholder="Try cafés, pharmacies, laundry…" autocomplete="off">
-      <button type="submit">Search directory <span aria-hidden="true">↗</span></button>
-    </form>
-  </div>
-  <div class="section-kicker">BROWSE BY CATEGORY</div><div class="explore-category-grid"><a class="explore-category-card" href="directory.html?category=Food%20%26%20Dining"><span>01</span><strong>Food & drink</strong><p>Cafés, restaurants and everyday bites.</p><b aria-hidden="true">↗</b></a><a class="explore-category-card" href="pg-housing.html"><span>02</span><strong>PG & housing</strong><p>PGs, hostels, shared rooms and rentals.</p><b aria-hidden="true">↗</b></a><a class="explore-category-card" href="directory.html?category=Shopping"><span>03</span><strong>Shops</strong><p>Daily needs, retail and neighbourhood stores.</p><b aria-hidden="true">↗</b></a><a class="explore-category-card" href="directory.html?category=Healthcare"><span>04</span><strong>Health</strong><p>Clinics, pharmacies and health services.</p><b aria-hidden="true">↗</b></a><a class="explore-category-card" href="directory.html?category=Beauty%20%26%20Fitness"><span>05</span><strong>Wellness</strong><p>Salons, gyms and personal care.</p><b aria-hidden="true">↗</b></a><a class="explore-category-card" href="directory.html?category=Education"><span>06</span><strong>Learn</strong><p>Tuition, coaching and learning spaces.</p><b aria-hidden="true">↗</b></a><a class="explore-category-card" href="directory.html?category=Local%20Services"><span>07</span><strong>Local services</strong><p>Repairs, laundry and helpful services.</p><b aria-hidden="true">↗</b></a><a class="explore-category-card" href="directory.html?category=Transport"><span>08</span><strong>Transport</strong><p>Travel, rentals and automotive services.</p><b aria-hidden="true">↗</b></a><a class="explore-category-card" href="directory.html?category=Banking%20%26%20Utilities"><span>09</span><strong>Money & essentials</strong><p>Banking, ATMs and everyday essentials.</p><b aria-hidden="true">↗</b></a><a class="explore-category-card" href="directory.html"><span>10</span><strong>More local finds</strong><p>Explore the rest of the neighbourhood.</p><b aria-hidden="true">↗</b></a></div><div class="explore-landing-footer"><p>Looking for something specific? Search the full BENGALOOP directory.</p><a class="button button-dark" href="directory.html">Open business directory <span aria-hidden="true">↗</span></a></div></section>
-<section class="explore-callout"><div><span class="section-kicker">NEW TO S.G. PALYA?</span><h2>Start with the <em>neighbourhood.</em></h2><p>Find a place to stay, pick up everyday essentials or discover an independent business nearby.</p></div><a class="button button-outline" href="pg-housing.html">Explore PG &amp; housing <span aria-hidden="true">↗</span></a></section>
-</main>
-<footer class="site-footer">
-  <div class="footer-top">
-    <a class="footer-brand" href="index.html"><img src="bengaloop-logo-light.svg" width="220" height="52" alt="BENGALOOP"><span>S.G. PALYA EDITION</span></a>
-    <p>Your neighbourhood, <em>in the loop.</em><br><span>Starting in S.G. Palya, Bengaluru.</span></p>
-    <div class="footer-links">
-      <a href="explore.html">Explore</a><a href="directory.html">Business directory</a><a href="pg-housing.html">PG & housing</a><a href="for-businesses.html">For businesses</a><a href="what-we-do.html">What we do</a><a href="our-story.html">Our story</a><a href="our-team.html#team">Our team</a><a href="departments.html">Our departments</a>
-    </div>
-  </div>
-  <div class="footer-bottom"><span>© <span id="year">2026</span> BENGALOOP · S.G. Palya, Bengaluru</span><span>Local people. Real places. Better connections.</span><a href="#top">Back to top ↑</a></div>
-</footer>
-<script src="script.js?v=20261107-scroll-motion" defer></script>
-
-</div>
+  <p>Opening the BENGALOOP one-page experience. <a href="index.html#explore">Continue to explore</a>.</p>
 </body>
 </html>
