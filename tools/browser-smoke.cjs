@@ -44,6 +44,11 @@ async function installDirectoryFixture(page) {
     route.fulfill({
       status: 200,
       contentType: "text/csv; charset=utf-8",
+      headers: {
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, OPTIONS",
+        "access-control-allow-headers": "Content-Type"
+      },
       body: DIRECTORY_FIXTURE
     })
   );
