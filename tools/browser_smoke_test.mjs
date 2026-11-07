@@ -110,24 +110,27 @@ try {
     await desktop.locator('#nav a[href="#' + section + '"]').first().click();
     await desktop.waitForFunction(expected => location.hash === "#" + expected, section);
     await desktop.waitForFunction(() => !document.querySelector("#nav").classList.contains("open"));
+    if (section === "team") {
+      await desktop.waitForFunction(() => {
+        const targetTop = document.querySelector("#team").getBoundingClientRect().top;
+        const headerBottom = document.querySelector(".site-header").getBoundingClientRect().bottom;
+        return targetTop >= headerBottom - 2 && targetTop <= headerBottom + 110;
+      });
+      const anchorGeometry = await desktop.evaluate(() => ({
+        teamTop: document.querySelector("#team").getBoundingClientRect().top,
+        headerBottom: document.querySelector(".site-header").getBoundingClientRect().bottom,
+        scrollY: window.scrollY,
+        scrollPaddingTop: getComputedStyle(document.documentElement).scrollPaddingTop,
+        headerPosition: getComputedStyle(document.querySelector(".site-header")).position
+      }));
+      console.log("Desktop section-anchor geometry: " + JSON.stringify(anchorGeometry));
+    }
   }
-  await desktop.waitForTimeout(250);
   await desktop.locator("#menu").click();
   await desktop.waitForFunction(() => document.querySelector("#nav").classList.contains("open"));
   await desktop.keyboard.press("Escape");
   await desktop.waitForFunction(() => !document.querySelector("#nav").classList.contains("open")
     && document.activeElement === document.querySelector("#menu"));
-  const anchorGeometry = await desktop.evaluate(() => ({
-    teamTop: document.querySelector("#team").getBoundingClientRect().top,
-    headerBottom: document.querySelector(".site-header").getBoundingClientRect().bottom,
-    scrollY: window.scrollY,
-    scrollPaddingTop: getComputedStyle(document.documentElement).scrollPaddingTop,
-    headerPosition: getComputedStyle(document.querySelector(".site-header")).position
-  }));
-  console.log("Desktop section-anchor geometry: " + JSON.stringify(anchorGeometry));
-  assert.ok(anchorGeometry.teamTop >= anchorGeometry.headerBottom - 2
-    && anchorGeometry.teamTop <= anchorGeometry.headerBottom + 110,
-    "team anchor should land clear of the sticky header: " + JSON.stringify(anchorGeometry));
 
   await desktop.locator('button.explore-category-card[data-filter="Healthcare"]').click();
   await desktop.waitForFunction(() => document.querySelectorAll("#listingGrid .listing-card").length === 1
