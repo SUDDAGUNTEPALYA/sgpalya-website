@@ -121,7 +121,7 @@ def main() -> int:
 
     required_sections = {
         "home", "explore", "directory", "housing", "for-businesses",
-        "business-registration", "what-we-do", "story", "team", "departments",
+        "business-registration", "what-we-do", "vision", "story", "team", "departments", "app-launch",
     }
     actual_ids = set(parser.ids)
     for section_id in sorted(required_sections):
@@ -129,7 +129,7 @@ def main() -> int:
 
     required_nav = {f"#{section_id}" for section_id in (
         "home", "explore", "directory", "housing", "for-businesses",
-        "what-we-do", "story", "team", "departments"
+        "what-we-do", "vision", "story", "team", "departments", "app-launch"
     )}
     for href in required_nav:
         check(errors, href in parser.nav_links, f"index.html: navigation link {href} is missing")
@@ -195,8 +195,24 @@ def main() -> int:
     check(errors, html.count('<span class="team-status">CO-FOUNDER</span>') == 2
           and "Rhythm Mehrotra" in html and "Yuval Ostwal" in html,
           "team leadership contract changed: Rhythm and Yuval must remain the only co-founders")
-    check(errors, 'id="technical-leadership-title"' in html and "Subhankar Raj Gupta" in html,
-          "technical leadership section is missing")
+    team_start = html.find('<section class="team-section"')
+    team_end = html.find('<section class="departments-section"', team_start)
+    founder_pos = html.find('id="leadership"', team_start, team_end)
+    cofounder_pos = html.find("team-level-cofounders", team_start, team_end)
+    members_pos = html.find("team-level-members", team_start, team_end)
+    check(errors, team_start >= 0 and founder_pos >= 0 and cofounder_pos > founder_pos
+          and members_pos > cofounder_pos,
+          "team hierarchy must read Founder → Co-founders → Members")
+    check(errors, 'Junior Web Developer &amp; Technical Support Member' in html
+          and "Chief Technology Officer" not in html and 'team-status">CTO' not in html
+          and 'id="technical-leadership-title"' not in html,
+          "Subhankar must be an ordinary member, not in a separate CTO section")
+    check(errors, "Nidhish Aggarwal" in html and "Institutional Partnership Associate" in html
+          and "B.Com · Global Management Accounting &amp; Strategy" in html,
+          "Nidhish's member profile is missing or incomplete")
+    check(errors, "Mohansh Arora" in html and "Website Developer &amp; Administrator" in html
+          and "Bachelor of Computer Applications" in html,
+          "Mohansh's member profile is missing or incomplete")
     check(errors, 'aria-label="Initials for Rajath R.">RR</div>' in html,
           "team profiles without photographs must use a clear initials placeholder")
     check(errors, 'class="page-masthead"><div class="page-masthead-inner"><div class="section-kicker">THE BENGALOOP MODEL' not in html,
@@ -204,10 +220,16 @@ def main() -> int:
 
     check(errors, "RECRUITMENT OPEN" in html and "19 current roles" in html
           and "co-founders, managers, team members and volunteers" in html
-          and "students from across campus" in html,
-          "homepage recruitment message must identify the audience, role groups and 19 current opportunities")
+          and "students from across campus" in html and "ZERO FROM SCRATCH" in html,
+          "ZERO FROM SCRATCH recruitment campaign must identify the audience and current opportunities")
     check(errors, "Six departments." in html and "More roles may be introduced as BENGALOOP grows." in html,
           "department recruitment section must communicate the six-department / growing-role structure")
+    check(errors, 'id="vision"' in html and 'class="local-loop-board"' in html
+          and "the connecting layer" in html.lower(),
+          "the original local-loop mechanism or complementary ecosystem visual is missing")
+    check(errors, 'id="app-launch"' in html and "January 2027" in html
+          and "Google Play Store" in html and "Apple App Store" in html,
+          "final January 2027 app launch announcement is incomplete")
     check(errors, 'id="businessRegistrationForm"' in html,
           "business registration preview form is missing")
     check(errors, "Preview only" in registration
