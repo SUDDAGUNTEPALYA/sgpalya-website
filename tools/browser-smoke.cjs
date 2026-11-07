@@ -40,8 +40,10 @@ async function waitForServer() {
 }
 
 async function installDirectoryFixture(page) {
-  await page.route(/https:\/\/docs\.google\.com\/spreadsheets\/.*/, route =>
-    route.fulfill({
+  let fixtureHits = 0;
+  await page.route("https://docs.google.com/spreadsheets/**", async route => {
+    fixtureHits += 1;
+    await route.fulfill({
       status: 200,
       contentType: "text/csv; charset=utf-8",
       headers: {
@@ -50,8 +52,9 @@ async function installDirectoryFixture(page) {
         "access-control-allow-headers": "Content-Type"
       },
       body: DIRECTORY_FIXTURE
-    })
-  );
+    });
+  });
+  return () => fixtureHits;
 }
 
 async function inspectViewport(browser, viewport) {
@@ -124,10 +127,24 @@ async function inspectNavigation(browser) {
 async function inspectDirectory(browser) {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true });
   const page = await context.newPage();
-  await installDirectoryFixture(page);
+  const pageErrors = [];
+  page.on("console", message => { if (message.type() === "error" || message.type() === "warning") pageErrors.push(message.text()); });
+  page.on("requestfailed", request => pageErrors.push("REQUEST FAILED: " + request.url() + " :: " + request.failure()?.errorText));
+  const fixtureHitCount = await installDirectoryFixture(page);
   await page.goto(BASE + "/directory.html", { waitUntil: "domcontentloaded" });
-  await page.locator("#listingGrid .listing-card").first().waitFor({ state: "visible" });
-  assert.equal(await page.locator("#listingGrid .listing-card").count(), 2, "only approved fixture rows should display");
+  await page.waitForFunction(() => document.querySelector("#listingGrid")?.getAttribute("aria-busy") === "false", { timeout: 10000 }).catch(() => {});
+  await page.waitForTimeout(150);
+  const state = await page.evaluate(() => ({
+    feedUrl: document.querySelector('meta[name="bengaloop-directory-csv"]')?.content || "",
+    status: document.querySelector("#listingStatus")?.textContent || "",
+    count: document.querySelector("#listingCount")?.textContent || "",
+    result: document.querySelector("#result")?.textContent || "",
+    gridBusy: document.querySelector("#listingGrid")?.getAttribute("aria-busy"),
+    gridHidden: document.querySelector("#listingGrid")?.hidden,
+    cardCount: document.querySelectorAll("#listingGrid .listing-card").length
+  }));
+  assert.equal(fixtureHitCount(), 1, "directory CSV fixture was not requested; state=" + JSON.stringify(state) + "; errors=" + pageErrors.join(" | "));
+  assert.equal(state.cardCount, 2, "expected two approved fixture listings; state=" + JSON.stringify(state) + "; errors=" + pageErrors.join(" | "));
   await page.locator("#directorySearch").fill("Cafe");
   await page.waitForFunction(() => document.querySelectorAll("#listingGrid .listing-card").length === 1);
   await page.locator("[data-filter='Food & Dining']").click();
