@@ -167,6 +167,13 @@ def main() -> int:
           "Explore search form is not connected to the shared directory")
     check(errors, "initialiseSectionNavigation" in script,
           "scroll-aware single-page navigation is missing")
+    check(errors, 'const words = $("[data-tagline-word]")' in script,
+          "tagline reveal must select all word elements, not a single element")
+    check(errors, 'const sections = $("main > section:not(.home-hero):not(.hero)")' in script,
+          "scroll reveal must select all content sections, not a single element")
+    check(errors, 'const links = $(\'nav#nav a[href^="#"]\')' in script,
+          "section navigation must collect every drawer link before mapping targets")
+
 
     card_ids = set(re.findall(r'data-department-id=["\']([^"\']+)["\']', html))
     role_ids = set(re.findall(r'^\s*id:"(business|marketing|creative|technology|community|operations)"', recruitment, re.M))
