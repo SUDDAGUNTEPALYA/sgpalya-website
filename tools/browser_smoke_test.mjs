@@ -154,6 +154,8 @@ try {
     form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
   await desktop.waitForFunction(() => document.querySelector("#registrationFormStatus").textContent.includes("No information has been sent or saved"));
   await desktop.screenshot({ path: path.join(screenshotDir, "desktop-department-role-detail.png") });
+  await desktop.locator('.filter-chip[data-filter="Everything"]').click();
+  await desktop.waitForFunction(() => document.querySelectorAll("#listingGrid .listing-card").length === 3);
   await captureSection(desktop, "#explore", "desktop-explore.png");
   await captureSection(desktop, "#directory", "desktop-directory.png");
   await captureSection(desktop, "#team", "desktop-team.png");
