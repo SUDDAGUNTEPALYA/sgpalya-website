@@ -112,6 +112,12 @@ def main() -> int:
     check(errors, "family=Manrope" in html, "index.html: Manrope typeface is not loaded")
     check(errors, 'property="og:title"' in html and 'property="og:description"' in html,
           "index.html: Open Graph title/description metadata is missing")
+    check(errors, html.count('name="twitter:title"') == 1
+          and html.count('name="twitter:description"') == 1
+          and html.count('name="twitter:image"') == 1,
+          "index.html: Twitter card metadata must have one consistent title, description and image")
+    check(errors, 'property="og:image:alt"' in html,
+          "index.html: social sharing image alternative text is missing")
 
     required_sections = {
         "home", "explore", "directory", "housing", "for-businesses",
