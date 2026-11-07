@@ -569,7 +569,7 @@
       elements.directorySearch.value = requestedSearch;
       if (elements.query) elements.query.value = requestedSearch;
     }
-    $('[data-filter]').forEach(button => {
+    $$('[data-filter]').forEach(button => {
       button.addEventListener("click", () => {
         if (elements.query) elements.query.value = "";
         if (elements.directorySearch) elements.directorySearch.value = "";
