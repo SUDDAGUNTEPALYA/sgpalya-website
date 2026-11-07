@@ -106,6 +106,7 @@ def main() -> int:
     check(errors, html.count('class="site-shell"') == 1, "index.html: expected one .site-shell wrapper")
     check(errors, not parser.duplicate_ids,
           "index.html: duplicate IDs: " + ", ".join(sorted(parser.duplicate_ids)))
+    check(errors, parser.tags["h1"] == 1, "index.html: a single-page site must have exactly one primary H1")
     check(errors, 'name="viewport"' in html, "index.html: viewport metadata is missing")
     check(errors, 'name="bengaloop-directory-csv"' in html, "index.html: public directory CSV feed is missing")
     check(errors, "family=Manrope" in html, "index.html: Manrope typeface is not loaded")
