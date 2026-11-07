@@ -130,7 +130,9 @@ async function inspectDirectory(browser) {
   const pageErrors = [];
   const seenRequests = [];
   page.on("request", request => seenRequests.push(request.url()));
-  page.on("console", message => { if (message.type() === "error" || message.type() === "warning") pageErrors.push(message.text()); });
+  page.on("console", message => { if (message.type() === "error" || message.type() === "warning") pageErrors.push("CONSOLE: " + message.text()); });
+  page.on("pageerror", error => pageErrors.push("PAGE ERROR: " + error.message));
+  page.on("response", response => { if (response.url().includes("script.js")) pageErrors.push("SCRIPT RESPONSE: " + response.status() + " " + response.url()); });
   page.on("requestfailed", request => pageErrors.push("REQUEST FAILED: " + request.url() + " :: " + request.failure()?.errorText));
   const fixtureHitCount = await installDirectoryFixture(page);
   await page.goto(BASE + "/directory.html", { waitUntil: "domcontentloaded" });
