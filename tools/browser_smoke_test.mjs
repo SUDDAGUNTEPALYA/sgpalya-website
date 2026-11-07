@@ -18,6 +18,7 @@ async function watch(page, label) {
   await page.route("https://docs.google.com/**", route => route.fulfill({
     status: 200,
     contentType: "text/csv; charset=utf-8",
+    headers: { "access-control-allow-origin": "*" },
     body: csv
   }));
 }
