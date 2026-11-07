@@ -582,7 +582,7 @@
   function initialiseScrollExperience() {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const tagline = $(".tagline-inner");
-    const words = $("[data-tagline-word]");
+const words = $$("[data-tagline-word]");
     const supportsObserver = "IntersectionObserver" in window;
 
     if (reducedMotion || !supportsObserver) {
@@ -590,7 +590,7 @@
       return;
     }
 
-    const sections = $("main > section:not(.home-hero):not(.hero)");
+const sections = $$("main > section:not(.home-hero):not(.hero)");
     if (sections.length) {
       const sectionObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
@@ -620,7 +620,7 @@
   }
 
   function initialiseSectionNavigation() {
-    const links = $('nav#nav a[href^="#"]');
+const links = $$('nav#nav a[href^="#"]');
     const targets = links.map(link => document.querySelector(link.getAttribute("href"))).filter(Boolean);
     if (!("IntersectionObserver" in window) || !links.length || !targets.length) return;
     const observer = new IntersectionObserver(entries => {
