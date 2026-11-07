@@ -107,7 +107,7 @@ try {
   for (const section of ["home", "explore", "directory", "housing", "for-businesses", "what-we-do", "story", "team", "departments"]) {
     await desktop.locator("#menu").click();
     await desktop.waitForFunction(() => document.querySelector("#nav").classList.contains("open"));
-    await desktop.locator('#nav a[href="#' + section + '"]').click();
+    await desktop.locator('#nav a[href="#' + section + '"]').first().click();
     await desktop.waitForFunction(expected => location.hash === "#" + expected, section);
     await desktop.waitForFunction(() => !document.querySelector("#nav").classList.contains("open"));
   }
