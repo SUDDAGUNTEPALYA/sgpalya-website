@@ -76,7 +76,7 @@ try {
   await desktop.waitForFunction(() => document.querySelectorAll("#listingGrid .listing-card").length === 1
     && document.querySelector("#listingGrid").innerText.includes("Test Cafe"));
 
-  await desktop.locator('#housing button[data-filter="PGs & Housing"]').click();
+  await desktop.locator('.housing-filter-callout button[data-filter="PGs & Housing"]').click();
   await desktop.waitForFunction(() => document.querySelectorAll("#listingGrid .listing-card").length === 1
     && document.querySelector("#listingGrid").innerText.includes("Green PG"));
 
