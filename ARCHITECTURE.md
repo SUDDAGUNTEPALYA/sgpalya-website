@@ -20,7 +20,7 @@ body
     └── footer
 ```
 
-The common shell and navigation/footer markup are currently repeated in each page. `style.css` supplies the shared visual system; the shared shell is a structural convention, not a server-side template.
+The common shell and navigation/footer markup are currently repeated in each page. `style.css` supplies existing page and component layouts, while `design-system.css` defines shared typography, spacing, radius and motion tokens plus the floating navigation treatment. The shared shell is a structural convention, not a server-side template.
 
 ## 2. Page inventory
 
@@ -41,7 +41,8 @@ The homepage, explore and directory flows are connected through URL query parame
 
 ## 3. Shared source files
 
-- `style.css`: design tokens, typography, page layouts, responsive rules, navigation, directory cards, recruitment UI, team cards and form styles. It is currently a large shared stylesheet; selectors and responsive overrides have accumulated over time.
+- `style.css`: existing page layouts, responsive rules, directory cards, recruitment UI, team cards and form styles. It remains a large stylesheet whose page components will migrate incrementally.
+- `design-system.css`: shared Manrope typography foundation, named text styles, spacing/radius/motion tokens, focus/active states and floating navigation treatment.
 - `script.js`: shared navigation plus the public directory data pipeline, search, filters, sorting, refresh and business action links.
 - `recruitment.js`: static department/role data and the client-side department/role explorer.
 - `business-registration.js`: preview-only form behaviour. It prevents submission and explicitly tells visitors that information is not sent or saved.
@@ -116,7 +117,7 @@ A framework or static-site generator may help with reusable layouts, but it shou
 
 Before improvements, the production state was preserved on branch:
 
-`backup/pre-improvement-baseline-2026-11-07`
+`backup/pre-redesign-2026-11-07` (current pre-redesign production state, commit `a5aae7b54ff2dff3e252e4cb6b4311490fdffba0`), and `backup/pre-improvement-baseline-2026-11-07` (earlier baseline, commit `b67b8d0827c988c219d4395c0178a27b43f2d2c2`)
 
 Baseline commit:
 

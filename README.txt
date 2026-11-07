@@ -24,7 +24,8 @@ BENGALOOP is a neighbourhood discovery and community initiative starting in S.G.
 
 ## Source map
 
-- `style.css` — shared design system, page layouts, responsive behaviour and interaction states.
+- `style.css` — existing page layouts and component styling.
+- `design-system.css` — shared Manrope typography foundation, named text styles, spacing/radius/motion tokens and floating navigation.
 - `script.js` — shared navigation and public business-directory experience.
 - `recruitment.js` — six departments, role descriptions and interactive role explorer.
 - `business-registration.js` — preview-only form interaction.
@@ -75,7 +76,9 @@ Keep the root `CNAME` file and existing GitHub Pages/custom-domain settings. Do 
 
 The pre-improvement production baseline is preserved at:
 
-- Branch: `backup/pre-improvement-baseline-2026-11-07`
-- Commit: `b67b8d0827c988c219d4395c0178a27b43f2d2c2`
+- Current pre-redesign branch: `backup/pre-redesign-2026-11-07`
+- Current pre-redesign commit: `a5aae7b54ff2dff3e252e4cb6b4311490fdffba0`
+- Earlier pre-foundation branch: `backup/pre-improvement-baseline-2026-11-07`
+- Earlier baseline commit: `b67b8d0827c988c219d4395c0178a27b43f2d2c2`
 
 See `ARCHITECTURE.md` for the complete technical overview and migration principles.
