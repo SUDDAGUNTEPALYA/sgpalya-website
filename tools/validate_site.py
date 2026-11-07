@@ -294,6 +294,39 @@ def main() -> int:
         if target is not None and not target.is_file():
             fail(errors, f"style.css: missing local CSS asset: {asset}")
 
+    # Design-system contracts introduced by the November 2026 refresh.
+    for page, source in html_sources.items():
+        if "family=Manrope" not in source:
+            fail(errors, f"{page.name}: the shared Manrope typeface is not loaded")
+        if 'property="og:title"' not in source or 'property="og:description"' not in source:
+            fail(errors, f"{page.name}: Open Graph title/description metadata is missing")
+        if page.name != "404.html" and source.count('aria-current="page"') != 1:
+            fail(errors, f"{page.name}: expected exactly one current-page navigation marker")
+
+    homepage = html_sources.get(ROOT / "index.html", "")
+    if 'class="tagline-section"' not in homepage or homepage.count("data-tagline-word") < 8:
+        fail(errors, "index.html: the word-activated BENGALOOP tagline section is missing")
+    faq_items = len(re.findall(r"<details(?:\s|>)", homepage, re.I))
+    if faq_items < 6:
+        fail(errors, f"index.html: expected at least 6 factual FAQ items, found {faq_items}")
+    if not (ROOT / "404.html").is_file():
+        fail(errors, "branded 404.html page is missing")
+    if "https://sgpalya.in/departments.html" not in read("sitemap.xml"):
+        fail(errors, "sitemap.xml does not include departments.html")
+    if ".scroll-reveal" not in css or ".tagline-inner.tagline-enhanced" not in css:
+        fail(errors, "shared stylesheet is missing the scroll-reveal/tagline motion system")
+    if ":active" not in css:
+        fail(errors, "shared stylesheet is missing active interaction states")
+    if re.search(r"\b(?:Inter|Arial|Georgia|Roboto|Helvetica)\b", css, re.I):
+        fail(errors, "shared stylesheet contains a typeface outside the approved Manrope system")
+    if re.search(r"font:\s*italic|font-style:\s*italic", css, re.I):
+        fail(errors, "shared stylesheet still declares italic text")
+    if re.search(r"font-size:\s*(?:[0-9]|1[01])px", css):
+        fail(errors, "shared stylesheet contains text below the 12px minimum")
+    if 'name="robots" content="noindex,follow"' not in html_sources.get(ROOT / "404.html", ""):
+        fail(errors, "404.html must remain excluded from search indexing")
+
+
     # Report the actual number of role records without freezing future role growth.
     role_count = len(re.findall(r'\{id:"[^"]+",name:"[^"]+",summary:', recruitment_js))
     print(f"Inspected {len(pages)} HTML pages; {len(reference_nav)} shared nav links; {role_count} recruitment roles.")
