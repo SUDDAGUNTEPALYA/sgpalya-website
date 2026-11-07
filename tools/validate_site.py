@@ -198,8 +198,8 @@ def main() -> int:
     team_start = html.find('<section class="team-section"')
     team_end = html.find('<section class="departments-section"', team_start)
     founder_pos = html.find('id="leadership"', team_start, team_end)
-    cofounder_pos = html.find('class="team-level-cofounders"', team_start, team_end)
-    members_pos = html.find('class="team-level-members"', team_start, team_end)
+    cofounder_pos = html.find("team-level-cofounders", team_start, team_end)
+    members_pos = html.find("team-level-members", team_start, team_end)
     check(errors, team_start >= 0 and founder_pos >= 0 and cofounder_pos > founder_pos
           and members_pos > cofounder_pos,
           "team hierarchy must read Founder → Co-founders → Members")
