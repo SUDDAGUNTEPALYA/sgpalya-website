@@ -125,7 +125,8 @@ try {
   }
   await desktop.locator("#menu").click();
   await desktop.waitForFunction(() => document.querySelector("#nav").classList.contains("open"));
-  const drawerAlignment = await desktop.evaluate(() => ({ drawerTop: document.querySelector("#nav").getBoundingClientRect().top, headerInnerTop: document.querySelector(".header-inner").getBoundingClientRect().top }));
+  const drawerAlignment = await desktop.evaluate(() => ({ drawerTop: document.querySelector("#nav").getBoundingClientRect().top, headerInnerTop: document.querySelector(".header-inner").getBoundingClientRect().top, headerTop: document.querySelector(".site-header").getBoundingClientRect().top, navComputedTop: getComputedStyle(document.querySelector("#nav")).top, headerPaddingTop: getComputedStyle(document.querySelector(".site-header")).paddingTop }));
+  console.log("Drawer alignment geometry: " + JSON.stringify(drawerAlignment));
   assert.ok(Math.abs(drawerAlignment.drawerTop - drawerAlignment.headerInnerTop) <= 3, "drawer must align with the fixed navigation surface");
   await desktop.keyboard.press("Escape");
   await desktop.waitForFunction(() => !document.querySelector("#nav").classList.contains("open")
