@@ -60,3 +60,12 @@ jobs:
             exit 1
           fi
           node tools/browser_smoke_test.mjs
+
+      - name: Upload desktop and mobile visual QA screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bengaloop-visual-qa
+          path: artifacts/*.png
+          if-no-files-found: warn
+          retention-days: 7
