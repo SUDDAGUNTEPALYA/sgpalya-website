@@ -1734,3 +1734,35 @@ body { padding-top: 112px; }
 
 /* Stagger entrance for the two added menu destinations. */
 @media (max-width: 900px) { .drawer-nav.open .drawer-links a:nth-child(10) { transition-delay: 450ms; } .drawer-nav.open .drawer-links a:nth-child(11) { transition-delay: 500ms; } }
+
+
+/* Mobile visibility and primary-brand corrections — 7 November 2026 */
+.site-header .brand {
+  display: inline-flex;
+  flex: 0 1 auto;
+  min-width: 0;
+  align-items: center;
+  gap: 0;
+}
+.site-header .brand img {
+  display: block;
+  width: 310px;
+  max-width: 100%;
+  height: auto;
+}
+.site-header .brand-edition { display: none !important; }
+
+@media (max-width: 900px) {
+  .site-header .brand img { width: 300px; }
+}
+@media (max-width: 600px) {
+  .header-inner { gap: 10px; }
+  .site-header .brand {
+    max-width: calc(100% - 58px);
+  }
+  .site-header .brand img {
+    width: min(260px, calc(100vw - 116px));
+    max-width: 100%;
+    height: auto;
+  }
+}

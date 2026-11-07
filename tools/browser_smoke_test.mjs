@@ -46,8 +46,8 @@ async function watch(page, label) {
   }));
 }
 
-async function openPage(viewport, label) {
-  const page = await browser.newPage({ viewport, reducedMotion: "reduce" });
+async function openPage(viewport, label, reducedMotion = "reduce") {
+  const page = await browser.newPage({ viewport, reducedMotion });
   await watch(page, label);
   await page.goto(baseURL + "/index.html", { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => document.querySelectorAll("#listingGrid .listing-card").length === 3);
@@ -98,6 +98,12 @@ try {
     "only approved CSV listings should render");
   assert.equal(await desktop.locator("#listingGrid").innerText().then(value => value.includes("Hidden Draft")), false,
     "non-approved listings must never render");
+  const desktopBrand = await desktop.evaluate(() => ({
+    editionLabelPresent: Boolean(document.querySelector(".site-header .brand-edition")),
+    logoWidth: document.querySelector(".site-header .brand img").getBoundingClientRect().width
+  }));
+  assert.equal(desktopBrand.editionLabelPresent, false, "header edition label must be removed");
+  assert.ok(desktopBrand.logoWidth >= 300, "desktop BENGALOOP logo should be enlarged");
   await capture(desktop, "desktop-home.png");
 
   for (const section of ["home", "explore", "directory", "housing", "for-businesses", "what-we-do", "vision", "story", "team", "departments", "app-launch"]) {
@@ -174,7 +180,13 @@ try {
   await desktop.close();
   console.log("PASS: desktop navigation, anchors, directory, recruitment and registration-preview interactions.");
 
-  const mobile = await openPage({ width: 390, height: 844 }, "mobile");
+  const mobile = await openPage({ width: 390, height: 844 }, "mobile", "no-preference");
+  const mobileBrand = await mobile.evaluate(() => ({
+    editionLabelPresent: Boolean(document.querySelector(".site-header .brand-edition")),
+    logoWidth: document.querySelector(".site-header .brand img").getBoundingClientRect().width
+  }));
+  assert.equal(mobileBrand.editionLabelPresent, false, "mobile header must not show the edition label");
+  assert.ok(mobileBrand.logoWidth >= 250, "mobile BENGALOOP logo should use the larger available width");
   await capture(mobile, "mobile-home-390.png");
   await mobile.locator("#menu").click();
   await mobile.waitForFunction(() => document.querySelector("#nav").classList.contains("open"));
@@ -184,6 +196,28 @@ try {
   await mobile.waitForFunction(() => !document.querySelector("#nav").classList.contains("open"));
   await mobile.waitForFunction(() => getComputedStyle(document.querySelector("#nav")).visibility === "hidden");
   await captureSection(mobile, "#departments", "mobile-departments-390.png");
+  await mobile.goto(baseURL + "/index.html#team", { waitUntil: "domcontentloaded" });
+  await mobile.waitForFunction(() => document.querySelector("#team")?.classList.contains("is-revealed"));
+  await mobile.waitForFunction(() => Number(getComputedStyle(document.querySelector("#team")).opacity) >= 0.98);
+  const mobileTeam = await mobile.evaluate(() => ({
+    sectionOpacity: Number(getComputedStyle(document.querySelector("#team")).opacity),
+    founderVisible: document.querySelector("#leadership").getBoundingClientRect().height > 0,
+    cofounderSectionVisible: getComputedStyle(document.querySelector(".team-level-cofounders")).display !== "none",
+    cofounderCards: document.querySelectorAll(".team-level-cofounders .team-card").length,
+    memberSectionVisible: getComputedStyle(document.querySelector(".team-level-members")).display !== "none",
+    memberCards: document.querySelectorAll(".team-level-members .team-card").length,
+    headerPosition: getComputedStyle(document.querySelector(".site-header")).position
+  }));
+  assert.ok(mobileTeam.sectionOpacity >= 0.98, "mobile team section must be visible after its entrance reveal");
+  assert.equal(mobileTeam.founderVisible, true, "Founder profile must be visible on mobile");
+  assert.equal(mobileTeam.cofounderSectionVisible, true, "Co-founder section must be visible on mobile");
+  assert.equal(mobileTeam.cofounderCards, 2, "both Co-founder cards must render on mobile");
+  assert.equal(mobileTeam.memberSectionVisible, true, "Members section must be visible on mobile");
+  assert.equal(mobileTeam.memberCards, 15, "all 15 member cards must render on mobile");
+  assert.equal(mobileTeam.headerPosition, "fixed", "navigation must remain available while the team list is scrolled");
+  console.log("PASS: mobile Founder → Co-founders → Members visibility: " + JSON.stringify(mobileTeam));
+  await capture(mobile, "mobile-team-390.png");
+
   await mobile.goto(baseURL + "/index.html", { waitUntil: "domcontentloaded" });
   await mobile.waitForFunction(() => document.querySelectorAll("#listingGrid .listing-card").length === 3);
   await mobile.addStyleTag({ content: "html{scroll-behavior:auto!important} .site-header{position:relative!important;top:auto!important} .scroll-reveal{opacity:1!important;transform:none!important;filter:none!important} *{animation:none!important;transition:none!important}" });
@@ -193,6 +227,8 @@ try {
 
   // Open a fresh 360px page rather than resizing an already-laid-out 390px viewport.
   const narrow = await openPage({ width: 360, height: 800 }, "mobile 360px");
+  const narrowLogoWidth = await narrow.locator(".site-header .brand img").evaluate(element => element.getBoundingClientRect().width);
+  assert.ok(narrowLogoWidth >= 235, "BENGALOOP logo should stay prominent at 360px");
   await noHorizontalOverflow(narrow, "mobile 360px");
   await narrow.close();
   console.log("PASS: mobile menu, section navigation and fresh 390px/360px layout checks.");

@@ -598,7 +598,13 @@ const sections = $$("main > section:not(.home-hero):not(.hero)");
           entry.target.classList.add("is-revealed");
           observer.unobserve(entry.target);
         });
-      }, { threshold: 0.12, rootMargin: "0px 0px -5% 0px" });
+      }, {
+        // A full team section can be several screens tall on mobile. A 12% visibility
+        // threshold is then impossible to reach, leaving the entire section hidden.
+        // Reveal as soon as any part enters the usable viewport instead.
+        threshold: 0,
+        rootMargin: "0px 0px -5% 0px"
+      });
 
       sections.forEach(section => {
         section.classList.add("scroll-reveal");
