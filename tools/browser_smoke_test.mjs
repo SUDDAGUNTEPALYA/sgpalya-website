@@ -12,25 +12,21 @@ async function capture(page, filename, fullPage = false) {
 }
 
 async function captureSection(page, selector, filename) {
-  const geometry = await page.evaluate(targetSelector => {
+  await page.evaluate(targetSelector => {
     const target = document.querySelector(targetSelector);
     if (!target) throw new Error("Screenshot target not found: " + targetSelector);
     document.documentElement.style.setProperty("scroll-behavior", "auto", "important");
     const topInset = Number.parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
     const top = Math.max(0, target.getBoundingClientRect().top + window.scrollY - topInset);
-    window.scrollTo({ top, left: 0, behavior: "instant" });
-    return { top, topInset, scrollY: window.scrollY };
+    window.scrollTo(0, top);
   }, selector);
-  await page.waitForFunction(({ targetSelector, expectedTopInset }) => {
-    const target = document.querySelector(targetSelector);
-    return Boolean(target) && Math.abs(target.getBoundingClientRect().top - expectedTopInset) < 8;
-  }, { targetSelector: selector, expectedTopInset: geometry.topInset });
-  const finalGeometry = await page.evaluate(targetSelector => ({
+  await page.waitForTimeout(250);
+  const geometry = await page.evaluate(targetSelector => ({
     sectionTop: document.querySelector(targetSelector).getBoundingClientRect().top,
-    scrollY: window.scrollY
+    scrollY: window.scrollY,
+    scrollPaddingTop: getComputedStyle(document.documentElement).scrollPaddingTop
   }), selector);
-  console.log("VISUAL CAPTURE " + filename + ": " + JSON.stringify({ ...geometry, ...finalGeometry }));
-  await page.waitForTimeout(100);
+  console.log("VISUAL CAPTURE " + filename + ": " + JSON.stringify(geometry));
   await capture(page, filename);
 }
 const csv = [
@@ -169,8 +165,8 @@ try {
   await captureSection(desktop, "#departments", "desktop-departments.png");
   await desktop.locator("#closeDepartmentExplorer").click();
   await desktop.addStyleTag({ content: "html{scroll-behavior:auto!important} .site-header{position:relative!important;top:auto!important} .scroll-reveal{opacity:1!important;transform:none!important;filter:none!important} *{animation:none!important;transition:none!important}" });
-  await desktop.evaluate(() => window.scrollTo({ top: 0, left: 0, behavior: "instant" }));
-  await desktop.waitForFunction(() => window.scrollY === 0);
+  await desktop.evaluate(() => window.scrollTo(0, 0));
+  await desktop.waitForTimeout(150);
   await capture(desktop, "desktop-full-page.png", true);
   await noHorizontalOverflow(desktop, "desktop");
   await desktop.close();
@@ -189,8 +185,8 @@ try {
   await mobile.locator('.filter-chip[data-filter="Everything"]').click();
   await mobile.waitForFunction(() => document.querySelectorAll("#listingGrid .listing-card").length === 3);
   await mobile.addStyleTag({ content: "html{scroll-behavior:auto!important} .site-header{position:relative!important;top:auto!important} .scroll-reveal{opacity:1!important;transform:none!important;filter:none!important} *{animation:none!important;transition:none!important}" });
-  await mobile.evaluate(() => window.scrollTo({ top: 0, left: 0, behavior: "instant" }));
-  await mobile.waitForFunction(() => window.scrollY === 0);
+  await mobile.evaluate(() => window.scrollTo(0, 0));
+  await mobile.waitForTimeout(150);
   await capture(mobile, "mobile-full-page-390.png", true);
   await noHorizontalOverflow(mobile, "mobile 390px");
   await mobile.close();
