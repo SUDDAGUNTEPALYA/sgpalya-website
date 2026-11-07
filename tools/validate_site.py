@@ -317,6 +317,15 @@ def main() -> int:
         fail(errors, "shared stylesheet is missing the scroll-reveal/tagline motion system")
     if ":active" not in css:
         fail(errors, "shared stylesheet is missing active interaction states")
+    if re.search(r"\b(?:Inter|Arial|Georgia|Roboto|Helvetica)\b", css, re.I):
+        fail(errors, "shared stylesheet contains a typeface outside the approved Manrope system")
+    if re.search(r"font:\s*italic|font-style:\s*italic", css, re.I):
+        fail(errors, "shared stylesheet still declares italic text")
+    if re.search(r"font-size:\s*(?:[0-9]|1[01])px", css):
+        fail(errors, "shared stylesheet contains text below the 12px minimum")
+    if 'name="robots" content="noindex,follow"' not in html_sources.get(ROOT / "404.html", ""):
+        fail(errors, "404.html must remain excluded from search indexing")
+
 
     # Report the actual number of role records without freezing future role growth.
     role_count = len(re.findall(r'\{id:"[^"]+",name:"[^"]+",summary:', recruitment_js))
