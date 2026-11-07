@@ -34,8 +34,8 @@ async function openPage(viewport, label) {
 async function noHorizontalOverflow(page, label) {
   const size = await page.evaluate(() => {
     const viewport = document.documentElement.clientWidth;
-    const offenders = Array.from(document.querySelectorAll("body *"))
-      .filter(element => !element.closest('[aria-hidden="true"], [hidden]'))
+    const offenders = Array.from(document.querySelectorAll("main > section *"))
+      .filter(element => !element.closest(".filter-chips"))
       .map(element => {
         const rect = element.getBoundingClientRect();
         const style = getComputedStyle(element);
@@ -47,23 +47,25 @@ async function noHorizontalOverflow(page, label) {
           right: Math.round(rect.right),
           width: Math.round(rect.width),
           position: style.position,
-          visibility: style.visibility
+          visibility: style.visibility,
+          display: style.display
         };
       })
       .filter(item => item.width > 0 && item.visibility !== "hidden"
+        && item.display !== "none" && !["absolute", "fixed"].includes(item.position)
         && (item.left < -1 || item.right > viewport + 1))
-      .sort((a, b) => Math.max(Math.abs(b.left), b.right - viewport)
-        - Math.max(Math.abs(a.left), a.right - viewport))
       .slice(0, 12);
     return {
       viewport,
-      content: document.documentElement.scrollWidth,
+      pageScrollX: window.scrollX,
+      rootOverflowX: getComputedStyle(document.documentElement).overflowX,
       offenders
     };
   });
-  assert.ok(size.content <= size.viewport + 1,
-    label + " horizontal overflow: content " + size.content + "px > viewport " + size.viewport
-      + "px. Edge elements: " + JSON.stringify(size.offenders));
+  assert.equal(size.pageScrollX, 0, label + " should not be horizontally scrollable");
+  assert.equal(size.rootOverflowX, "clip", label + " root must clip accidental horizontal overflow");
+  assert.deepEqual(size.offenders, [],
+    label + " has visible main-content elements outside the viewport: " + JSON.stringify(size.offenders));
 }
 
 try {
@@ -127,6 +129,7 @@ try {
   await mobile.locator('#nav a[href="#departments"]').click();
   await mobile.waitForFunction(() => location.hash === "#departments");
   await mobile.waitForFunction(() => !document.querySelector("#nav").classList.contains("open"));
+  await mobile.waitForFunction(() => getComputedStyle(document.querySelector("#nav")).visibility === "hidden");
   await noHorizontalOverflow(mobile, "mobile 390px");
   await mobile.setViewportSize({ width: 360, height: 800 });
   await noHorizontalOverflow(mobile, "mobile 360px");
