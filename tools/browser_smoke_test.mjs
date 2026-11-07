@@ -12,8 +12,21 @@ async function capture(page, filename, fullPage = false) {
 }
 
 async function captureSection(page, selector, filename) {
-  await page.locator(selector).scrollIntoViewIfNeeded();
-  await page.waitForTimeout(300);
+  await page.evaluate(targetSelector => {
+    const target = document.querySelector(targetSelector);
+    if (!target) throw new Error("Screenshot target not found: " + targetSelector);
+    const topInset = Number.parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+    const top = target.getBoundingClientRect().top + window.scrollY - topInset;
+    document.documentElement.style.scrollBehavior = "auto";
+    window.scrollTo(0, Math.max(0, top));
+  }, selector);
+  await page.waitForFunction(targetSelector => {
+    const target = document.querySelector(targetSelector);
+    if (!target) return false;
+    const inset = Number.parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+    return Math.abs(target.getBoundingClientRect().top - inset) < 8;
+  }, selector);
+  await page.waitForTimeout(100);
   await capture(page, filename);
 }
 const csv = [
@@ -91,12 +104,19 @@ try {
     "non-approved listings must never render");
   await capture(desktop, "desktop-home.png");
 
+  for (const section of ["home", "explore", "directory", "housing", "for-businesses", "what-we-do", "story", "team", "departments"]) {
+    await desktop.locator("#menu").click();
+    await desktop.waitForFunction(() => document.querySelector("#nav").classList.contains("open"));
+    await desktop.locator('#nav a[href="#' + section + '"]').click();
+    await desktop.waitForFunction(expected => location.hash === "#" + expected, section);
+    await desktop.waitForFunction(() => !document.querySelector("#nav").classList.contains("open"));
+  }
+  await desktop.waitForTimeout(250);
   await desktop.locator("#menu").click();
   await desktop.waitForFunction(() => document.querySelector("#nav").classList.contains("open"));
-  await desktop.locator('#nav a[href="#team"]').click();
-  await desktop.waitForFunction(() => location.hash === "#team");
-  await desktop.waitForFunction(() => !document.querySelector("#nav").classList.contains("open"));
-  await desktop.waitForTimeout(500);
+  await desktop.keyboard.press("Escape");
+  await desktop.waitForFunction(() => !document.querySelector("#nav").classList.contains("open")
+    && document.activeElement === document.querySelector("#menu"));
   const anchorGeometry = await desktop.evaluate(() => ({
     teamTop: document.querySelector("#team").getBoundingClientRect().top,
     headerBottom: document.querySelector(".site-header").getBoundingClientRect().bottom,
@@ -138,6 +158,9 @@ try {
   await captureSection(desktop, "#directory", "desktop-directory.png");
   await captureSection(desktop, "#team", "desktop-team.png");
   await captureSection(desktop, "#departments", "desktop-departments.png");
+  await desktop.locator('.filter-chip[data-filter="Everything"]').click();
+  await desktop.waitForFunction(() => document.querySelectorAll("#listingGrid .listing-card").length === 3);
+  await desktop.evaluate(() => window.scrollTo(0, 0));
   await desktop.addStyleTag({ content: "html{scroll-behavior:auto!important} .scroll-reveal{opacity:1!important;transform:none!important;filter:none!important} *{animation:none!important;transition:none!important}" });
   await capture(desktop, "desktop-full-page.png", true);
   await noHorizontalOverflow(desktop, "desktop");
@@ -154,6 +177,9 @@ try {
   await mobile.waitForFunction(() => !document.querySelector("#nav").classList.contains("open"));
   await mobile.waitForFunction(() => getComputedStyle(document.querySelector("#nav")).visibility === "hidden");
   await captureSection(mobile, "#departments", "mobile-departments-390.png");
+  await mobile.locator('.filter-chip[data-filter="Everything"]').click();
+  await mobile.waitForFunction(() => document.querySelectorAll("#listingGrid .listing-card").length === 3);
+  await mobile.evaluate(() => window.scrollTo(0, 0));
   await mobile.addStyleTag({ content: "html{scroll-behavior:auto!important} .scroll-reveal{opacity:1!important;transform:none!important;filter:none!important} *{animation:none!important;transition:none!important}" });
   await capture(mobile, "mobile-full-page-390.png", true);
   await noHorizontalOverflow(mobile, "mobile 390px");
