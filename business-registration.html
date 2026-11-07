@@ -3,196 +3,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#173a2e">
-  <meta name="description" content="The BENGALOOP on-site business registration page is being prepared for local business owners in S.G. Palya.">
-  <meta name="robots" content="index,follow,max-image-preview:large">
-  <link rel="canonical" href="https://sgpalya.in/business-registration.html">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="bengaloop-avatar.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261107-premium-system">
-  
+  <meta name="robots" content="noindex,follow">
+  <link rel="canonical" href="https://sgpalya.in/">
+  <meta http-equiv="refresh" content="0;url=index.html#business-registration">
   <title>Business registration | BENGALOOP</title>
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="BENGALOOP">
-  <meta property="og:title" content="Business registration | BENGALOOP">
-  <meta property="og:description" content="The BENGALOOP on-site business registration page is being prepared for local business owners in S.G. Palya.">
-  <meta property="og:url" content="https://sgpalya.in/business-registration.html">
-  <meta property="og:image" content="https://sgpalya.in/bengaloop-social.jpg">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Business registration | BENGALOOP">
-  <meta name="twitter:description" content="The BENGALOOP on-site business registration page is being prepared for local business owners in S.G. Palya.">
+  <script>
+    (() => {
+      const destination = new URL("index.html", window.location.href);
+      const params = new URLSearchParams(window.location.search);
+      
+      destination.search = params.toString();
+      destination.hash = "business-registration";
+      window.location.replace(destination.toString());
+    })();
+  </script>
 </head>
 <body>
-<div class="site-shell">
-
-<a class="skip-link" href="#main">Skip to content</a>
-<header class="site-header" id="top">
-  <div class="header-inner">
-    <a class="brand" href="index.html" aria-label="BENGALOOP home">
-      <img src="bengaloop-logo.svg" width="226" height="52" alt="BENGALOOP — Bengaluru local discovery">
-      <span class="brand-edition">S.G. PALYA EDITION</span>
-    </a>
-    <button class="menu-toggle" id="menu" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="nav">
-      <span></span><span></span>
-    </button>
-    <nav class="site-nav drawer-nav" id="nav" aria-label="Main navigation" aria-hidden="true" inert>
-      <div class="drawer-heading"><span class="section-kicker">BENGALOOP / S.G. PALYA</span><button class="drawer-close" id="navClose" type="button" aria-label="Close navigation">×</button></div>
-      <div class="drawer-links">
-        <a href="index.html">Home<span aria-hidden="true">↗</span></a><a href="explore.html">Explore<span aria-hidden="true">↗</span></a><a href="directory.html">Business directory<span aria-hidden="true">↗</span></a><a href="pg-housing.html">PG & housing<span aria-hidden="true">↗</span></a><a href="for-businesses.html" aria-current="page">For businesses<span aria-hidden="true">↗</span></a><a href="what-we-do.html">What we do<span aria-hidden="true">↗</span></a><a href="our-story.html">Our story<span aria-hidden="true">↗</span></a><a href="our-team.html#team">Our team<span aria-hidden="true">↗</span></a><a href="departments.html">Our departments<span aria-hidden="true">↗</span></a>
-      </div>
-      <a class="nav-cta" href="for-businesses.html">List your business <span aria-hidden="true">↗</span></a>
-      <p class="drawer-note">Your neighbourhood,<br><em>in the loop.</em></p>
-    </nav>
-  </div>
-</header>
-<div class="nav-backdrop" id="navBackdrop" hidden></div>
-<main id="main">
-<section class="page-masthead">
-  <div class="page-masthead-inner">
-    <div class="section-kicker">BUSINESS ONBOARDING / S.G. PALYA</div>
-    <h1>Let's get your business<br><em>in the loop.</em></h1>
-    <p>Share a few details about your business. The BENGALOOP team will review the information before any listing is made public.</p>
-  </div>
-</section>
-
-<section class="business-registration-wrap" aria-labelledby="registration-title">
-  <div class="registration-intro-bar">
-    <span class="registration-preview-badge"><i></i> FORM DESIGN PREVIEW</span>
-    <p>The form layout is being prepared. Secure submission and Excel storage are not connected yet, so please do not enter real business or personal information on this preview.</p>
-  </div>
-
-  <div class="registration-layout">
-    <form class="business-registration-form" id="businessRegistrationForm">
-      <div class="registration-form-heading">
-        <div class="section-kicker">BUSINESS LISTING DETAILS</div>
-        <h2 id="registration-title">Tell us about <em>your business.</em></h2>
-        <p>Fields marked with * will be required when registration opens.</p>
-      </div>
-
-      <fieldset class="registration-fieldset">
-        <legend><span>01</span> Your business</legend>
-        <div class="registration-fields">
-          <label class="registration-field registration-field-wide">
-            <span>Business / establishment name <b>*</b></span>
-            <input name="business_name" type="text" placeholder="e.g. Green Leaf Cafe" autocomplete="organization" required>
-          </label>
-          <label class="registration-field">
-            <span>Business category <b>*</b></span>
-            <select name="category" required>
-              <option value="">Choose a category</option>
-              <option>Food &amp; Dining</option><option>PGs &amp; Housing</option>
-              <option>Shopping</option><option>Healthcare</option>
-              <option>Beauty &amp; Fitness</option><option>Education</option>
-              <option>Local Services</option><option>Transport</option>
-              <option>Banking &amp; Utilities</option><option>Other</option>
-            </select>
-          </label>
-          <label class="registration-field">
-            <span>Website or social media link</span>
-            <input name="online_presence" type="url" placeholder="https://…" inputmode="url">
-          </label>
-          <label class="registration-field registration-field-wide">
-            <span>Short business description <b>*</b></span>
-            <textarea name="description" rows="4" maxlength="700" placeholder="What do you offer? What should nearby customers know?" required></textarea>
-            <small>Keep it clear and useful. Maximum 700 characters.</small>
-          </label>
-        </div>
-      </fieldset>
-
-      <fieldset class="registration-fieldset">
-        <legend><span>02</span> Where people can find you</legend>
-        <div class="registration-fields">
-          <label class="registration-field registration-field-wide">
-            <span>Complete business address <b>*</b></span>
-            <textarea name="address" rows="2" placeholder="Shop / building, street, area, S.G. Palya, Bengaluru" required></textarea>
-          </label>
-          <label class="registration-field">
-            <span>Nearby landmark</span>
-            <input name="landmark" type="text" placeholder="A nearby well-known place">
-          </label>
-          <label class="registration-field">
-            <span>Google Maps link</span>
-            <input name="maps_url" type="url" placeholder="Paste your Google Maps share link" inputmode="url">
-          </label>
-          <label class="registration-field">
-            <span>Opening hours</span>
-            <input name="opening_hours" type="text" placeholder="e.g. Mon–Sat, 9 AM–9 PM">
-          </label>
-          <label class="registration-field">
-            <span>Business photo link</span>
-            <input name="photo_url" type="url" placeholder="Optional public image link" inputmode="url">
-          </label>
-        </div>
-      </fieldset>
-
-      <fieldset class="registration-fieldset">
-        <legend><span>03</span> Contact details</legend>
-        <div class="registration-fields">
-          <label class="registration-field">
-            <span>Contact person / owner name <b>*</b></span>
-            <input name="contact_person" type="text" placeholder="Name of the person we can contact" autocomplete="name" required>
-          </label>
-          <label class="registration-field">
-            <span>Email for follow-up</span>
-            <input name="contact_email" type="email" placeholder="name@example.com" autocomplete="email">
-          </label>
-          <label class="registration-field">
-            <span>Public contact number <b>*</b></span>
-            <input name="public_phone" type="tel" placeholder="10-digit mobile / business number" autocomplete="tel" inputmode="tel" pattern="[0-9+() -]{8,18}" required>
-          </label>
-          <label class="registration-field">
-            <span>WhatsApp number</span>
-            <input name="whatsapp" type="tel" placeholder="If different from contact number" inputmode="tel" pattern="[0-9+() -]{8,18}">
-          </label>
-        </div>
-      </fieldset>
-
-      <fieldset class="registration-fieldset registration-consent">
-        <legend><span>04</span> Confirmation</legend>
-        <label class="registration-check">
-          <input type="checkbox" name="accuracy_consent" required>
-          <span>I confirm that the information provided is accurate and that I am authorised to submit it on behalf of this business. I understand that public listing details will be reviewed by BENGALOOP before publication. <b>*</b></span>
-        </label>
-        <p>Contact-person details and follow-up information are intended for internal review. Only the business information selected for the public directory would be published after approval.</p>
-      </fieldset>
-
-      <div class="registration-form-actions">
-        <button class="button button-dark registration-submit" type="submit">Preview submission <span aria-hidden="true">→</span></button>
-        <a class="registration-back-link" href="for-businesses.html">Back to business information</a>
-      </div>
-      <p class="registration-form-status" id="registrationFormStatus" role="status" aria-live="polite"></p>
-    </form>
-
-    <aside class="registration-side-panel">
-      <div class="registration-side-top"><span class="section-kicker">HOW IT WILL WORK</span><span class="registration-side-mark">B.</span></div>
-      <h3>A simple process.<br><em>A reviewed listing.</em></h3>
-      <div class="registration-process">
-        <article><span>01</span><div><strong>Share your details</strong><p>Enter your business information directly on BENGALOOP.</p></div></article>
-        <article><span>02</span><div><strong>Our team reviews it</strong><p>We check the details and may contact you if anything needs clarification.</p></div></article>
-        <article><span>03</span><div><strong>Your listing goes live</strong><p>Only approved details are added to the public directory.</p></div></article>
-      </div>
-      <div class="registration-fairness"><span class="section-kicker">OUR PROMISE</span><p>Every local business deserves a fair opportunity to be discovered — regardless of its size.</p></div>
-    </aside>
-  </div>
-</section>
-</main>
-<footer class="site-footer">
-  <div class="footer-top">
-    <a class="footer-brand" href="index.html"><img src="bengaloop-logo-light.svg" width="220" height="52" alt="BENGALOOP"><span>S.G. PALYA EDITION</span></a>
-    <p>Your neighbourhood, <em>in the loop.</em><br><span>Starting in S.G. Palya, Bengaluru.</span></p>
-    <div class="footer-links">
-      <a href="explore.html">Explore</a><a href="directory.html">Business directory</a><a href="pg-housing.html">PG & housing</a><a href="for-businesses.html">For businesses</a><a href="what-we-do.html">What we do</a><a href="our-story.html">Our story</a><a href="our-team.html#team">Our team</a><a href="departments.html">Our departments</a>
-    </div>
-  </div>
-  <div class="footer-bottom"><span>© <span id="year">2026</span> BENGALOOP · S.G. Palya, Bengaluru</span><span>Local people. Real places. Better connections.</span><a href="#top">Back to top ↑</a></div>
-</footer>
-
-<script src="script.js?v=20261107-scroll-motion" defer></script>
-<script src="business-registration.js?v=20261104-preview" defer></script>
-
-</div>
+  <p>Opening the BENGALOOP one-page experience. <a href="index.html#business-registration">Continue to business registration</a>.</p>
 </body>
 </html>

@@ -15,6 +15,8 @@
     searchForm: $("#searchForm"),
     query: $("#q"),
     directorySearch: $("#directorySearch"),
+    exploreSearch: $("#exploreSearch"),
+    exploreSearchForm: $("#exploreSearchForm"),
     sort: $("#sortListings"),
     refresh: $("#refreshListings"),
     grid: $("#listingGrid"),
@@ -526,6 +528,18 @@
     });
   }
   function initialiseSearch() {
+    elements.exploreSearchForm?.addEventListener("submit", event => {
+      event.preventDefault();
+      const value = String(elements.exploreSearch?.value || "").trim();
+      if (elements.directorySearch) elements.directorySearch.value = value;
+      if (elements.query) elements.query.value = value;
+      setCategory("Everything", false);
+      renderListings();
+      document.querySelector("#directory")?.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        block: "start"
+      });
+    });
     elements.searchForm?.addEventListener("submit", event => {
       event.preventDefault();
       if (elements.directorySearch && elements.query) elements.directorySearch.value = elements.query.value;
@@ -605,10 +619,28 @@
     }
   }
 
+  function initialiseSectionNavigation() {
+    const links = $('nav#nav a[href^="#"]');
+    const targets = links.map(link => document.querySelector(link.getAttribute("href"))).filter(Boolean);
+    if (!("IntersectionObserver" in window) || !links.length || !targets.length) return;
+    const observer = new IntersectionObserver(entries => {
+      const visible = entries.filter(entry => entry.isIntersecting)
+        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+      if (!visible.length) return;
+      const activeId = visible[0].target.id;
+      links.forEach(link => {
+        if (link.getAttribute("href") === "#" + activeId) link.setAttribute("aria-current", "location");
+        else link.removeAttribute("aria-current");
+      });
+    }, { rootMargin: "-18% 0px -68% 0px", threshold: 0 });
+    targets.forEach(target => observer.observe(target));
+  }
+
   function initialise() {
     if (elements.year) elements.year.textContent = String(new Date().getFullYear());
     initialiseScrollExperience();
     initialiseNavigation();
+    initialiseSectionNavigation();
     initialiseSearch();
     initialiseFilters();
     elements.refresh?.addEventListener("click", loadListings);

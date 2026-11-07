@@ -1493,3 +1493,20 @@ button:disabled, input:disabled, select:disabled, textarea:disabled, [aria-disab
   }
   * { animation: none !important; }
 }
+
+
+/* Single-page navigation and same-page category shortcuts — November 2026 */
+main > section[id],
+main [id].directory-section,
+main [id].team-section,
+main [id].departments-section,
+main [id].what-we-do-section { scroll-margin-top: 116px; }
+button.explore-category-card {
+  width: 100%; font: inherit; color: var(--forest); text-align: left;
+  cursor: pointer; appearance: none;
+}
+button.explore-category-card[aria-pressed="true"] {
+  border-color: #78977e; background: #e8efe7; box-shadow: inset 0 0 0 1px #78977e;
+}
+.housing-filter-callout .button { border: 0; font: inherit; font-weight: 700; cursor: pointer; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
