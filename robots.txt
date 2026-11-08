@@ -1,3 +1,6 @@
 User-agent: *
 Allow: /
-Sitemap: https://sgpalya.in/sitemap.xml
+
+# Crawling must remain allowed so search engines can read the noindex directive
+# on the temporary landing page and remove the previous homepage from results.
+# No sitemap is advertised while the public website is suspended.

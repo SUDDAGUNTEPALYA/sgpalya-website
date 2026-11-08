@@ -86,7 +86,46 @@ def local_path(raw: str) -> tuple[Path | None, str]:
     return candidate, fragment
 
 
+def validate_suspended_site() -> int:
+    """Validate the temporary public holding page without touching archived site code."""
+    errors: list[str] = []
+    html = (ROOT / "index.html").read_text(encoding="utf-8")
+    robots = (ROOT / "robots.txt").read_text(encoding="utf-8")
+    sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8")
+    marker = (ROOT / "SITE_SUSPENDED").read_text(encoding="utf-8")
+    cname = (ROOT / "CNAME").read_text(encoding="utf-8").strip()
+
+    check(errors, '<meta name="robots" content="noindex,follow">' in html,
+          "temporary homepage must explicitly request no indexing")
+    check(errors, "temporarily offline" in html.lower() and "platform has not closed" in html.lower(),
+          "temporary homepage must explain that the pause is not a closure")
+    check(errors, html.count("<h1") == 1,
+          "temporary homepage must have exactly one primary heading")
+    check(errors, "id=\"team\"" not in html and "data-department-id=" not in html,
+          "the full public website must not remain embedded in the temporary homepage")
+    check(errors, "User-agent: *" in robots and "Allow: /" in robots and "Disallow: /" not in robots,
+          "crawlers must be allowed to read the noindex directive")
+    check(errors, "<loc>" not in sitemap,
+          "suspended sitemap must not advertise indexable pages")
+    check(errors, cname == "sgpalya.in",
+          "custom domain mapping must remain intact for revival")
+    check(errors, "backup/pre-website-suspension-2026-11-08" in marker
+          and "cf5e3d1a4e6a73f5d344c356519562c80e95cc5f" in marker,
+          "the pre-suspension recovery point must be recorded")
+
+    if errors:
+        for error in errors:
+            print("FAIL: " + error)
+        print(str(len(errors)) + " suspension check(s) failed.")
+        return 1
+    print("PASS: temporary landing page, noindex, crawl access, empty sitemap and recovery point verified.")
+    return 0
+
+
 def main() -> int:
+    if (ROOT / "SITE_SUSPENDED").is_file():
+        return validate_suspended_site()
+
     errors: list[str] = []
     index_path = ROOT / "index.html"
     check(errors, index_path.is_file(), "canonical index.html is missing")
