@@ -41,6 +41,7 @@ jobs:
           node --check business-registration.js
 
       - name: Run desktop and mobile Chromium interaction checks
+        if: ${{ hashFiles('SITE_SUSPENDED') == '' }}
         run: |
           npm install --no-save --no-audit --no-fund playwright
           npx playwright install --with-deps chromium

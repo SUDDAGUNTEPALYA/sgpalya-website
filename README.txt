@@ -3,6 +3,22 @@ BENGALOOP — S.G. Palya Edition
 
 BENGALOOP is a static neighbourhood discovery website for S.G. Palya, Bengaluru.
 
+TEMPORARY PUBLIC SUSPENSION (8 NOVEMBER 2026)
+------------------------------------------------
+The public website is currently paused. The live homepage is a small maintenance
+notice marked noindex; the former homepage, team, recruitment content, assets,
+directory and code have not been deleted.
+
+Recovery point:
+  backup/pre-website-suspension-2026-11-08
+  pre-suspension commit: cf5e3d1a4e6a73f5d344c356519562c80e95cc5f
+
+To revive the original website, restore the public-site files from that backup
+(or revert the suspension commit) and remove SITE_SUSPENDED. Keep CNAME pointing
+to sgpalya.in. Do not delete the repository, domain configuration or backup.
+Search engines need to recrawl the noindex landing page before old results
+disappear; this is not necessarily immediate.
+
 The canonical user experience is one long-scrolling page:
   index.html
 
