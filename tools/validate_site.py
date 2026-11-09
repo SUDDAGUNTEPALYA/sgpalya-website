@@ -67,7 +67,7 @@ def main():
    s=x.read_text(encoding="utf-8");ck(e,'content="noindex,follow"' in s,name+" should be noindex");ck(e,dest in s,name+" wrong destination")
  css=(ROOT/"agency.css").read_text(encoding="utf-8");js=(ROOT/"relaunch.js").read_text(encoding="utf-8")
  ck(e,"@media(max-width:600px)" in css and "prefers-reduced-motion:reduce" in css,"mobile/reduced motion styles missing")
- ck(e,'credentials' in js and 'omit' in js and 'data-form-endpoint' in js,"form submission privacy boundary missing")
+ ck(e,'credentials' in js and 'omit' in js and 'fetch(endpoint' in js,"form submission privacy boundary missing")
  robots=(ROOT/"robots.txt").read_text(encoding="utf-8");sm=(ROOT/"sitemap.xml").read_text(encoding="utf-8")
  ck(e,"Allow: /" in robots and "Disallow: /" not in robots,"robots must allow crawl")
  ck(e,sm.count("<loc>")==2 and "https://sgpalya.in/our-team.html" in sm,"sitemap should list homepage and team")
