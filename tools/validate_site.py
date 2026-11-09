@@ -32,10 +32,10 @@ def target(raw):
  if x.is_dir():x=x/"index.html"
  return x,unquote(p.fragment)
 def main():
- e=[];hp=ROOT/"index.html";tp=ROOT/"our-team.html"
+ e=[];hp=ROOT/"index.html";tp=ROOT/"our-team.html";jp=ROOT/"join-us.html"
  ck(e,hp.is_file(),"index.html missing");ck(e,tp.is_file(),"our-team.html missing")
  if e:print("\n".join(e));return 1
- h=hp.read_text(encoding="utf-8");t=tp.read_text(encoding="utf-8");p=Inspector();p.feed(h);q=Inspector();q.feed(t)
+ h=hp.read_text(encoding="utf-8");t=tp.read_text(encoding="utf-8");j=jp.read_text(encoding="utf-8") if jp.is_file() else "";p=Inspector();p.feed(h);q=Inspector();q.feed(t);r=Inspector();r.feed(j)
  ck(e,p.tags["h1"]==1,"homepage needs one H1");ck(e,not p.dups,"duplicate homepage IDs")
  ck(e,'name="robots" content="index,follow,max-image-preview:large"' in h,"homepage must be indexable")
  ck(e,'rel="canonical" href="https://sgpalya.in/"' in h,"homepage canonical URL missing")
@@ -46,19 +46,31 @@ def main():
  ck(e,'id="businessEnquiryForm"' in h and 'id="businessEnquiryStatus"' in h,"business enquiry form/status missing")
  ck(e,'data-form-endpoint=""' in h and "Online submissions are being connected" in h and "nothing is sent or stored" in h,"form must clearly explain that submissions are disabled until a secure endpoint is configured")
  ck(e,'name="consent"' in h and 'name="businessName"' in h and 'name="phone"' in h,"form required fields/consent missing")
- ck(e,f'<span class="member-count-number">{15}</span>' in h and 'href="our-team.html"' in h,"15-member team bar must link to full team")
- ck(e,h.count('class="agency-leader-card')==3,"homepage should show Founder and two Co-founders only")
+ ck(e,f'<span class="member-count-number">{16}</span>' in h and 'href="our-team.html"' in h,"16-member team bar must link to full team")
+ ck(e,h.count('class="agency-leader-card')==2,"homepage should show Founder and one Co-founder only")
  ck(e,"listingGrid" not in h and "department-grid" not in h and "ZERO FROM SCRATCH" not in h and "19 current roles" not in h,"old directory/recruitment content still on homepage")
  ck(e,not (ROOT/"SITE_SUSPENDED").exists(),"suspension marker must be removed")
  ck(e,'name="robots" content="index,follow"' in t,"team page must be indexable")
  for n in ("Naval Aggarwal","Rhythm Mehrotra","Yuval Ostwal","Ripunjay Raj","Su Mayur","Rahul Raj Gupta","Pranjita Devi","Misbah Ur Rahman","Bhavana Chandrashekar","Swara Upadhayay","Pradyumn Verma","Rajath. R","Anon Biju","Mohammed Jawadh","Johan Biju","Subhankar Raj Gupta","Nidhish Aggarwal","Mohansh Arora"):ck(e,n in t,"missing team profile "+n)
  ck(e,'id="team"' in t and "team-level-cofounders" in t and "team-level-members" in t,"team hierarchy missing")
+ co=t.split('<div class="team-grid team-grid-cofounders">',1)[1].split("</section>",1)[0] if '<div class="team-grid team-grid-cofounders">' in t else ""
+ mem=t.split('<div class="team-grid team-grid-members">',1)[1] if '<div class="team-grid team-grid-members">' in t else ""
+ ck(e,"Yuval Ostwal" not in co and "Yuval Ostwal" in mem,"Yuval must be listed as an ordinary member, not a co-founder")
+ yu_card=mem[mem.index("<article"):mem.index("</article>")+10] if "Yuval Ostwal" in mem else ""
+ ck(e,"team-card-cofounder" not in yu_card and "TEAM MEMBER" in yu_card,"Yuval's profile card must use ordinary-member styling")
+ ck(e,"01 Co-founder" in t and "16 Members" in t,"team counts must show one co-founder and sixteen members")
+ ck(e,jp.is_file() and 'rel="canonical" href="https://sgpalya.in/join-us.html"' in j,"student recruitment page/canonical missing")
+ ck(e,"RECRUITMENT OPEN" in j and j.count('class="dept-card"')==8,"student page must show open recruitment and eight departments")
+ for field in ('name="name"','name="registerNumber"','name="class"','name="department"'):
+  ck(e,field in j,"student application form missing "+field)
+ ck(e,'data-form-endpoint=""' in j and "not being collected yet" in j and "not been sent or stored" in j,"student form must state that submissions are disabled")
+ ck(e,'href="join-us.html"' in h and 'href="join-us.html"' in t,"recruitment link missing from homepage/team navigation")
  ck(e,'Junior Web Developer &amp; Technical Support Member' in t and "Chief Technology Officer" not in t,"Subhankar role classification changed")
  for raw in p.links:
   x,f=target(raw)
   if x and f and x.resolve()==hp.resolve():ck(e,f in p.ids,"broken homepage anchor #"+f)
   if x and f and x.resolve()==tp.resolve():ck(e,f in q.ids,"broken team page anchor #"+f)
- for kind,raw in p.assets+q.assets:
+ for kind,raw in p.assets+q.assets+r.assets:
   x,_=target(raw)
   if x is not None:ck(e,x.is_file(),f"missing {kind}: {raw}")
  for name,dest in ROUTES.items():
@@ -70,7 +82,7 @@ def main():
  ck(e,'credentials' in js and 'omit' in js and 'fetch(endpoint' in js,"form submission privacy boundary missing")
  robots=(ROOT/"robots.txt").read_text(encoding="utf-8");sm=(ROOT/"sitemap.xml").read_text(encoding="utf-8")
  ck(e,"Allow: /" in robots and "Disallow: /" not in robots,"robots must allow crawl")
- ck(e,sm.count("<loc>")==2 and "https://sgpalya.in/our-team.html" in sm,"sitemap should list homepage and team")
+ ck(e,sm.count("<loc>")==3 and "https://sgpalya.in/our-team.html" in sm and "https://sgpalya.in/join-us.html" in sm,"sitemap should list homepage, team and recruitment pages")
  ck(e,(ROOT/"CNAME").read_text(encoding="utf-8").strip()=="sgpalya.in","custom domain mapping changed")
  if e:
   for x in e:print("FAIL: "+x)
