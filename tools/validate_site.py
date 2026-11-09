@@ -52,7 +52,7 @@ def main():
  ck(e,not (ROOT/"SITE_SUSPENDED").exists(),"suspension marker must be removed")
  ck(e,'name="robots" content="index,follow"' in t,"team page must be indexable")
  for n in ("Naval Aggarwal","Rhythm Mehrotra","Yuval Ostwal","Ripunjay Raj","Su Mayur","Rahul Raj Gupta","Pranjita Devi","Misbah Ur Rahman","Bhavana Chandrashekar","Swara Upadhayay","Pradyumn Verma","Rajath. R","Anon Biju","Mohammed Jawadh","Johan Biju","Subhankar Raj Gupta","Nidhish Aggarwal","Mohansh Arora"):ck(e,n in t,"missing team profile "+n)
-  ck(e,'id="team"' in t and "team-level-cofounders" in t and "team-level-members" in t,"team hierarchy missing")
+ ck(e,'id="team"' in t and "team-level-cofounders" in t and "team-level-members" in t,"team hierarchy missing")
  co=t.split('<div class="team-grid team-grid-cofounders">',1)[1].split("</section>",1)[0] if '<div class="team-grid team-grid-cofounders">' in t else ""
  mem=t.split('<div class="team-grid team-grid-members">',1)[1] if '<div class="team-grid team-grid-members">' in t else ""
  ck(e,"Yuval Ostwal" not in co and "Yuval Ostwal" in mem,"Yuval must be listed as an ordinary member, not a co-founder")
