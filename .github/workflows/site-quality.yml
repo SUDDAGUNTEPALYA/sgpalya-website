@@ -36,12 +36,9 @@ jobs:
 
       - name: Check JavaScript syntax
         run: |
-          node --check script.js
-          node --check recruitment.js
-          node --check business-registration.js
+          node --check relaunch.js
 
       - name: Run desktop and mobile Chromium interaction checks
-        if: ${{ hashFiles('SITE_SUSPENDED') == '' }}
         run: |
           npm install --no-save --no-audit --no-fund playwright
           npx playwright install --with-deps chromium

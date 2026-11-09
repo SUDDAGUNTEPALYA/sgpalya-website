@@ -1,317 +1,80 @@
 #!/usr/bin/env python3
-"""Structural and integration checks for the BENGALOOP one-page static site."""
-from __future__ import annotations
-
+"""Quality checks for the BENGALOOP local marketing website."""
 from collections import Counter
 from html.parser import HTMLParser
 from pathlib import Path
+from urllib.parse import unquote,urlsplit
 import re
-from urllib.parse import unquote, urlsplit
-
-ROOT = Path(__file__).resolve().parents[1]
-ROUTES = {
-    "explore.html": "explore",
-    "directory.html": "directory",
-    "pg-housing.html": "directory",
-    "for-businesses.html": "for-businesses",
-    "business-registration.html": "business-registration",
-    "our-story.html": "story",
-    "what-we-do.html": "what-we-do",
-    "our-team.html": "team",
-    "departments.html": "departments",
-}
-LOCAL_SCHEMES = {"http", "https", "mailto", "tel", "sms", "data", "javascript"}
-
-
+ROOT=Path(__file__).resolve().parents[1]
+ROUTES={"explore.html":"index.html#services","directory.html":"index.html#services","pg-housing.html":"index.html#services","for-businesses.html":"index.html#business-enquiry","business-registration.html":"index.html#business-enquiry","our-story.html":"index.html","what-we-do.html":"index.html#services","departments.html":"our-team.html#team"}
+EXT={"http","https","mailto","tel","sms","data","javascript"}
 class Inspector(HTMLParser):
-    def __init__(self) -> None:
-        super().__init__(convert_charrefs=True)
-        self.ids: list[str] = []
-        self.duplicate_ids: set[str] = set()
-        self._seen: set[str] = set()
-        self.links: list[str] = []
-        self.resources: list[tuple[str, str]] = []
-        self.tags: Counter[str] = Counter()
-        self.nav_links: list[str] = []
-        self.in_nav = False
-
-    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        self.tags[tag] += 1
-        values = {key.lower(): (value or "") for key, value in attrs}
-        element_id = values.get("id", "").strip()
-        if element_id:
-            self.ids.append(element_id)
-            if element_id in self._seen:
-                self.duplicate_ids.add(element_id)
-            self._seen.add(element_id)
-        if tag == "nav":
-            self.in_nav = True
-        href = values.get("href", "").strip()
-        if tag == "a" and href:
-            self.links.append(href)
-            if self.in_nav:
-                self.nav_links.append(href)
-        if tag in {"img", "script", "source", "iframe", "audio", "video"}:
-            src = values.get("src", "").strip()
-            if src:
-                self.resources.append((tag, src))
-        if tag == "link" and href:
-            self.resources.append(("link", href))
-
-    def handle_endtag(self, tag: str) -> None:
-        if tag == "nav":
-            self.in_nav = False
-
-
-def check(errors: list[str], condition: bool, message: str) -> None:
-    if not condition:
-        errors.append(message)
-
-
-def local_path(raw: str) -> tuple[Path | None, str]:
-    parsed = urlsplit(raw.strip())
-    if parsed.scheme.lower() in LOCAL_SCHEMES or parsed.netloc:
-        return None, ""
-    path = unquote(parsed.path)
-    fragment = unquote(parsed.fragment)
-    if not path:
-        return ROOT / "index.html", fragment
-    candidate = (ROOT / path.lstrip("/")).resolve()
-    try:
-        candidate.relative_to(ROOT.resolve())
-    except ValueError:
-        return None, fragment
-    if candidate.is_dir():
-        candidate = candidate / "index.html"
-    return candidate, fragment
-
-
-def validate_suspended_site() -> int:
-    """Validate the temporary public holding page without touching archived site code."""
-    errors: list[str] = []
-    html = (ROOT / "index.html").read_text(encoding="utf-8")
-    robots = (ROOT / "robots.txt").read_text(encoding="utf-8")
-    sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8")
-    marker = (ROOT / "SITE_SUSPENDED").read_text(encoding="utf-8")
-    cname = (ROOT / "CNAME").read_text(encoding="utf-8").strip()
-
-    check(errors, '<meta name="robots" content="noindex,follow">' in html,
-          "temporary homepage must explicitly request no indexing")
-    check(errors, "temporarily offline" in html.lower() and "platform has not closed" in html.lower(),
-          "temporary homepage must explain that the pause is not a closure")
-    check(errors, html.count("<h1") == 1,
-          "temporary homepage must have exactly one primary heading")
-    check(errors, "id=\"team\"" not in html and "data-department-id=" not in html,
-          "the full public website must not remain embedded in the temporary homepage")
-    check(errors, "User-agent: *" in robots and "Allow: /" in robots and "Disallow: /" not in robots,
-          "crawlers must be allowed to read the noindex directive")
-    check(errors, "<loc>" not in sitemap,
-          "suspended sitemap must not advertise indexable pages")
-    check(errors, cname == "sgpalya.in",
-          "custom domain mapping must remain intact for revival")
-    check(errors, "backup/pre-website-suspension-2026-11-08" in marker
-          and "cf5e3d1a4e6a73f5d344c356519562c80e95cc5f" in marker,
-          "the pre-suspension recovery point must be recorded")
-
-    if errors:
-        for error in errors:
-            print("FAIL: " + error)
-        print(str(len(errors)) + " suspension check(s) failed.")
-        return 1
-    print("PASS: temporary landing page, noindex, crawl access, empty sitemap and recovery point verified.")
-    return 0
-
-
-def main() -> int:
-    if (ROOT / "SITE_SUSPENDED").is_file():
-        return validate_suspended_site()
-
-    errors: list[str] = []
-    index_path = ROOT / "index.html"
-    check(errors, index_path.is_file(), "canonical index.html is missing")
-    if errors:
-        print("\n".join(errors))
-        return 1
-
-    html = index_path.read_text(encoding="utf-8")
-    parser = Inspector()
-    parser.feed(html)
-    parser.close()
-
-    required_tags = {"html": 1, "head": 1, "body": 1, "header": 1, "nav": 1, "main": 1, "footer": 1}
-    for tag, count in required_tags.items():
-        check(errors, parser.tags[tag] == count,
-              f"index.html: expected {count} <{tag}> element(s), found {parser.tags[tag]}")
-    check(errors, html.count('class="site-shell"') == 1, "index.html: expected one .site-shell wrapper")
-    check(errors, not parser.duplicate_ids,
-          "index.html: duplicate IDs: " + ", ".join(sorted(parser.duplicate_ids)))
-    check(errors, parser.tags["h1"] == 1, "index.html: a single-page site must have exactly one primary H1")
-    check(errors, 'name="viewport"' in html, "index.html: viewport metadata is missing")
-    check(errors, 'name="bengaloop-directory-csv"' in html, "index.html: public directory CSV feed is missing")
-    check(errors, "family=Manrope" in html, "index.html: Manrope typeface is not loaded")
-    check(errors, 'property="og:title"' in html and 'property="og:description"' in html,
-          "index.html: Open Graph title/description metadata is missing")
-    check(errors, html.count('name="twitter:title"') == 1
-          and html.count('name="twitter:description"') == 1
-          and html.count('name="twitter:image"') == 1,
-          "index.html: Twitter card metadata must have one consistent title, description and image")
-    check(errors, 'property="og:image:alt"' in html,
-          "index.html: social sharing image alternative text is missing")
-
-    required_sections = {
-        "home", "explore", "directory", "housing", "for-businesses",
-        "business-registration", "what-we-do", "vision", "story", "team", "departments", "app-launch",
-    }
-    actual_ids = set(parser.ids)
-    for section_id in sorted(required_sections):
-        check(errors, section_id in actual_ids, f"index.html: required section anchor #{section_id} is missing")
-
-    required_nav = {f"#{section_id}" for section_id in (
-        "home", "explore", "directory", "housing", "for-businesses",
-        "what-we-do", "vision", "story", "team", "departments", "app-launch"
-    )}
-    for href in required_nav:
-        check(errors, href in parser.nav_links, f"index.html: navigation link {href} is missing")
-
-    for href in parser.links:
-        target, fragment = local_path(href)
-        if fragment and target is not None and target.resolve() == index_path.resolve():
-            check(errors, fragment in actual_ids, f"index.html: broken same-page anchor #{fragment}")
-
-    for kind, raw in parser.resources:
-        target, _ = local_path(raw)
-        if target is not None:
-            check(errors, target.is_file(), f"index.html: missing local {kind} resource: {raw}")
-
-    for filename, target in ROUTES.items():
-        route = ROOT / filename
-        check(errors, route.is_file(), f"missing legacy route bridge: {filename}")
-        if not route.is_file():
-            continue
-        source = route.read_text(encoding="utf-8")
-        check(errors, 'content="noindex,follow"' in source,
-              f"{filename}: route bridge must be excluded from indexing")
-        check(errors, "window.location.replace" in source,
-              f"{filename}: client redirect is missing")
-        check(errors, f'destination.hash = "{target}"' in source,
-              f"{filename}: redirect target must be #{target}")
-        check(errors, "index.html" in source, f"{filename}: redirect must point to index.html")
-
-    script = (ROOT / "script.js").read_text(encoding="utf-8")
-    css = (ROOT / "style.css").read_text(encoding="utf-8")
-    recruitment = (ROOT / "recruitment.js").read_text(encoding="utf-8")
-    registration = (ROOT / "business-registration.js").read_text(encoding="utf-8")
-
-    for required in ('id="listingGrid"', 'id="directorySearch"', 'id="sortListings"',
-                     'id="refreshListings"', 'id="listingStatus"'):
-        check(errors, required in html, f"index.html: required directory element {required} is missing")
-    check(errors, 'normalise(item.status) === "approved"' in script,
-          "directory script no longer enforces Approved listing status")
-    check(errors, 'credentials: "omit"' in script and 'cache: "no-store"' in script,
-          "public directory fetch privacy/cache settings changed")
-    check(errors, "exploreSearchForm" in script,
-          "Explore search form is not connected to the shared directory")
-    check(errors, "initialiseSectionNavigation" in script,
-          "scroll-aware single-page navigation is missing")
-    check(errors, 'const words = $$("[data-tagline-word]")' in script,
-          "tagline reveal must select all word elements, not a single element")
-    check(errors, 'const sections = $$("main > section:not(.home-hero):not(.hero)")' in script,
-          "scroll reveal must select all content sections, not a single element")
-    check(errors, 'const links = $$(\'nav#nav a[href^="#"]\')' in script,
-          "section navigation must collect every drawer link before mapping targets")
-
-
-    check(errors, "$$('[data-filter]').forEach(button => {" in script,
-          "filter initialisation must iterate over all category controls")
-    
-    card_ids = set(re.findall(r'data-department-id=["\']([^"\']+)["\']', html))
-    role_ids = set(re.findall(r'^\s*id:"(business|marketing|creative|technology|community|operations)"', recruitment, re.M))
-    check(errors, len(card_ids) == 6 and card_ids == role_ids,
-          "department cards do not match all six recruitment data groups")
-    role_count = len(re.findall(r'\{id:"[^"]+",name:"[^"]+",summary:', recruitment))
-    check(errors, role_count == 19, f"expected 19 recruitment roles, found {role_count}")
-
-    check(errors, html.count('<span class="team-status">CO-FOUNDER</span>') == 2
-          and "Rhythm Mehrotra" in html and "Yuval Ostwal" in html,
-          "team leadership contract changed: Rhythm and Yuval must remain the only co-founders")
-    team_start = html.find('<section class="team-section"')
-    team_end = html.find('<section class="departments-section"', team_start)
-    founder_pos = html.find('id="leadership"', team_start, team_end)
-    cofounder_pos = html.find("team-level-cofounders", team_start, team_end)
-    members_pos = html.find("team-level-members", team_start, team_end)
-    check(errors, team_start >= 0 and founder_pos >= 0 and cofounder_pos > founder_pos
-          and members_pos > cofounder_pos,
-          "team hierarchy must read Founder → Co-founders → Members")
-    check(errors, 'Junior Web Developer &amp; Technical Support Member' in html
-          and "Chief Technology Officer" not in html and 'team-status">CTO' not in html
-          and 'id="technical-leadership-title"' not in html,
-          "Subhankar must be an ordinary member, not in a separate CTO section")
-    check(errors, "Nidhish Aggarwal" in html and "Institutional Partnership Associate" in html
-          and "B.Com · Global Management Accounting &amp; Strategy" in html,
-          "Nidhish's member profile is missing or incomplete")
-    check(errors, "Mohansh Arora" in html and "Website Developer &amp; Administrator" in html
-          and "Bachelor of Computer Applications" in html,
-          "Mohansh's member profile is missing or incomplete")
-    check(errors, 'aria-label="Initials for Rajath R.">RR</div>' in html,
-          "team profiles without photographs must use a clear initials placeholder")
-    check(errors, 'class="page-masthead"><div class="page-masthead-inner"><div class="section-kicker">THE BENGALOOP MODEL' not in html,
-          "the What We Do section must not repeat its main heading in a redundant masthead")
-
-    check(errors, "RECRUITMENT OPEN" in html and "19 current roles" in html
-          and "co-founders, managers, team members and volunteers" in html
-          and "students from across campus" in html and "ZERO FROM SCRATCH" in html,
-          "ZERO FROM SCRATCH recruitment campaign must identify the audience and current opportunities")
-    check(errors, "Six departments." in html and "More roles may be introduced as BENGALOOP grows." in html,
-          "department recruitment section must communicate the six-department / growing-role structure")
-    check(errors, 'id="vision"' in html and 'class="local-loop-board"' in html
-          and "the connecting layer" in html.lower(),
-          "the original local-loop mechanism or complementary ecosystem visual is missing")
-    check(errors, 'id="app-launch"' in html and "January 2027" in html
-          and "Google Play Store" in html and "Apple App Store" in html,
-          "final January 2027 app launch announcement is incomplete")
-    check(errors, 'id="businessRegistrationForm"' in html,
-          "business registration preview form is missing")
-    check(errors, "Preview only" in registration
-          and "No information has been sent or saved" in registration,
-          "business registration preview/data-handling boundary changed")
-
-    faq_count = len(re.findall(r"<details(?:\s|>)", html, re.I))
-    check(errors, faq_count >= 6, f"expected at least 6 factual FAQs, found {faq_count}")
-    check(errors, 'threshold: 0,' in script and 'threshold: 0.12' not in script,
-          "section reveal must support long mobile sections without a 12% visibility threshold")
-    check(errors, 'class="brand-edition"' not in html and 'width="310" height="75"' in html,
-          "the primary navigation must not show the S.G. Palya edition label and must use the larger logo")
-    check(errors, not re.search(r"\bBANGALOOP\b", html, re.I),
-          "the incorrect BANGALOOP spelling must not appear in the canonical page")
-    check(errors, "prefers-reduced-motion: reduce" in css,
-          "shared stylesheet is missing reduced-motion support")
-    check(errors, "width: 100vw" in css and ".site-shell" in css,
-          "shared viewport-sized site shell styles are missing")
-    check(errors, ".scroll-reveal" in css and ".tagline-inner.tagline-enhanced" in css,
-          "scroll-reveal/tagline motion system is missing")
-    check(errors, ":active" in css, "shared stylesheet is missing active interaction states")
-    check(errors, not re.search(r"\b(?:Inter|Arial|Georgia|Roboto|Helvetica)\b", css, re.I),
-          "shared stylesheet contains an unapproved typeface")
-    check(errors, not re.search(r"font:\s*italic|font-style:\s*italic", css, re.I),
-          "shared stylesheet still declares italic text")
-    check(errors, 'name="robots" content="noindex,follow"' in (ROOT / "404.html").read_text(encoding="utf-8"),
-          "404.html must remain excluded from search indexing")
-
-    sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8")
-    check(errors, sitemap.count("<loc>") == 1 and "https://sgpalya.in/</loc>" in sitemap,
-          "sitemap.xml must list only the canonical one-page website")
-
-    print("Inspected the canonical one-page site, " + str(len(ROUTES)) +
-          " legacy route bridges, 6 departments and " + str(role_count) + " recruitment roles.")
-    print("Checked section anchors, navigation, local assets, directory privacy, team structure, form boundaries and reduced motion.")
-    if errors:
-        for error in errors:
-            print("FAIL: " + error)
-        print(str(len(errors)) + " site quality check(s) failed.")
-        return 1
-    print("PASS: all BENGALOOP single-page quality checks passed.")
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
+ def __init__(self):
+  super().__init__(convert_charrefs=True);self.ids=[];self.dups=set();self.seen=set();self.links=[];self.assets=[];self.tags=Counter()
+ def handle_starttag(self,t,a):
+  self.tags[t]+=1;v={k.lower():(x or "") for k,x in a};i=v.get("id","")
+  if i:
+   self.ids.append(i)
+   if i in self.seen:self.dups.add(i)
+   self.seen.add(i)
+  h=v.get("href","")
+  if t=="a" and h:self.links.append(h)
+  if t in {"img","script","source","iframe","audio","video"} and v.get("src"):self.assets.append((t,v["src"]))
+  if t=="link" and h:self.assets.append(("link",h))
+def ck(e,c,m):
+ if not c:e.append(m)
+def target(raw):
+ p=urlsplit(raw)
+ if p.scheme.lower() in EXT or p.netloc:return None,""
+ x=ROOT/unquote(p.path or "index.html").lstrip("/")
+ try:x.resolve().relative_to(ROOT.resolve())
+ except ValueError:return None,unquote(p.fragment)
+ if x.is_dir():x=x/"index.html"
+ return x,unquote(p.fragment)
+def main():
+ e=[];hp=ROOT/"index.html";tp=ROOT/"our-team.html"
+ ck(e,hp.is_file(),"index.html missing");ck(e,tp.is_file(),"our-team.html missing")
+ if e:print("\n".join(e));return 1
+ h=hp.read_text(encoding="utf-8");t=tp.read_text(encoding="utf-8");p=Inspector();p.feed(h);q=Inspector();q.feed(t)
+ ck(e,p.tags["h1"]==1,"homepage needs one H1");ck(e,not p.dups,"duplicate homepage IDs")
+ ck(e,'name="robots" content="index,follow,max-image-preview:large"' in h,"homepage must be indexable")
+ ck(e,'rel="canonical" href="https://sgpalya.in/"' in h,"homepage canonical URL missing")
+ for s in ("Google &amp; Maps presence","Social media management","Content &amp; creative production","WhatsApp Business setup"):ck(e,s in h,"missing launch service "+s)
+ ck(e,h.count('class="agency-service-card"')==4,"homepage must feature four initial services")
+ ck(e,h.count('<details class="agency-next-card">')==6,"additional services should remain secondary/expandable")
+ for s in ("Paid advertising","Websites &amp; digital catalogues","Local &amp; offline campaigns","Customer retention","Strategy &amp; reputation","Business training"):ck(e,s in h,"missing secondary service "+s)
+ ck(e,'id="businessEnquiryForm"' in h and 'id="businessEnquiryStatus"' in h,"business enquiry form/status missing")
+ ck(e,'data-form-endpoint=""' in h and "Online submissions are being connected" in h and "nothing is sent or stored" in h,"form must clearly explain that submissions are disabled until a secure endpoint is configured")
+ ck(e,'name="consent"' in h and 'name="businessName"' in h and 'name="phone"' in h,"form required fields/consent missing")
+ ck(e,f'<span class="member-count-number">{15}</span>' in h and 'href="our-team.html"' in h,"15-member team bar must link to full team")
+ ck(e,h.count('class="agency-leader-card')==3,"homepage should show Founder and two Co-founders only")
+ ck(e,"listingGrid" not in h and "department-grid" not in h and "ZERO FROM SCRATCH" not in h and "19 current roles" not in h,"old directory/recruitment content still on homepage")
+ ck(e,not (ROOT/"SITE_SUSPENDED").exists(),"suspension marker must be removed")
+ ck(e,'name="robots" content="index,follow"' in t,"team page must be indexable")
+ for n in ("Naval Aggarwal","Rhythm Mehrotra","Yuval Ostwal","Ripunjay Raj","Su Mayur","Rahul Raj Gupta","Pranjita Devi","Misbah Ur Rahman","Bhavana Chandrashekar","Swara Upadhayay","Pradyumn Verma","Rajath. R","Anon Biju","Mohammed Jawadh","Johan Biju","Subhankar Raj Gupta","Nidhish Aggarwal","Mohansh Arora"):ck(e,n in t,"missing team profile "+n)
+ ck(e,'id="team"' in t and "team-level-cofounders" in t and "team-level-members" in t,"team hierarchy missing")
+ ck(e,'Junior Web Developer &amp; Technical Support Member' in t and "Chief Technology Officer" not in t,"Subhankar role classification changed")
+ for raw in p.links:
+  x,f=target(raw)
+  if x and f and x.resolve()==hp.resolve():ck(e,f in p.ids,"broken homepage anchor #"+f)
+  if x and f and x.resolve()==tp.resolve():ck(e,f in q.ids,"broken team page anchor #"+f)
+ for kind,raw in p.assets+q.assets:
+  x,_=target(raw)
+  if x is not None:ck(e,x.is_file(),f"missing {kind}: {raw}")
+ for name,dest in ROUTES.items():
+  x=ROOT/name;ck(e,x.is_file(),"legacy page missing "+name)
+  if x.is_file():
+   s=x.read_text(encoding="utf-8");ck(e,'content="noindex,follow"' in s,name+" should be noindex");ck(e,dest in s,name+" wrong destination")
+ css=(ROOT/"agency.css").read_text(encoding="utf-8");js=(ROOT/"relaunch.js").read_text(encoding="utf-8")
+ ck(e,"@media(max-width:600px)" in css and "prefers-reduced-motion:reduce" in css,"mobile/reduced motion styles missing")
+ ck(e,'credentials' in js and 'omit' in js and 'fetch(endpoint' in js,"form submission privacy boundary missing")
+ robots=(ROOT/"robots.txt").read_text(encoding="utf-8");sm=(ROOT/"sitemap.xml").read_text(encoding="utf-8")
+ ck(e,"Allow: /" in robots and "Disallow: /" not in robots,"robots must allow crawl")
+ ck(e,sm.count("<loc>")==2 and "https://sgpalya.in/our-team.html" in sm,"sitemap should list homepage and team")
+ ck(e,(ROOT/"CNAME").read_text(encoding="utf-8").strip()=="sgpalya.in","custom domain mapping changed")
+ if e:
+  for x in e:print("FAIL: "+x)
+  return 1
+ print("PASS: BENGALOOP marketing model, four launch services, form boundary, team hierarchy and crawl settings.")
+ return 0
+if __name__=="__main__":raise SystemExit(main())
