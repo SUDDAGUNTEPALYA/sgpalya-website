@@ -43,7 +43,7 @@ async function checkStudentForm(page, label) {
   await page.waitForFunction(() =>
     document.querySelector("#studentApplicationStatus")?.innerText.includes("Applications are not being collected yet")
   );
-  assert.ok((await page.locator("#studentApplicationStatus").innerText()).includes("not sent or stored"));
+  assert.ok((await page.locator("#studentApplicationStatus").innerText()).includes("not been sent or stored"));
 }
 
 try {
