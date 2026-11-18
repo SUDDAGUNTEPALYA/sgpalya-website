@@ -1,105 +1,281 @@
 #!/usr/bin/env python3
-"""Quality checks for the BENGALOOP local marketing website."""
+"""Quality checks for the BENGALOOP business-growth ecosystem website."""
 from collections import Counter
 from html.parser import HTMLParser
 from pathlib import Path
-from urllib.parse import unquote,urlsplit
+from urllib.parse import unquote, urlsplit
 import re
-ROOT=Path(__file__).resolve().parents[1]
-ROUTES={"explore.html":"index.html#services","directory.html":"index.html#services","pg-housing.html":"index.html#services","for-businesses.html":"index.html#business-enquiry","business-registration.html":"index.html#business-enquiry","our-story.html":"index.html","what-we-do.html":"index.html#services","departments.html":"our-team.html#team"}
-EXT={"http","https","mailto","tel","sms","data","javascript"}
+
+ROOT = Path(__file__).resolve().parents[1]
+ROUTES = {
+    "explore.html": "index.html#services",
+    "directory.html": "index.html#services",
+    "pg-housing.html": "index.html#services",
+    "for-businesses.html": "index.html#business-enquiry",
+    "business-registration.html": "index.html#business-enquiry",
+    "our-story.html": "index.html",
+    "what-we-do.html": "index.html#services",
+    "departments.html": "our-team.html#team",
+}
+EXTERNAL_SCHEMES = {"http", "https", "mailto", "tel", "sms", "data", "javascript"}
+
 class Inspector(HTMLParser):
- def __init__(self):
-  super().__init__(convert_charrefs=True);self.ids=[];self.dups=set();self.seen=set();self.links=[];self.assets=[];self.tags=Counter()
- def handle_starttag(self,t,a):
-  self.tags[t]+=1;v={k.lower():(x or "") for k,x in a};i=v.get("id","")
-  if i:
-   self.ids.append(i)
-   if i in self.seen:self.dups.add(i)
-   self.seen.add(i)
-  h=v.get("href","")
-  if t=="a" and h:self.links.append(h)
-  if t in {"img","script","source","iframe","audio","video"} and v.get("src"):self.assets.append((t,v["src"]))
-  if t=="link" and h:self.assets.append(("link",h))
-def ck(e,c,m):
- if not c:e.append(m)
-def target(raw):
- p=urlsplit(raw)
- if p.scheme.lower() in EXT or p.netloc:return None,""
- x=ROOT/unquote(p.path or "index.html").lstrip("/")
- try:x.resolve().relative_to(ROOT.resolve())
- except ValueError:return None,unquote(p.fragment)
- if x.is_dir():x=x/"index.html"
- return x,unquote(p.fragment)
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.ids = []
+        self.duplicates = set()
+        self.seen = set()
+        self.links = []
+        self.assets = []
+        self.tags = Counter()
+
+    def handle_starttag(self, tag, attrs):
+        self.tags[tag] += 1
+        values = {key.lower(): (value or "") for key, value in attrs}
+        element_id = values.get("id", "")
+        if element_id:
+            self.ids.append(element_id)
+            if element_id in self.seen:
+                self.duplicates.add(element_id)
+            self.seen.add(element_id)
+        href = values.get("href", "")
+        if tag == "a" and href:
+            self.links.append(href)
+        if tag in {"img", "script", "source", "iframe", "audio", "video"} and values.get("src"):
+            self.assets.append((tag, values["src"]))
+        if tag == "link" and href:
+            self.assets.append(("link", href))
+
+def check(errors, condition, message):
+    if not condition:
+        errors.append(message)
+
+def local_target(raw):
+    parsed = urlsplit(raw)
+    if parsed.scheme.lower() in EXTERNAL_SCHEMES or parsed.netloc:
+        return None, ""
+    target = ROOT / unquote(parsed.path or "index.html").lstrip("/")
+    try:
+        target.resolve().relative_to(ROOT.resolve())
+    except ValueError:
+        return None, unquote(parsed.fragment)
+    if target.is_dir():
+        target = target / "index.html"
+    return target, unquote(parsed.fragment)
+
 def main():
- e=[];hp=ROOT/"index.html";tp=ROOT/"our-team.html";jp=ROOT/"join-us.html"
- ck(e,hp.is_file(),"index.html missing");ck(e,tp.is_file(),"our-team.html missing")
- if e:print("\n".join(e));return 1
- h=hp.read_text(encoding="utf-8");t=tp.read_text(encoding="utf-8");j=jp.read_text(encoding="utf-8") if jp.is_file() else "";p=Inspector();p.feed(h);q=Inspector();q.feed(t);r=Inspector();r.feed(j)
- ck(e,p.tags["h1"]==1,"homepage needs one H1");ck(e,not p.dups,"duplicate homepage IDs")
- ck(e,'name="robots" content="index,follow,max-image-preview:large"' in h,"homepage must be indexable")
- ck(e,'rel="canonical" href="https://sgpalya.in/"' in h,"homepage canonical URL missing")
- for s in ("Google &amp; Maps presence","Social media management","Content &amp; creative production","WhatsApp Business setup"):ck(e,s in h,"missing launch service "+s)
- ck(e,h.count('class="agency-service-card"')==4,"homepage must feature four initial services")
- ck(e,h.count('<details class="agency-next-card">')==6,"additional services should remain secondary/expandable")
- for s in ("Paid advertising","Websites &amp; digital catalogues","Local &amp; offline campaigns","Customer retention","Strategy &amp; reputation","Business training"):ck(e,s in h,"missing secondary service "+s)
- ck(e,'id="businessEnquiryForm"' in h and 'id="businessEnquiryStatus"' in h,"business enquiry form/status missing")
- ck(e,'data-form-endpoint=""' in h and "Online submissions are being connected" in h and "nothing is sent or stored" in h,"form must clearly explain that submissions are disabled until a secure endpoint is configured")
- ck(e,'name="consent"' in h and 'name="businessName"' in h and 'name="phone"' in h,"form required fields/consent missing")
- ck(e,f'<span class="member-count-number">{18}</span>' in h and 'href="our-team.html"' in h,"18-member team bar must link to full team")
- ck(e,h.count('class="agency-leader-card')==2 and "02 / TEAM MEMBER" in h,"homepage should show the Founder and a correctly labelled team-member spotlight")
- ck(e,"listingGrid" not in h and "department-grid" not in h and "ZERO FROM SCRATCH" not in h and "19 current roles" not in h,"old directory/recruitment content still on homepage")
- ck(e,not (ROOT/"SITE_SUSPENDED").exists(),"suspension marker must be removed")
- ck(e,'name="robots" content="index,follow"' in t,"team page must be indexable")
- for n in ("Naval Aggarwal","Rhythm Mehrotra","Yuval Ostwal","Ripunjay Raj","Su Mayur","Rahul Raj Gupta","Pranjita Devi","Misbah Ur Rahman","Bhavana Chandrashekar","Swara Upadhayay","Pradyumn Verma","Rajath. R","Anon Biju","Mohammed Jawadh","Johan Biju","Subhankar Raj Gupta","Nidhish Aggarwal","Mohansh Arora","Jenneth Pinto"):ck(e,n in t,"missing team profile "+n)
- ck(e,'id="team"' in t and "team-level-cofounders" not in t and "team-level-members" in t,"Founder-to-members hierarchy missing")
- # Co-founder tier removed; non-founder profiles are checked in the members grid.
- mem=t.split('<div class="team-grid team-grid-members">',1)[1] if '<div class="team-grid team-grid-members">' in t else ""
- members_section=t.split('<section class="team-level team-level-members"',1)[1].split("</section>",1)[0] if '<section class="team-level team-level-members"' in t else ""
- member_cards=re.findall(r'<article class="[^"]*team-card[^"]*">[\s\S]*?</article>',members_section)
- ck(e,len(member_cards)==18,"members category must contain eighteen visible profiles")
- ck(e,all('<span class="team-status">TEAM MEMBER</span>' in card for card in member_cards),"every member profile must display the TEAM MEMBER badge")
- ck(e,all("team-card-new" not in card for card in member_cards),"member profiles must use the standard team-card appearance")
- template=t.split('<template id="teamMemberProfileTemplate">',1)[1].split("</template>",1)[0] if '<template id="teamMemberProfileTemplate">' in t else ""
- ck(e,'<span class="team-status">TEAM MEMBER</span>' in template,"reusable member template must include the TEAM MEMBER badge")
- ck(e,"Yuval Ostwal" in mem,"Yuval must be listed as an ordinary member")
- yu_at=mem.find("Yuval Ostwal")
- yu_start=mem.rfind("<article",0,yu_at)
- yu_card=mem[yu_start:mem.find("</article>",yu_at)+10] if yu_at>=0 and yu_start>=0 else ""
- ck(e,"team-card-cofounder" not in yu_card and "TEAM MEMBER" in yu_card,"Yuval's profile card must use ordinary-member styling")
- rhythm_at=mem.find("Rhythm Mehrotra")
- rhythm_start=mem.rfind("<article",0,rhythm_at)
- rhythm_card=mem[rhythm_start:mem.find("</article>",rhythm_at)+10] if rhythm_at>=0 and rhythm_start>=0 else ""
- ck(e,rhythm_at>=0 and "Co-Founder" not in rhythm_card and "TEAM MEMBER" in rhythm_card and "Human Resources Manager" in rhythm_card,"Rhythm must be listed as an ordinary Human Resources team member")
- ck(e,"01 Founder" in t and "18 Members" in t and "Co-founder" not in t,"team counts must show one founder and eighteen members, with no co-founder tier")
- ck(e,jp.is_file() and 'rel="canonical" href="https://sgpalya.in/join-us.html"' in j,"student recruitment page/canonical missing")
- ck(e,"RECRUITMENT OPEN" in j and j.count('class="dept-card"')==8,"student page must show open recruitment and eight departments")
- for field in ('name="name"','name="registerNumber"','name="class"','name="department"'):
-  ck(e,field in j,"student application form missing "+field)
- ck(e,'data-form-endpoint=""' in j and "not being collected yet" in j and "not been sent or stored" in j,"student form must state that submissions are disabled")
- ck(e,'href="join-us.html"' in h and 'href="join-us.html"' in t,"recruitment link missing from homepage/team navigation")
- ck(e,'Junior Web Developer &amp; Technical Support Member' in t and "Chief Technology Officer" not in t,"Subhankar role classification changed")
- for raw in p.links:
-  x,f=target(raw)
-  if x and f and x.resolve()==hp.resolve():ck(e,f in p.ids,"broken homepage anchor #"+f)
-  if x and f and x.resolve()==tp.resolve():ck(e,f in q.ids,"broken team page anchor #"+f)
- for kind,raw in p.assets+q.assets+r.assets:
-  x,_=target(raw)
-  if x is not None:ck(e,x.is_file(),f"missing {kind}: {raw}")
- for name,dest in ROUTES.items():
-  x=ROOT/name;ck(e,x.is_file(),"legacy page missing "+name)
-  if x.is_file():
-   s=x.read_text(encoding="utf-8");ck(e,'content="noindex,follow"' in s,name+" should be noindex");ck(e,dest in s,name+" wrong destination")
- css=(ROOT/"agency.css").read_text(encoding="utf-8");js=(ROOT/"relaunch.js").read_text(encoding="utf-8")
- ck(e,"@media(max-width:600px)" in css and "prefers-reduced-motion:reduce" in css,"mobile/reduced motion styles missing")
- ck(e,'credentials' in js and 'omit' in js and 'fetch(endpoint' in js,"form submission privacy boundary missing")
- robots=(ROOT/"robots.txt").read_text(encoding="utf-8");sm=(ROOT/"sitemap.xml").read_text(encoding="utf-8")
- ck(e,"Allow: /" in robots and "Disallow: /" not in robots,"robots must allow crawl")
- ck(e,sm.count("<loc>")==3 and "https://sgpalya.in/our-team.html" in sm and "https://sgpalya.in/join-us.html" in sm,"sitemap should list homepage, team and recruitment pages")
- ck(e,(ROOT/"CNAME").read_text(encoding="utf-8").strip()=="sgpalya.in","custom domain mapping changed")
- if e:
-  for x in e:print("FAIL: "+x)
-  return 1
- print("PASS: BENGALOOP marketing model, four launch services, form boundary, team hierarchy and crawl settings.")
- return 0
-if __name__=="__main__":raise SystemExit(main())
+    errors = []
+    paths = {
+        "home": ROOT / "index.html",
+        "team": ROOT / "our-team.html",
+        "lab": ROOT / "join-us.html",
+    }
+    for label, path in paths.items():
+        check(errors, path.is_file(), f"{label} page missing: {path.name}")
+    if errors:
+        print("\n".join(errors))
+        return 1
+
+    home = paths["home"].read_text(encoding="utf-8")
+    team = paths["team"].read_text(encoding="utf-8")
+    lab = paths["lab"].read_text(encoding="utf-8")
+    home_doc, team_doc, lab_doc = Inspector(), Inspector(), Inspector()
+    home_doc.feed(home)
+    team_doc.feed(team)
+    lab_doc.feed(lab)
+
+    # Homepage: indexability, central message, two-beneficiary model and current offer.
+    check(errors, home_doc.tags["h1"] == 1, "homepage needs exactly one H1")
+    check(errors, not home_doc.duplicates, "duplicate homepage IDs")
+    check(errors, 'name="robots" content="index,follow,max-image-preview:large"' in home,
+          "homepage must be indexable")
+    check(errors, 'rel="canonical" href="https://sgpalya.in/"' in home, "homepage canonical missing")
+    check(errors, "Student-Powered Business Growth Ecosystem" in home,
+          "homepage title/positioning is not updated")
+    check(errors, "Growing businesses." in home and "Developing people." in home,
+          "homepage brand message missing")
+    check(errors, home.count('class="eco-model-card"') == 2,
+          "homepage should explain both business and student outcomes")
+    check(errors, home.count('class="eco-journey-step"') == 3,
+          "homepage should show the three-stage growth direction")
+    for service in (
+        "Google &amp; Maps presence",
+        "Social media management",
+        "Content &amp; creative production",
+        "WhatsApp Business setup",
+    ):
+        check(errors, service in home, "missing current launch service: " + service)
+    check(errors, home.count('class="agency-service-card"') == 4,
+          "homepage must retain four current launch services")
+    check(errors, home.count('<details class="agency-next-card">') == 6,
+          "six additional consultation services should remain secondary/expandable")
+    for service in (
+        "Paid advertising", "Websites &amp; digital catalogues", "Local &amp; offline campaigns",
+        "Customer retention", "Strategy &amp; reputation", "Business training",
+    ):
+        check(errors, service in home, "missing additional service: " + service)
+    check(errors, 'id="businessEnquiryForm"' in home and 'id="businessEnquiryStatus"' in home,
+          "business enquiry form/status missing")
+    check(errors, 'data-form-endpoint=""' in home and "nothing is sent or stored" in home,
+          "business enquiry must clearly state that submissions are disabled")
+    check(errors, 'name="consent"' in home and 'name="businessName"' in home and 'name="phone"' in home,
+          "business enquiry required fields/consent missing")
+    check(errors, '<span class="member-count-number">18</span>' in home and 'href="our-team.html"' in home,
+          "homepage team count/link must show eighteen members")
+    check(errors, home.count('class="agency-leader-card') == 2,
+          "homepage should retain two leadership/team preview cards")
+    check(errors, "Experiment Lab" in home and 'href="join-us.html"' in home,
+          "homepage Experiment Lab link missing")
+    check(errors, "Not affiliated with or endorsed by CHRIST University." in home,
+          "homepage institutional-independence note missing")
+
+    # Team page: one founder plus eighteen ordinary members.
+    check(errors, 'name="robots" content="index,follow"' in team, "team page must be indexable")
+    for person in (
+        "Naval Aggarwal", "Yuval Ostwal", "Rhythm Mehrotra", "Ripunjay Raj", "Su Mayur",
+        "Rahul Raj Gupta", "Pranjita Devi", "Misbah Ur Rahman", "Bhavana Chandrashekar",
+        "Swara Upadhayay", "Pradyumn Verma", "Rajath. R", "Anon Biju", "Mohammed Jawadh",
+        "Johan Biju", "Subhankar Raj Gupta", "Nidhish Aggarwal", "Mohansh Arora", "Jenneth Pinto",
+    ):
+        check(errors, person in team, "missing team profile: " + person)
+    members_section = (
+        team.split('<section class="team-level team-level-members"', 1)[1].split("</section>", 1)[0]
+        if '<section class="team-level team-level-members"' in team else ""
+    )
+    member_cards = re.findall(r'<article class="[^"]*team-card[^"]*">[\s\S]*?</article>', members_section)
+    check(errors, 'id="team"' in team and "team-level-members" in team,
+          "Founder-to-members hierarchy missing")
+    check(errors, len(member_cards) == 18, "members category must contain eighteen visible profiles")
+    check(errors, all('<span class="team-status">TEAM MEMBER</span>' in card for card in member_cards),
+          "every member profile must display the TEAM MEMBER badge")
+    check(errors, all("team-card-new" not in card for card in member_cards),
+          "member profiles must use standard team-card styling")
+    check(errors, "01 Founder" in team and "18 Members" in team and "Co-founder" not in team,
+          "team counts must show one founder and eighteen members, with no co-founder tier")
+    check(errors, "Experiment Lab" in team and "Not affiliated with or endorsed by CHRIST University." in team,
+          "team page Experiment Lab link or independence note missing")
+
+    # Experiment Lab: four courses, six departments, nineteen role pathways.
+    check(errors, 'rel="canonical" href="https://sgpalya.in/join-us.html"' in lab,
+          "Experiment Lab canonical missing")
+    check(errors, lab_doc.tags["h1"] == 1 and not lab_doc.duplicates,
+          "Experiment Lab needs exactly one H1 and unique IDs")
+    check(errors, "EXPERIMENT LAB" in lab and "independent student-led initiative" in lab,
+          "Experiment Lab identity/independence statement missing")
+    check(errors, lab.count('class="lab-course-card"') == 4,
+          "Experiment Lab must show four academic pathways")
+    check(errors, lab.count('class="lab-dept-card"') == 6,
+          "Experiment Lab must show six departments")
+    check(errors, lab.count('class="lab-role"') == 19,
+          "Experiment Lab must describe nineteen role pathways")
+    for pathway in (
+        "B.Com Global Management Accounting &amp; Strategy", "Integrated with CIMA UK",
+        "B.Com International Accountancy &amp; Finance", "Integrated with ACCA",
+        "B.Com Branding &amp; Entrepreneurship", "B.Com Accountancy &amp; Finance",
+        "Integrated with CA – ICAI",
+    ):
+        check(errors, pathway in lab, "missing academic pathway detail: " + pathway)
+    for department in (
+        "Business Strategy &amp; Research", "Finance &amp; Business Analysis",
+        "Brand, Marketing &amp; Creative", "Business Development &amp; Client Partnerships",
+        "Technology &amp; Digital Solutions", "Operations, Projects &amp; People",
+    ):
+        check(errors, department in lab, "missing Experiment Lab department: " + department)
+    lower_lab = lab.lower()
+    for phrase in ("not an official project of", "not affiliated with", "endorsed by"):
+        check(errors, phrase in lower_lab, "Experiment Lab institutional disclosure missing: " + phrase)
+    check(errors, "exploring opportunities for academic collaboration" in lower_lab,
+          "academic collaboration invitation missing")
+    check(errors, "illustrative scenario" in lower_lab and "not a claim" in lower_lab,
+          "illustrative business case should be clearly labelled")
+
+    # Preserve the exact four-field recruitment form and disabled-submission boundary.
+    check(errors, 'id="studentApplicationForm"' in lab and 'data-form-endpoint=""' in lab,
+          "student application form or disabled endpoint missing")
+    application = re.search(r'<form[^>]*id="studentApplicationForm"[^>]*>([\s\S]*?)</form>', lab)
+    application_names = re.findall(r'name="([^"]+)"', application.group(1)) if application else []
+    check(errors, application_names == ["name", "registerNumber", "class", "department"],
+          "student application form must retain exactly the original four fields")
+    check(errors, "Applications are not being collected yet" in lab and
+          "not sent or stored" in lab,
+          "student form must clearly state that applications are not being collected")
+    check(errors, lab.count("<option>Business Strategy &amp; Research</option>") == 1 and
+          lab.count("<option>Operations, Projects &amp; People</option>") == 1,
+          "student application department choices missing or duplicated")
+    check(errors, 'id="studentApplicationStatus"' in lab,
+          "student application status region missing")
+    check(errors, "not currently affiliated with" in lower_lab and
+          "CHRIST (Deemed to be University)" in lab and "endorsed by" in lower_lab,
+          "Experiment Lab institutional footer note missing")
+
+    # Shared navigation and local links.
+    check(errors, 'href="join-us.html"' in home and 'href="join-us.html"' in team and
+          "Experiment Lab" in home and "Experiment Lab" in team,
+          "Experiment Lab navigation missing from homepage or team page")
+    for source, doc, label in (
+        (home, home_doc, "homepage"),
+        (team, team_doc, "team"),
+        (lab, lab_doc, "Experiment Lab"),
+    ):
+        for raw in doc.links:
+            if raw.startswith("#"):
+                check(errors, raw[1:] in doc.ids, f"broken {label} local anchor {raw}")
+                continue
+            target, fragment = local_target(raw)
+            if target and fragment and target.resolve() == (ROOT / "index.html").resolve():
+                check(errors, fragment in home_doc.ids, f"broken {label} homepage anchor #{fragment}")
+            elif target and fragment and target.resolve() == (ROOT / "our-team.html").resolve():
+                check(errors, fragment in team_doc.ids, f"broken {label} team anchor #{fragment}")
+            elif target and fragment and target.resolve() == (ROOT / "join-us.html").resolve():
+                check(errors, fragment in lab_doc.ids, f"broken {label} Experiment Lab anchor #{fragment}")
+        for kind, raw in doc.assets:
+            target, _ = local_target(raw)
+            if target is not None:
+                check(errors, target.is_file(), f"missing {label} {kind}: {raw}")
+
+    for name, destination in ROUTES.items():
+        route = ROOT / name
+        check(errors, route.is_file(), "legacy route missing: " + name)
+        if route.is_file():
+            route_html = route.read_text(encoding="utf-8")
+            check(errors, 'content="noindex,follow"' in route_html, name + " should be noindex")
+            check(errors, destination in route_html, name + " has the wrong destination")
+
+    agency_css = (ROOT / "agency.css").read_text(encoding="utf-8")
+    ecosystem_css_path = ROOT / "ecosystem-home.css"
+    lab_css_path = ROOT / "experiment-lab.css"
+    check(errors, ecosystem_css_path.is_file(), "homepage ecosystem stylesheet missing")
+    check(errors, lab_css_path.is_file(), "Experiment Lab stylesheet missing")
+    ecosystem_css = ecosystem_css_path.read_text(encoding="utf-8") if ecosystem_css_path.is_file() else ""
+    lab_css = lab_css_path.read_text(encoding="utf-8") if lab_css_path.is_file() else ""
+    check(errors, "@media(max-width:600px)" in agency_css and
+          "prefers-reduced-motion:reduce" in agency_css,
+          "shared mobile/reduced-motion styles missing")
+    check(errors, ".eco-model-section" in ecosystem_css and "@media(max-width:600px)" in ecosystem_css,
+          "homepage ecosystem stylesheet lacks responsive rules")
+    check(errors, ".lab-course-card" in lab_css and ".lab-dept-card" in lab_css and
+          "@media(max-width:520px)" in lab_css,
+          "Experiment Lab stylesheet lacks responsive components")
+
+    robots = (ROOT / "robots.txt").read_text(encoding="utf-8")
+    sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8")
+    check(errors, "Allow: /" in robots and "Disallow: /" not in robots,
+          "robots.txt must allow crawling")
+    check(errors, sitemap.count("<loc>") == 3 and
+          "https://sgpalya.in/our-team.html" in sitemap and
+          "https://sgpalya.in/join-us.html" in sitemap,
+          "sitemap should list homepage, team and Experiment Lab")
+    check(errors, (ROOT / "CNAME").read_text(encoding="utf-8").strip() == "sgpalya.in",
+          "custom domain mapping changed")
+    check(errors, not (ROOT / "SITE_SUSPENDED").exists(), "suspension marker must be absent")
+
+    if errors:
+        for error in errors:
+            print("FAIL: " + error)
+        return 1
+    print("PASS: BENGALOOP ecosystem, business services, four academic pathways, six departments, "
+          "nineteen roles, unchanged four-field form, team hierarchy, links, assets and crawl settings.")
+    return 0
+
+if __name__ == "__main__":
+    raise SystemExit(main())
