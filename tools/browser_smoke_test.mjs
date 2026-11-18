@@ -92,9 +92,9 @@ try {
   assert.equal(await labDesktop.locator(".lab-dept-card").count(), 6);
   assert.equal(await labDesktop.locator(".lab-role").count(), 19);
   assert.ok((await labDesktop.locator(".lab-independence").innerText()).includes("not an official project"));
-  await checkStudentForm(labDesktop, "desktop Experiment Lab");
   await noOverflow(labDesktop, "desktop Experiment Lab");
   await labDesktop.screenshot({ path: path.join(out, "desktop-experiment-lab.png"), fullPage: true });
+  await checkStudentForm(labDesktop, "desktop Experiment Lab");
   await labDesktop.close();
 
   // Mobile homepage, drawer and business-enquiry disabled-submission boundary.
@@ -129,9 +129,9 @@ try {
   assert.equal(await labMobile.locator(".lab-course-card").count(), 4);
   assert.equal(await labMobile.locator(".lab-dept-card").count(), 6);
   assert.equal(await labMobile.locator(".lab-role").count(), 19);
-  await checkStudentForm(labMobile, "mobile Experiment Lab");
   await noOverflow(labMobile, "mobile Experiment Lab 390");
   await labMobile.screenshot({ path: path.join(out, "mobile-experiment-lab-390.png"), fullPage: true });
+  await checkStudentForm(labMobile, "mobile Experiment Lab");
   await labMobile.close();
 
   const narrowLab = await openPage("/join-us.html", { width: 360, height: 800 }, "mobile Experiment Lab 360");
