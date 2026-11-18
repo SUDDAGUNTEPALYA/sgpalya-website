@@ -66,7 +66,7 @@ def main():
  member_names=[name for name in re.findall(r"<h3>(.*?)</h3>",mem) if name!="FULL NAME"]
  ck(e,len(member_names)==16,"team page must show sixteen ordinary members")
  ck(e,jp.is_file() and 'rel="canonical" href="https://sgpalya.in/join-us.html"' in j,"student recruitment page/canonical missing")
- ck(e,"RECRUITMENT OPEN" in j and j.count('class="department-card"')==6,"student page must show open recruitment and six departments")
+ ck(e,"ROLE EXPLORER OPEN" in j and "Application submissions will open" in j and j.count('class="department-card"')==6,"student page must show role exploration and six departments without claiming applications are live")
  ck(e,'id="departments"' in j and 'id="departmentExplorer"' in j and 'id="departmentRoleList"' in j and 'id="roleDetailPanel"' in j,"student role explorer markup is incomplete")
  ck(e,'src="recruitment.js' in j,"student role explorer script is not loaded")
  ck(e,len(re.findall(r'\{id:"[^"]+",name:"[^"]+"',role_js))==19,"recruitment source must define nineteen role profiles")
