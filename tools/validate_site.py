@@ -122,6 +122,10 @@ def main():
           "business enquiry must clearly state that submissions are disabled")
     check(errors, 'name="consent"' in home and 'name="businessName"' in home and 'name="phone"' in home,
           "business enquiry required fields/consent missing")
+    check(errors, "PG / Hostel / Accommodation" not in home and
+          "Startups &amp; Technology" in home and
+          "Manufacturing &amp; Business Services" in home,
+          "business categories must reflect the current growth-ecosystem audience, not the retired directory model")
     check(errors, '<span class="member-count-number">18</span>' in home and 'href="our-team.html"' in home,
           "homepage team count/link must show eighteen members")
     check(errors, home.count('class="agency-leader-card') == 2,
@@ -254,6 +258,10 @@ def main():
             route_html = route.read_text(encoding="utf-8")
             check(errors, 'content="noindex,follow"' in route_html, name + " should be noindex")
             check(errors, destination in route_html, name + " has the wrong destination")
+            check(errors, "local marketing experience" not in route_html.lower(),
+                  name + " still describes the retired model")
+            check(errors, "student-powered business growth ecosystem" in route_html.lower(),
+                  name + " should identify the current ecosystem")
 
     agency_css = (ROOT / "agency.css").read_text(encoding="utf-8")
     ecosystem_css_path = ROOT / "ecosystem-home.css"

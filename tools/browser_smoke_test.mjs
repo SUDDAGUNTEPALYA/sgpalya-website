@@ -111,7 +111,9 @@ try {
   await mobile.waitForFunction(() => location.hash === "#business-enquiry");
   await mobile.locator('[name="businessName"]').fill("Sample Cafe");
   await mobile.locator('[name="contactName"]').fill("Sample Owner");
-  await mobile.locator('[name="category"]').selectOption({ label: "Food & Beverage" });
+  await mobile.locator('[name="category"]').selectOption({ label: "Food & Hospitality" });
+  assert.equal(await mobile.locator('[name="category"] option').filter({ hasText: "PG / Hostel / Accommodation" }).count(), 0);
+  assert.equal(await mobile.locator('[name="category"] option').filter({ hasText: "Startups & Technology" }).count(), 1);
   await mobile.locator('[name="locality"]').fill("S.G. Palya, Bengaluru");
   await mobile.locator('[name="phone"]').fill("9876543210");
   await mobile.locator('[name="consent"]').check();
