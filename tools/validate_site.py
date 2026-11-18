@@ -226,6 +226,7 @@ def main():
           "CHRIST (Deemed to be University)" in lab and "endorsed by" in lower_lab,
           "Experiment Lab institutional footer note missing")
 
+    # Reject legacy local-directory product language in business categories and redirects.
     # Shared navigation and local links.
     check(errors, 'href="join-us.html"' in home and 'href="join-us.html"' in team and
           "Experiment Lab" in home and "Experiment Lab" in team,
