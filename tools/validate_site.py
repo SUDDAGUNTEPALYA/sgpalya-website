@@ -69,6 +69,7 @@ def main():
         "home": ROOT / "index.html",
         "team": ROOT / "our-team.html",
         "lab": ROOT / "join-us.html",
+        "vk": ROOT / "vyapar-kavach.html",
     }
     for label, path in paths.items():
         check(errors, path.is_file(), f"{label} page missing: {path.name}")
@@ -79,10 +80,12 @@ def main():
     home = paths["home"].read_text(encoding="utf-8")
     team = paths["team"].read_text(encoding="utf-8")
     lab = paths["lab"].read_text(encoding="utf-8")
-    home_doc, team_doc, lab_doc = Inspector(), Inspector(), Inspector()
+    vk = paths["vk"].read_text(encoding="utf-8")
+    home_doc, team_doc, lab_doc, vk_doc = Inspector(), Inspector(), Inspector(), Inspector()
     home_doc.feed(home)
     team_doc.feed(team)
     lab_doc.feed(lab)
+    vk_doc.feed(vk)
 
     # Homepage: indexability, central message, two-beneficiary model and current offer.
     check(errors, home_doc.tags["h1"] == 1, "homepage needs exactly one H1")
@@ -226,6 +229,30 @@ def main():
           "CHRIST (Deemed to be University)" in lab and "endorsed by" in lower_lab,
           "Experiment Lab institutional footer note missing")
 
+    # Standalone collaborative microsite. On the three core pages, the project appears only in the menu.
+    check(errors, vk_doc.tags["h1"] == 1 and not vk_doc.duplicates,
+          "Vyapar Kavach needs exactly one H1 and unique IDs")
+    check(errors, 'rel="canonical" href="https://sgpalya.in/vyapar-kavach.html"' in vk,
+          "Vyapar Kavach canonical missing")
+    check(errors, "INSURANCE AWARENESS &amp; BUSINESS PROTECTION INITIATIVE" in vk,
+          "Vyapar Kavach purpose statement missing")
+    check(errors, "STARTING FROM S.G. PALYA AND NEARBY NEIGHBOURHOODS" in vk,
+          "Vyapar Kavach starting geography must include nearby neighbourhoods")
+    for stage in ("COMMUNITY OUTREACH &amp; AWARENESS",
+                  "PERSONALISED LEARNING &amp; COMPARISON SUPPORT",
+                  "MERCHANT INSURANCE AWARENESS PROGRAMME"):
+        check(errors, stage in vk, "Vyapar Kavach stage missing: " + stage)
+    check(errors, "No insurer preferred by default" in vk and
+          "commercial relationship" in vk and "authorised insurance professional" in vk,
+          "Vyapar Kavach impartiality and professional boundaries missing")
+    for source, label in ((home, "homepage"), (team, "team"), (lab, "Experiment Lab")):
+        check(errors, source.count('class="nav-project-link"') == 1 and
+              source.count('href="vyapar-kavach.html"') == 1,
+              label + " must have one featured Vyapar Kavach navigation link")
+    check(errors, home.lower().count("vyapar kavach") == 1 and
+          lab.lower().count("vyapar kavach") == 1,
+          "Vyapar Kavach should appear on homepage and Experiment Lab only as a menu item")
+
     # Reject legacy local-directory product language in business categories and redirects.
     # Shared navigation and local links.
     check(errors, 'href="join-us.html"' in home and 'href="join-us.html"' in team and
@@ -235,6 +262,7 @@ def main():
         (home, home_doc, "homepage"),
         (team, team_doc, "team"),
         (lab, lab_doc, "Experiment Lab"),
+        (vk, vk_doc, "Vyapar Kavach"),
     ):
         for raw in doc.links:
             if raw.startswith("#"):
@@ -284,10 +312,11 @@ def main():
     sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8")
     check(errors, "Allow: /" in robots and "Disallow: /" not in robots,
           "robots.txt must allow crawling")
-    check(errors, sitemap.count("<loc>") == 3 and
+    check(errors, sitemap.count("<loc>") == 4 and
           "https://sgpalya.in/our-team.html" in sitemap and
-          "https://sgpalya.in/join-us.html" in sitemap,
-          "sitemap should list homepage, team and Experiment Lab")
+          "https://sgpalya.in/join-us.html" in sitemap and
+          "https://sgpalya.in/vyapar-kavach.html" in sitemap,
+          "sitemap should list homepage, team, Experiment Lab and Vyapar Kavach")
     check(errors, (ROOT / "CNAME").read_text(encoding="utf-8").strip() == "sgpalya.in",
           "custom domain mapping changed")
     check(errors, not (ROOT / "SITE_SUSPENDED").exists(), "suspension marker must be absent")
@@ -296,8 +325,8 @@ def main():
         for error in errors:
             print("FAIL: " + error)
         return 1
-    print("PASS: BENGALOOP ecosystem, business services, four academic pathways, six departments, "
-          "nineteen roles, unchanged four-field form, team hierarchy, links, assets and crawl settings.")
+    print("PASS: BENGALOOP ecosystem, Experiment Lab, standalone Vyapar Kavach stages and boundaries, "
+          "navigation, four-field form, team hierarchy, links, assets and crawl settings.")
     return 0
 
 if __name__ == "__main__":

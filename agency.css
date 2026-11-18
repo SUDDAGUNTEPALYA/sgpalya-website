@@ -76,3 +76,19 @@ html{scroll-behavior:smooth;scroll-padding-top:94px;overflow-x:clip}body.agency-
 .recruitment-inline h2{margin:10px 0;color:#173a2e;font-size:32px}.recruitment-inline p{color:#68786d;font-size:12px}
 .agency-team-page .team-page-bottom{display:block}.agency-team-page .team-page-bottom-original{display:flex;align-items:center;justify-content:space-between;gap:25px}
 @media(max-width:700px){.campus-recruitment-banner{align-items:flex-start;flex-direction:column}.agency-team-page .team-page-bottom-original{align-items:flex-start;flex-direction:column}}
+
+
+/* Featured collaborative initiative: intentionally distinct from standard navigation links. */
+.agency-home .site-nav.drawer-nav .drawer-links a.nav-project-link{
+ position:relative;display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 12px;
+ margin:0 0 13px;padding:15px 16px;border:1px solid #d1a64c;
+ background:linear-gradient(110deg,#f4d58d,#e8bd62 62%,#d7a84b);color:#173224;
+ box-shadow:0 8px 20px #b58a3826;
+}
+.agency-home .site-nav.drawer-nav .drawer-links a.nav-project-link:hover{
+ background:linear-gradient(110deg,#ffe6a9,#edc66f 62%,#dfb051);color:#10291d;
+}
+.agency-home .site-nav.drawer-nav .drawer-links a.nav-project-link::after{display:none}
+.agency-home .nav-project-kicker{grid-column:1;color:#70501e;font-family:Manrope,system-ui,sans-serif;font-size:8px;font-weight:900;letter-spacing:2px}
+.agency-home .nav-project-link strong{grid-column:1;color:#173224;font-family:Georgia,"Times New Roman",serif;font-size:16px;letter-spacing:1.8px;line-height:1.2}
+.agency-home .nav-project-arrow{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:#583c12;font-size:23px}

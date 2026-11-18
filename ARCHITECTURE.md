@@ -53,3 +53,11 @@ Service descriptions are capability areas, not blanket guarantees. Each engageme
 - `node tools/browser_smoke_test.mjs`
 
 GitHub Actions runs structural, link, asset, form-contract, JavaScript and Playwright desktop/mobile checks on pushes to main and pull requests to main.
+
+
+## Separate collaborative microsite
+- `vyapar-kavach.html` and `vyapar-kavach.css` form a separately branded insurance-awareness microsite for Project Vyapar Kavach, organised in collaboration with CUFFLINKSIA, Insurance Club of CHRIST (Deemed to be University).
+- It is a distinct initiative, not a BENGALOOP service line, homepage proposition or Experiment Lab workstream. Its only reference on the three core BENGALOOP pages is the featured navigation link.
+- The project explains general business-risk awareness, policy-reading and comparison criteria, its three-stage outreach / learning / workshop model, impartiality safeguards and the boundary between education and regulated insurance distribution.
+- Volunteers must not be represented as insurance agents, brokers, insurers or authorised advisers. Product-specific recommendations, solicitation, quotations and policy placement must be handled by appropriately authorised professionals. Any referral, sponsorship or commercial relationship must be disclosed.
+- `cufflinksia-logo.svg` is a web-ready vector redraw based on the supplied CUFFLINKSIA emblem. The project stylesheet is isolated from the shared BENGALOOP and Experiment Lab styles.
