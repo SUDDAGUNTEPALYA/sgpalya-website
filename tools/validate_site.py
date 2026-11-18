@@ -234,7 +234,7 @@ def main():
           "Vyapar Kavach needs exactly one H1 and unique IDs")
     check(errors, 'rel="canonical" href="https://sgpalya.in/vyapar-kavach.html"' in vk,
           "Vyapar Kavach canonical missing")
-    check(errors, "Insurance Awareness &amp; Business Protection Initiative" in vk,
+    check(errors, "INSURANCE AWARENESS &amp; BUSINESS PROTECTION INITIATIVE" in vk,
           "Vyapar Kavach purpose statement missing")
     check(errors, "STARTING FROM S.G. PALYA AND NEARBY NEIGHBOURHOODS" in vk,
           "Vyapar Kavach starting geography must include nearby neighbourhoods")
