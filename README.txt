@@ -4,22 +4,40 @@ BENGALOOP — Local Marketing & Creative Studio
 BENGALOOP is a local marketing and creative studio serving businesses in
 S.G. Palya, Bengaluru.
 
-Public pages:
-  index.html       Local marketing services, enquiry form and leadership preview
-  our-team.html    Full Founder → Co-founders → Members hierarchy
+Active public pages:
+  index.html       Local marketing services, business enquiry preview and leadership
+  our-team.html    Founder → 2 Co-founders → 16 Members
+  join-us.html     Campus recruitment overview and application preview
   agency.css       Mobile-first relaunch design system
-  relaunch.js      Navigation and business enquiry form behaviour
+  relaunch.js      Shared navigation and business enquiry behaviour
+
+Team structure:
+  Founder & CEO: Naval Aggarwal
+  Co-founders: Rhythm Mehrotra and Yuval Ostwal
+  Chief Technology Officer: Subhankar Raj Gupta (Member tier)
+  Other team members: 15
+  Total: 19 people
 
 Launch service focus: Google Business Profile / Maps presence, social media
 management, content and creative production, and WhatsApp Business setup.
 Additional capabilities are offered by consultation.
 
-FORM STATUS: The enquiry form is designed but is not live until a secure server
-submission endpoint is configured in data-form-endpoint. While blank, no details
-are sent or stored; the page explicitly warns visitors not to enter real data.
+FORM STATUS: Both the business enquiry and student application forms are
+preview-only. The business form's data-form-endpoint is blank, and the student
+form's submit handler only displays a preview notice. Neither form sends or
+stores submitted details. Do not collect real data until secure server-side
+submission and access controls are configured.
 
-The complete Founder, two Co-founder and 15-member profile hierarchy remains on
-our-team.html. The homepage shows leadership and links to the complete team.
+LEGACY FILES: script.js (CSV directory), recruitment.js (six-department role
+explorer) and business-registration.js (old registration preview) are retained
+for reference and are not loaded by the current public pages.
 
-Checks: python tools/validate_site.py; node --check relaunch.js;
-node tools/browser_smoke_test.mjs. CNAME remains sgpalya.in.
+Checks:
+  python tools/validate_site.py
+  node --check relaunch.js
+  node --check script.js
+  node --check recruitment.js
+  node --check business-registration.js
+  node tools/browser_smoke_test.mjs
+
+CNAME remains sgpalya.in.
