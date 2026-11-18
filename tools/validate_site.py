@@ -130,7 +130,7 @@ def main():
           "homepage Experiment Lab link missing")
     check(errors, "Not affiliated with or endorsed by CHRIST University." in home,
           "homepage institutional-independence note missing")
-    check(errors, "starting in S.G. Palya" in home and "nearby areas" in home,
+    check(errors, "s.g. palya and nearby areas" in home.lower() and "our starting point" in home.lower(),
           "homepage must frame S.G. Palya as the starting geography")
     check(errors, not re.search(r"local business directory|neighbourhood directory|local discovery platform", home, re.I),
           "retired local-directory positioning must not appear on homepage")
@@ -207,8 +207,8 @@ def main():
     application_names = re.findall(r'name="([^"]+)"', application.group(1)) if application else []
     check(errors, application_names == ["name", "registerNumber", "class", "department"],
           "student application form must retain exactly the original four fields")
-    check(errors, "Applications are not being collected yet" in lab and
-          "not sent or stored" in lab,
+    check(errors, "applications are not being collected yet" in lab.lower() and
+          "not been sent or stored" in lab.lower(),
           "student form must clearly state that applications are not being collected")
     check(errors, 'data-requires-consent="true"' in lab and
           "privacy information" in lab and "explicit consent" in lab,
