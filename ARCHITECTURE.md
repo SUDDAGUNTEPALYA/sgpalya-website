@@ -4,8 +4,8 @@
 - `index.html`: local marketing proposition, four launch services, add-on
   capabilities, process, business enquiry preview and leadership preview.
 - `our-team.html`: Founder → two Co-founders → sixteen Members.
-- `join-us.html`: campus recruitment overview with eight departments and an
-  application preview.
+- `join-us.html`: campus recruitment overview, six departments, nineteen
+  interactive role profiles and an application preview.
 
 ## Launch offer
 Four initial services: Google Business Profile / Maps presence, social media
@@ -27,12 +27,11 @@ access controls, privacy notice and retention process are implemented.
 The published team structure is one Founder, two Co-founders and sixteen
 Members (nineteen people total). Naval Aggarwal is Founder & CEO; Rhythm
 Mehrotra and Yuval Ostwal are Co-founders; Subhankar Raj Gupta is Chief
-Technology Officer and remains in the Member tier. The recruitment page
-currently presents eight departments.
+Technology Officer and remains in the Member tier. `recruitment.js` powers
+the six-department / nineteen-role explorer on `join-us.html`.
 
 ## Legacy source files
-`script.js` contains the former CSV-powered local directory; `recruitment.js`
-contains the former six-department / nineteen-role explorer; and
+`script.js` contains the former CSV-powered local directory, and
 `business-registration.js` supports the former registration preview. These
 files are retained for historical/reference purposes and are not loaded by the
 current public pages. The legacy routes redirect to the current experience.
@@ -41,7 +40,7 @@ current public pages. The legacy routes redirect to the current experience.
 `robots.txt` permits crawling; `sitemap.xml` lists the homepage, team and
 recruitment pages. Legacy pages are marked noindex. GitHub Pages serves the
 static site; `CNAME` remains `sgpalya.in`. GitHub Actions validates structure,
-JavaScript syntax and desktop/mobile browser interactions.
+all retained JavaScript syntax and desktop/mobile browser interactions.
 
 ## Recovery
 Suspended state backup: `backup/pre-new-marketing-model-2026-11-09`.
