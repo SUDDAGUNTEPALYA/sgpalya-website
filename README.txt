@@ -7,7 +7,8 @@ S.G. Palya, Bengaluru.
 Active public pages:
   index.html       Local marketing services, business enquiry preview and leadership
   our-team.html    Founder → 2 Co-founders → 16 Members
-  join-us.html     Campus recruitment overview and application preview
+  join-us.html     Six recruitment departments and 19 interactive role profiles
+  recruitment.js   Department and role explorer
   agency.css       Mobile-first relaunch design system
   relaunch.js      Shared navigation and business enquiry behaviour
 
@@ -28,9 +29,9 @@ form's submit handler only displays a preview notice. Neither form sends or
 stores submitted details. Do not collect real data until secure server-side
 submission and access controls are configured.
 
-LEGACY FILES: script.js (CSV directory), recruitment.js (six-department role
-explorer) and business-registration.js (old registration preview) are retained
-for reference and are not loaded by the current public pages.
+LEGACY FILES: script.js (former CSV directory) and business-registration.js
+(old registration preview) are retained for reference and are not loaded by
+the current public pages.
 
 Checks:
   python tools/validate_site.py
