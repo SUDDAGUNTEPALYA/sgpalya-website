@@ -98,22 +98,24 @@ def main():
           "homepage should explain both business and student outcomes")
     check(errors, home.count('class="eco-journey-step"') == 3,
           "homepage should show the three-stage growth direction")
+    check(errors, home.count('class="agency-service-card"') == 6,
+          "homepage must show all six Experiment Lab-aligned business workstreams")
     for service in (
-        "Google &amp; Maps presence",
-        "Social media management",
-        "Content &amp; creative production",
-        "WhatsApp Business setup",
+        "Business strategy &amp; research", "Finance &amp; business analysis",
+        "Brand, marketing &amp; creative", "Digital &amp; technology solutions",
+        "Business development &amp; client partnerships", "Operations, projects &amp; people",
     ):
-        check(errors, service in home, "missing current launch service: " + service)
-    check(errors, home.count('class="agency-service-card"') == 4,
-          "homepage must retain four current launch services")
-    check(errors, home.count('<details class="agency-next-card">') == 6,
-          "six additional consultation services should remain secondary/expandable")
-    for service in (
-        "Paid advertising", "Websites &amp; digital catalogues", "Local &amp; offline campaigns",
-        "Customer retention", "Strategy &amp; reputation", "Business training",
-    ):
-        check(errors, service in home, "missing additional service: " + service)
+        check(errors, service in home, "missing Experiment Lab-aligned workstream: " + service)
+    check(errors, home.count('<details class="agency-next-card">') == 3,
+          "homepage must show three multidisciplinary project examples")
+    for phrase in ("Business clarity &amp; performance", "Brand, customer &amp; digital growth",
+                   "Operational improvement", "Capability-led, not one-size-fits-all"):
+        check(errors, phrase in home, "missing project example or capability boundary: " + phrase)
+    check(errors, "statutory audit" in home and "tax filing" in home,
+          "finance work boundaries must be stated")
+    check(errors, 'value="Business strategy & research"' in home and
+          'value="Operations, projects & people"' in home,
+          "business enquiry options must match Experiment Lab workstreams")
     check(errors, 'id="businessEnquiryForm"' in home and 'id="businessEnquiryStatus"' in home,
           "business enquiry form/status missing")
     check(errors, 'data-form-endpoint=""' in home and "nothing is sent or stored" in home,
@@ -128,9 +130,16 @@ def main():
           "homepage Experiment Lab link missing")
     check(errors, "Not affiliated with or endorsed by CHRIST University." in home,
           "homepage institutional-independence note missing")
+    check(errors, "starting in S.G. Palya" in home and "nearby areas" in home,
+          "homepage must frame S.G. Palya as the starting geography")
+    check(errors, not re.search(r"local business directory|neighbourhood directory|local discovery platform", home, re.I),
+          "retired local-directory positioning must not appear on homepage")
 
     # Team page: one founder plus eighteen ordinary members.
     check(errors, 'name="robots" content="index,follow"' in team, "team page must be indexable")
+    check(errors, '<meta property="og:title" content="Our Team | BENGALOOP">' in team and
+          '<meta name="twitter:card" content="summary_large_image">' in team,
+          "team page social metadata missing")
     for person in (
         "Naval Aggarwal", "Yuval Ostwal", "Rhythm Mehrotra", "Ripunjay Raj", "Su Mayur",
         "Rahul Raj Gupta", "Pranjita Devi", "Misbah Ur Rahman", "Bhavana Chandrashekar",
@@ -158,6 +167,8 @@ def main():
     # Experiment Lab: four courses, six departments, nineteen role pathways.
     check(errors, 'rel="canonical" href="https://sgpalya.in/join-us.html"' in lab,
           "Experiment Lab canonical missing")
+    check(errors, '<meta name="twitter:card" content="summary_large_image">' in lab,
+          "Experiment Lab Twitter metadata missing")
     check(errors, lab_doc.tags["h1"] == 1 and not lab_doc.duplicates,
           "Experiment Lab needs exactly one H1 and unique IDs")
     check(errors, "EXPERIMENT LAB" in lab and "independent student-led initiative" in lab,
@@ -199,6 +210,9 @@ def main():
     check(errors, "Applications are not being collected yet" in lab and
           "not sent or stored" in lab,
           "student form must clearly state that applications are not being collected")
+    check(errors, 'data-requires-consent="true"' in lab and
+          "privacy information" in lab and "explicit consent" in lab,
+          "student application preview must require privacy and consent before activation")
     check(errors, lab.count("<option>Business Strategy &amp; Research</option>") == 1 and
           lab.count("<option>Operations, Projects &amp; People</option>") == 1,
           "student application department choices missing or duplicated")

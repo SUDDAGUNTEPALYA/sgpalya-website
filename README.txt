@@ -1,47 +1,50 @@
 BENGALOOP — STUDENT-POWERED BUSINESS GROWTH ECOSYSTEM
 =======================================================
 
-BENGALOOP is an independent, student-led initiative working towards a
-business growth ecosystem: practical support for businesses and real-world
-learning opportunities for students. It is not currently affiliated with or
-endorsed by CHRIST (Deemed to be University) or its Department of Professional
-Studies. Any future institutional collaboration requires formal approval.
+BENGALOOP is an independent, student-powered business growth ecosystem. It connects businesses with multidisciplinary student talent and applies academic knowledge to practical business challenges.
 
-Public pages:
-  index.html             Business growth ecosystem proposition, current services,
-                         business enquiry and leadership preview
-  our-team.html          Founder → 18 Members hierarchy and profiles
-  join-us.html           Experiment Lab: academic pathways, departments, roles,
-                         learning model, future direction and student application
+The previous S.G. Palya neighbourhood/local-discovery directory model has been retired. S.G. Palya and nearby areas are only the starting geography for BENGALOOP's business work; they are not the product identity.
 
-Styles:
-  style.css              Original shared style foundation
-  agency.css             Shared agency/site components and responsive relaunch layer
-  ecosystem-home.css     Additive homepage ecosystem section
-  experiment-lab.css     Experiment Lab page-specific responsive design
-  relaunch.js             Shared navigation, year label and business enquiry form
+BENGALOOP is not currently affiliated with or endorsed by CHRIST (Deemed to be University) or its Department of Professional Studies. Any future institutional collaboration requires formal approval.
 
-Experiment Lab invites students from four academic programmes:
+PUBLIC PAGES:
+  index.html             Ecosystem proposition, six capability-led business
+                         workstreams, project examples and business enquiry
+  our-team.html          Founder and eighteen member profiles
+  join-us.html           Experiment Lab: four academic pathways, six
+                         departments, nineteen role pathways and application
+                         preview
+
+EXPERIMENT LAB AS THE BUSINESS CAPABILITY FOUNDATION:
+  Business Strategy & Research
+  Finance & Business Analysis
+  Brand, Marketing & Creative
+  Business Development & Client Partnerships
+  Technology & Digital Solutions
+  Operations, Projects & People
+
+Academic pathways:
   B.Com Global Management Accounting & Strategy — CIMA UK integrated
   B.Com International Accountancy & Finance — ACCA integrated
   B.Com Branding & Entrepreneurship
   B.Com Accountancy & Finance — CA (ICAI) integrated
 
-The programme pathways are not rigid role assignments. The page describes six
-functional departments and nineteen role pathways; actual opportunities depend
-on skills, readiness and project requirements.
+The six workstreams are capability areas, not guarantees of availability.
+Project acceptance depends on skills, suitable oversight, team capacity and
+agreed scope. Finance work is limited to management information and decision
+support; it is not statutory audit, tax filing, legal advice or regulated
+investment advice.
 
 FORM STATUS:
-The student application form retains four fields: full name, register number,
-class/course & section, and preferred department. The form is a preview until a
-secure submission destination is configured in data-form-endpoint. While blank,
-student details are not sent or stored and the page clearly says applications
-are not being collected.
+  Business enquiry has no configured secure server-side endpoint. While
+  data-form-endpoint is blank, no enquiry is sent or stored.
+  Student application retains four fields: full name, register number,
+  class/course & section, and preferred department. Applications are not open.
+  Before opening it, BENGALOOP must publish the recruitment notice and privacy
+  information, add explicit consent, configure a secure HTTPS receiver and
+  establish a review process.
 
-The business enquiry form is also not live until its secure server-side receiver
-is configured. While blank, no enquiry details are sent or stored.
-
-Checks:
+CHECKS:
   python tools/validate_site.py
   node --check relaunch.js
   node tools/browser_smoke_test.mjs
