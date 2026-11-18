@@ -32,6 +32,7 @@ async function noOverflow(page, label) {
 async function checkStudentForm(page, label) {
   const form = page.locator("#studentApplicationForm");
   assert.equal(await form.getAttribute("data-form-endpoint"), "", label + " form must remain safely disabled");
+  assert.equal(await form.getAttribute("data-requires-consent"), "true", label + " form must require explicit consent before activation");
   const names = await form.locator("[name]").evaluateAll(nodes => nodes.map(node => node.name));
   assert.deepEqual(names, ["name", "registerNumber", "class", "department"], label + " must retain the original four fields");
   assert.equal(await form.locator('[name="department"] option').count(), 7, label + " must have a placeholder and six departments");
@@ -53,8 +54,11 @@ try {
   assert.ok((await desktop.title()).includes("Business Growth Ecosystem"));
   assert.equal(await desktop.locator(".eco-model-card").count(), 2);
   assert.equal(await desktop.locator(".eco-journey-step").count(), 3);
-  assert.equal(await desktop.locator(".agency-service-card").count(), 4);
-  assert.equal(await desktop.locator(".agency-next-card").count(), 6);
+  assert.equal(await desktop.locator(".agency-service-card").count(), 6);
+  assert.equal(await desktop.locator(".agency-next-card").count(), 3);
+  assert.equal(await desktop.locator('#businessEnquiryForm input[name="services"]').count(), 6);
+  assert.ok((await desktop.locator("#services").innerText()).includes("Business strategy & research"));
+  assert.ok((await desktop.locator("#services").innerText()).includes("Operations, projects & people"));
   assert.equal(await desktop.locator(".agency-leader-card").count(), 2);
   assert.ok((await desktop.locator(".agency-member-count").innerText()).includes("18"));
   assert.equal(await desktop.locator("#businessEnquiryForm").getAttribute("data-form-endpoint"), "");
@@ -108,11 +112,12 @@ try {
   await mobile.locator('[name="businessName"]').fill("Sample Cafe");
   await mobile.locator('[name="contactName"]').fill("Sample Owner");
   await mobile.locator('[name="category"]').selectOption({ label: "Food & Beverage" });
+  await mobile.locator('[name="locality"]').fill("S.G. Palya, Bengaluru");
   await mobile.locator('[name="phone"]').fill("9876543210");
   await mobile.locator('[name="consent"]').check();
   await mobile.locator('button[type="submit"]').click();
   await mobile.waitForFunction(() => document.querySelector("#businessEnquiryStatus")?.dataset.state === "error");
-  assert.ok((await mobile.locator("#businessEnquiryStatus").innerText()).includes("not active yet"));
+  assert.ok((await mobile.locator("#businessEnquiryStatus").innerText()).includes("not being collected yet"));
   await noOverflow(mobile, "mobile homepage 390");
   await mobile.screenshot({ path: path.join(out, "mobile-business-enquiry-390.png"), fullPage: true });
   await mobile.close();
