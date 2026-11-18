@@ -204,7 +204,8 @@ def main():
           "student application department choices missing or duplicated")
     check(errors, 'id="studentApplicationStatus"' in lab,
           "student application status region missing")
-    check(errors, "Not affiliated with or endorsed by CHRIST University." in lab,
+    check(errors, "not currently affiliated with" in lower_lab and
+          "CHRIST (Deemed to be University)" in lab,
           "Experiment Lab institutional footer note missing")
 
     # Shared navigation and local links.
