@@ -55,6 +55,13 @@ def main():
  ck(e,'id="team"' in t and "team-level-cofounders" not in t and "team-level-members" in t,"Founder-to-members hierarchy missing")
  # Co-founder tier removed; non-founder profiles are checked in the members grid.
  mem=t.split('<div class="team-grid team-grid-members">',1)[1] if '<div class="team-grid team-grid-members">' in t else ""
+ members_section=t.split('<section class="team-level team-level-members"',1)[1].split("</section>",1)[0] if '<section class="team-level team-level-members"' in t else ""
+ member_cards=re.findall(r'<article class="[^"]*team-card[^"]*">[\s\S]*?</article>',members_section)
+ ck(e,len(member_cards)==18,"members category must contain eighteen visible profiles")
+ ck(e,all('<span class="team-status">TEAM MEMBER</span>' in card for card in member_cards),"every member profile must display the TEAM MEMBER badge")
+ ck(e,all("team-card-new" not in card for card in member_cards),"member profiles must use the standard team-card appearance")
+ template=t.split('<template id="teamMemberProfileTemplate">',1)[1].split("</template>",1)[0] if '<template id="teamMemberProfileTemplate">' in t else ""
+ ck(e,'<span class="team-status">TEAM MEMBER</span>' in template,"reusable member template must include the TEAM MEMBER badge")
  ck(e,"Yuval Ostwal" in mem,"Yuval must be listed as an ordinary member")
  yu_at=mem.find("Yuval Ostwal")
  yu_start=mem.rfind("<article",0,yu_at)
