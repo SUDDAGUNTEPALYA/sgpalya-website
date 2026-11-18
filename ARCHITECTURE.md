@@ -1,9 +1,11 @@
 # BENGALOOP website architecture — local marketing model
 
-## Public pages
+## Active public pages
 - `index.html`: local marketing proposition, four launch services, add-on
-  capabilities, process, business enquiry form and leadership preview.
-- `our-team.html`: complete Founder → two Co-founders → 15 Members hierarchy.
+  capabilities, process, business enquiry preview and leadership preview.
+- `our-team.html`: Founder → two Co-founders → sixteen Members.
+- `join-us.html`: campus recruitment overview with eight departments and an
+  application preview.
 
 ## Launch offer
 Four initial services: Google Business Profile / Maps presence, social media
@@ -13,15 +15,33 @@ reputation support and training are additional services by consultation.
 Advertising spend and third-party subscription costs remain separate from
 service fees and must be agreed before launch.
 
-## Enquiry data
-The form is a front-end design until a secure server-side receiver is configured
-in `data-form-endpoint`. While blank, the form does not transmit or store data
-and clearly warns visitors not to enter real business details.
+## Form and data boundaries
+The business enquiry form in `index.html` and student application form in
+`join-us.html` are preview-only. Neither form currently sends or stores
+submissions. The business form's `data-form-endpoint` is intentionally blank;
+the student form is handled by an inline preview-only submit listener. Do not
+collect real information until a secure server-side receiver, validation,
+access controls, privacy notice and retention process are implemented.
 
-## Team and search
-Full team profiles remain on `our-team.html`; the homepage shows only leadership.
-robots.txt permits crawling; sitemap.xml lists home and team. Legacy pages redirect
-to the new model and are marked noindex. CNAME remains sgpalya.in.
+## Team and recruitment
+The published team structure is one Founder, two Co-founders and sixteen
+Members (nineteen people total). Naval Aggarwal is Founder & CEO; Rhythm
+Mehrotra and Yuval Ostwal are Co-founders; Subhankar Raj Gupta is Chief
+Technology Officer and remains in the Member tier. The recruitment page
+currently presents eight departments.
+
+## Legacy source files
+`script.js` contains the former CSV-powered local directory; `recruitment.js`
+contains the former six-department / nineteen-role explorer; and
+`business-registration.js` supports the former registration preview. These
+files are retained for historical/reference purposes and are not loaded by the
+current public pages. The legacy routes redirect to the current experience.
+
+## Search and deployment
+`robots.txt` permits crawling; `sitemap.xml` lists the homepage, team and
+recruitment pages. Legacy pages are marked noindex. GitHub Pages serves the
+static site; `CNAME` remains `sgpalya.in`. GitHub Actions validates structure,
+JavaScript syntax and desktop/mobile browser interactions.
 
 ## Recovery
 Suspended state backup: `backup/pre-new-marketing-model-2026-11-09`.
