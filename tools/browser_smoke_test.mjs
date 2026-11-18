@@ -68,6 +68,8 @@ try {
   await desktop.locator("#menu").click();
   await desktop.waitForFunction(() => document.querySelector("#nav").classList.contains("open"));
   assert.ok((await desktop.locator("#nav").innerText()).includes("Experiment Lab"));
+  assert.equal(await desktop.locator("#nav .nav-project-link").count(), 1);
+  assert.equal(await desktop.locator("#nav .drawer-links a").first().getAttribute("href"), "vyapar-kavach.html");
   await desktop.locator('#nav a[href="#ecosystem"]').click();
   await desktop.waitForFunction(() => location.hash === "#ecosystem");
   await desktop.locator("#menu").click();
@@ -89,12 +91,34 @@ try {
   await noOverflow(desktop, "desktop team");
   await desktop.close();
 
+  // Standalone Vyapar Kavach collaboration microsite.
+  const vkDesktop = await openPage("/vyapar-kavach.html", { width: 1440, height: 960 }, "desktop Vyapar Kavach");
+  assert.ok((await vkDesktop.title()).includes("Vyapar Kavach"));
+  assert.equal(await vkDesktop.locator("h1").count(), 1);
+  assert.equal(await vkDesktop.locator(".vk-stage").count(), 3);
+  assert.ok((await vkDesktop.locator(".vk-collaboration").innerText()).includes("CUFFLINKSIA"));
+  assert.ok((await vkDesktop.locator("#vk-unbiased").innerText()).includes("No insurer preferred by default"));
+  await noOverflow(vkDesktop, "desktop Vyapar Kavach");
+  await vkDesktop.screenshot({ path: path.join(out, "desktop-vyapar-kavach.png"), fullPage: true });
+  await vkDesktop.close();
+
+  const vkMobile = await openPage("/vyapar-kavach.html", { width: 390, height: 844 }, "mobile Vyapar Kavach 390");
+  assert.equal(await vkMobile.locator(".vk-stage").count(), 3);
+  await noOverflow(vkMobile, "mobile Vyapar Kavach 390");
+  await vkMobile.screenshot({ path: path.join(out, "mobile-vyapar-kavach-390.png"), fullPage: true });
+  await vkMobile.close();
+
+  const vkNarrow = await openPage("/vyapar-kavach.html", { width: 360, height: 800 }, "mobile Vyapar Kavach 360");
+  await noOverflow(vkNarrow, "mobile Vyapar Kavach 360");
+  await vkNarrow.close();
+
   // Experiment Lab at desktop: all programme/department/role data and form contract.
   const labDesktop = await openPage("/join-us.html", { width: 1440, height: 960 }, "desktop Experiment Lab");
   assert.ok((await labDesktop.title()).includes("Experiment Lab"));
   assert.equal(await labDesktop.locator(".lab-course-card").count(), 4);
   assert.equal(await labDesktop.locator(".lab-dept-card").count(), 6);
   assert.equal(await labDesktop.locator(".lab-role").count(), 19);
+  assert.equal(await labDesktop.locator(".nav-project-link").count(), 1);
   assert.ok((await labDesktop.locator(".lab-independence").innerText()).includes("not an official project"));
   await noOverflow(labDesktop, "desktop Experiment Lab");
   await labDesktop.screenshot({ path: path.join(out, "desktop-experiment-lab.png"), fullPage: true });
