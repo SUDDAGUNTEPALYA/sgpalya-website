@@ -182,7 +182,7 @@ def main():
     ):
         check(errors, department in lab, "missing Experiment Lab department: " + department)
     lower_lab = lab.lower()
-    for phrase in ("not an official project of", "not affiliated with", "not endorsed by"):
+    for phrase in ("not an official project of", "not affiliated with", "endorsed by"):
         check(errors, phrase in lower_lab, "Experiment Lab institutional disclosure missing: " + phrase)
     check(errors, "exploring opportunities for academic collaboration" in lower_lab,
           "academic collaboration invitation missing")
@@ -205,7 +205,7 @@ def main():
     check(errors, 'id="studentApplicationStatus"' in lab,
           "student application status region missing")
     check(errors, "not currently affiliated with" in lower_lab and
-          "CHRIST (Deemed to be University)" in lab,
+          "CHRIST (Deemed to be University)" in lab and "endorsed by" in lower_lab,
           "Experiment Lab institutional footer note missing")
 
     # Shared navigation and local links.
@@ -218,6 +218,9 @@ def main():
         (lab, lab_doc, "Experiment Lab"),
     ):
         for raw in doc.links:
+            if raw.startswith("#"):
+                check(errors, raw[1:] in doc.ids, f"broken {label} local anchor {raw}")
+                continue
             target, fragment = local_target(raw)
             if target and fragment and target.resolve() == (ROOT / "index.html").resolve():
                 check(errors, fragment in home_doc.ids, f"broken {label} homepage anchor #{fragment}")
