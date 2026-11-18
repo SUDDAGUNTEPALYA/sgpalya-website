@@ -35,7 +35,7 @@ def main():
  e=[];hp=ROOT/"index.html";tp=ROOT/"our-team.html";jp=ROOT/"join-us.html"
  ck(e,hp.is_file(),"index.html missing");ck(e,tp.is_file(),"our-team.html missing")
  if e:print("\n".join(e));return 1
- h=hp.read_text(encoding="utf-8");t=tp.read_text(encoding="utf-8");j=jp.read_text(encoding="utf-8") if jp.is_file() else "";p=Inspector();p.feed(h);q=Inspector();q.feed(t);r=Inspector();r.feed(j)
+ h=hp.read_text(encoding="utf-8");t=tp.read_text(encoding="utf-8");j=jp.read_text(encoding="utf-8") if jp.is_file() else "";role_js=(ROOT/"recruitment.js").read_text(encoding="utf-8");p=Inspector();p.feed(h);q=Inspector();q.feed(t);r=Inspector();r.feed(j)
  ck(e,p.tags["h1"]==1,"homepage needs one H1");ck(e,not p.dups,"duplicate homepage IDs")
  ck(e,'name="robots" content="index,follow,max-image-preview:large"' in h,"homepage must be indexable")
  ck(e,'rel="canonical" href="https://sgpalya.in/"' in h,"homepage canonical URL missing")
@@ -66,7 +66,11 @@ def main():
  member_names=[name for name in re.findall(r"<h3>(.*?)</h3>",mem) if name!="FULL NAME"]
  ck(e,len(member_names)==16,"team page must show sixteen ordinary members")
  ck(e,jp.is_file() and 'rel="canonical" href="https://sgpalya.in/join-us.html"' in j,"student recruitment page/canonical missing")
- ck(e,"RECRUITMENT OPEN" in j and j.count('class="dept-card"')==8,"student page must show open recruitment and eight departments")
+ ck(e,"RECRUITMENT OPEN" in j and j.count('class="department-card"')==6,"student page must show open recruitment and six departments")
+ ck(e,'id="departments"' in j and 'id="departmentExplorer"' in j and 'id="departmentRoleList"' in j and 'id="roleDetailPanel"' in j,"student role explorer markup is incomplete")
+ ck(e,'src="recruitment.js' in j,"student role explorer script is not loaded")
+ ck(e,len(re.findall(r'\{id:"[^"]+",name:"[^"]+"',role_js))==19,"recruitment source must define nineteen role profiles")
+ ck(e,"Creative &amp; Media" in j and "Local Business Outreach &amp; Directory" in j,"student application choices must match the six departments")
  for field in ('name="name"','name="registerNumber"','name="class"','name="department"'):
   ck(e,field in j,"student application form missing "+field)
  ck(e,'data-form-endpoint=""' in j and "not being collected yet" in j and "not been sent or stored" in j,"student form must state that submissions are disabled")
