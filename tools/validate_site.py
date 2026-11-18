@@ -46,8 +46,8 @@ def main():
  ck(e,'id="businessEnquiryForm"' in h and 'id="businessEnquiryStatus"' in h,"business enquiry form/status missing")
  ck(e,'data-form-endpoint=""' in h and "Online submissions are being connected" in h and "nothing is sent or stored" in h,"form must clearly explain that submissions are disabled until a secure endpoint is configured")
  ck(e,'name="consent"' in h and 'name="businessName"' in h and 'name="phone"' in h,"form required fields/consent missing")
- ck(e,f'<span class="member-count-number">{17}</span>' in h and 'href="our-team.html"' in h,"17-member team bar must link to full team")
- ck(e,h.count('class="agency-leader-card')==2,"homepage should show Founder and one Co-founder only")
+ ck(e,f'<span class="member-count-number">{16}</span>' in h and 'href="our-team.html"' in h,"16-member team bar must link to full team")
+ ck(e,h.count('class="agency-leader-card')==3,"homepage should show Founder and both Co-founders only")
  ck(e,"listingGrid" not in h and "department-grid" not in h and "ZERO FROM SCRATCH" not in h and "19 current roles" not in h,"old directory/recruitment content still on homepage")
  ck(e,not (ROOT/"SITE_SUSPENDED").exists(),"suspension marker must be removed")
  ck(e,'name="robots" content="index,follow"' in t,"team page must be indexable")
@@ -55,17 +55,23 @@ def main():
  ck(e,'id="team"' in t and "team-level-cofounders" in t and "team-level-members" in t,"team hierarchy missing")
  co=t.split('<div class="team-grid team-grid-cofounders">',1)[1].split("</section>",1)[0] if '<div class="team-grid team-grid-cofounders">' in t else ""
  mem=t.split('<div class="team-grid team-grid-members">',1)[1] if '<div class="team-grid team-grid-members">' in t else ""
- ck(e,"Yuval Ostwal" not in co and "Yuval Ostwal" in mem,"Yuval must be listed as an ordinary member, not a co-founder")
- yu_card=mem[mem.index("<article"):mem.index("</article>")+10] if "Yuval Ostwal" in mem else ""
- ck(e,"team-card-cofounder" not in yu_card and "TEAM MEMBER" in yu_card,"Yuval's profile card must use ordinary-member styling")
- ck(e,"01 Co-founder" in t and "17 Members" in t,"team counts must show one co-founder and seventeen members")
+ ck(e,"Rhythm Mehrotra" in co and "Yuval Ostwal" in co and "Yuval Ostwal" not in mem,"both co-founders must be in the co-founder section; Yuval must not be in Members")
+ yu_pos=co.find("Yuval Ostwal")
+ yu_start=co.rfind("<article",0,yu_pos) if yu_pos >= 0 else -1
+ yu_end=co.find("</article>",yu_pos) if yu_pos >= 0 else -1
+ yu_card=co[yu_start:yu_end+10] if yu_start >= 0 and yu_end >= 0 else ""
+ ck(e,"team-card-cofounder" in yu_card and "CO-FOUNDER" in yu_card,"Yuval's card must use co-founder styling")
+ ck(e,co.count("team-card-cofounder")==2,"team page must show exactly two co-founder cards")
+ ck(e,"01 Founder" in t and "02 Co-founders" in t and "16 Members" in t,"team counts must show one Founder, two Co-founders and sixteen Members")
+ member_names=[name for name in re.findall(r"<h3>(.*?)</h3>",mem) if name!="FULL NAME"]
+ ck(e,len(member_names)==16,"team page must show sixteen ordinary members")
  ck(e,jp.is_file() and 'rel="canonical" href="https://sgpalya.in/join-us.html"' in j,"student recruitment page/canonical missing")
  ck(e,"RECRUITMENT OPEN" in j and j.count('class="dept-card"')==8,"student page must show open recruitment and eight departments")
  for field in ('name="name"','name="registerNumber"','name="class"','name="department"'):
   ck(e,field in j,"student application form missing "+field)
  ck(e,'data-form-endpoint=""' in j and "not being collected yet" in j and "not been sent or stored" in j,"student form must state that submissions are disabled")
  ck(e,'href="join-us.html"' in h and 'href="join-us.html"' in t,"recruitment link missing from homepage/team navigation")
- ck(e,'Junior Web Developer &amp; Technical Support Member' in t and "Chief Technology Officer" not in t,"Subhankar role classification changed")
+ ck(e,'Chief Technology Officer' in t and 'Junior Web Developer &amp; Technical Support Member' not in t,"Subhankar should be listed as Chief Technology Officer")
  for raw in p.links:
   x,f=target(raw)
   if x and f and x.resolve()==hp.resolve():ck(e,f in p.ids,"broken homepage anchor #"+f)
