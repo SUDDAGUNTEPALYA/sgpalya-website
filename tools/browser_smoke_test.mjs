@@ -112,6 +112,7 @@ try {
   await mobile.locator('[name="businessName"]').fill("Sample Cafe");
   await mobile.locator('[name="contactName"]').fill("Sample Owner");
   await mobile.locator('[name="category"]').selectOption({ label: "Food & Beverage" });
+  await mobile.locator('[name="locality"]').fill("S.G. Palya, Bengaluru");
   await mobile.locator('[name="phone"]').fill("9876543210");
   await mobile.locator('[name="consent"]').check();
   await mobile.locator('button[type="submit"]').click();
