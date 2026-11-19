@@ -68,8 +68,10 @@ try {
   await desktop.locator("#menu").click();
   await desktop.waitForFunction(() => document.querySelector("#nav").classList.contains("open"));
   assert.ok((await desktop.locator("#nav").innerText()).includes("Experiment Lab"));
+  assert.equal(await desktop.locator("#nav .nav-meld-link").count(), 1);
+  assert.equal(await desktop.locator("#nav .nav-meld-link").getAttribute("href"), "meld.html");
   assert.equal(await desktop.locator("#nav .nav-project-link").count(), 1);
-  assert.equal(await desktop.locator("#nav .drawer-links a").first().getAttribute("href"), "vyapar-kavach.html");
+  assert.equal(await desktop.locator("#nav .nav-project-link").getAttribute("href"), "vyapar-kavach.html");
   await desktop.locator('#nav a[href="#ecosystem"]').click();
   await desktop.waitForFunction(() => location.hash === "#ecosystem");
   await desktop.locator("#menu").click();
@@ -111,6 +113,34 @@ try {
   const vkNarrow = await openPage("/vyapar-kavach.html", { width: 360, height: 800 }, "mobile Vyapar Kavach 360");
   await noOverflow(vkNarrow, "mobile Vyapar Kavach 360");
   await vkNarrow.close();
+
+
+  // Standalone MELD sponsorship and collaboration microsite.
+  const meldDesktop = await openPage("/meld.html", { width: 1440, height: 960 }, "desktop MELD");
+  assert.ok((await meldDesktop.title()).includes("MELD"));
+  assert.equal(await meldDesktop.locator("h1").count(), 1);
+  assert.equal(await meldDesktop.locator(".meld-audience-card").count(), 2);
+  assert.equal(await meldDesktop.locator(".meld-fit-row").count(), 3);
+  assert.equal(await meldDesktop.locator(".meld-support-grid article").count(), 4);
+  assert.equal(await meldDesktop.locator(".meld-process-step").count(), 4);
+  assert.equal(await meldDesktop.locator(".meld-faq-list details").count(), 5);
+  assert.ok((await meldDesktop.locator(".meld-independent-note").innerText()).includes("independent initiative"));
+  assert.ok((await meldDesktop.locator(".meld-network-copy").innerText()).includes("BENGALOOP's network"));
+  assert.ok((await meldDesktop.locator(".meld-faq-list").innerText()).includes("Not yet"));
+  await noOverflow(meldDesktop, "desktop MELD");
+  await meldDesktop.screenshot({ path: path.join(out, "desktop-meld.png"), fullPage: true });
+  await meldDesktop.close();
+
+  const meldMobile = await openPage("/meld.html", { width: 390, height: 844 }, "mobile MELD 390");
+  assert.equal(await meldMobile.locator(".meld-audience-card").count(), 2);
+  assert.equal(await meldMobile.locator(".meld-process-step").count(), 4);
+  await noOverflow(meldMobile, "mobile MELD 390");
+  await meldMobile.screenshot({ path: path.join(out, "mobile-meld-390.png"), fullPage: true });
+  await meldMobile.close();
+
+  const meldNarrow = await openPage("/meld.html", { width: 360, height: 800 }, "mobile MELD 360");
+  await noOverflow(meldNarrow, "mobile MELD 360");
+  await meldNarrow.close();
 
   // Experiment Lab at desktop: all programme/department/role data and form contract.
   const labDesktop = await openPage("/join-us.html", { width: 1440, height: 960 }, "desktop Experiment Lab");
@@ -176,7 +206,7 @@ try {
   await legacy.close();
 
   assert.deepEqual(errors, [], "browser errors: " + errors.join(" | "));
-  console.log("PASS: homepage, shared navigation, team hierarchy, Experiment Lab desktop/mobile layouts, four-field student form, disabled business enquiry, and legacy route.");
+  console.log("PASS: homepage, shared navigation including MELD, MELD desktop/mobile microsite, team hierarchy, Experiment Lab desktop/mobile layouts, forms, and legacy route.");
 } finally {
   await browser.close();
 }

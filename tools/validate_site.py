@@ -70,6 +70,7 @@ def main():
         "team": ROOT / "our-team.html",
         "lab": ROOT / "join-us.html",
         "vk": ROOT / "vyapar-kavach.html",
+        "meld": ROOT / "meld.html",
     }
     for label, path in paths.items():
         check(errors, path.is_file(), f"{label} page missing: {path.name}")
@@ -81,11 +82,13 @@ def main():
     team = paths["team"].read_text(encoding="utf-8")
     lab = paths["lab"].read_text(encoding="utf-8")
     vk = paths["vk"].read_text(encoding="utf-8")
-    home_doc, team_doc, lab_doc, vk_doc = Inspector(), Inspector(), Inspector(), Inspector()
+    meld = paths["meld"].read_text(encoding="utf-8")
+    home_doc, team_doc, lab_doc, vk_doc, meld_doc = Inspector(), Inspector(), Inspector(), Inspector(), Inspector()
     home_doc.feed(home)
     team_doc.feed(team)
     lab_doc.feed(lab)
     vk_doc.feed(vk)
+    meld_doc.feed(meld)
 
     # Homepage: indexability, central message, two-beneficiary model and current offer.
     check(errors, home_doc.tags["h1"] == 1, "homepage needs exactly one H1")
@@ -253,6 +256,33 @@ def main():
           lab.lower().count("vyapar kavach") == 1,
           "Vyapar Kavach should appear on homepage and Experiment Lab only as a menu item")
 
+
+    # Standalone MELD sponsorship and collaboration microsite.
+    check(errors, meld_doc.tags["h1"] == 1 and not meld_doc.duplicates,
+          "MELD needs exactly one H1 and unique IDs")
+    check(errors, 'rel="canonical" href="https://sgpalya.in/meld.html"' in meld,
+          "MELD canonical missing")
+    check(errors, "Sponsorship &amp; Collaboration for Campus Events" in meld,
+          "MELD title or purpose missing")
+    check(errors, "CHRIST University student ecosystem" in meld and
+          "not an official CHRIST University platform" in meld,
+          "MELD campus-first positioning and independence boundary missing")
+    check(errors, "BENGALOOP's network" in meld and
+          "separately chooses whether to participate" in meld,
+          "MELD business-network opt-in boundary missing")
+    check(errors, "No commissions, paid listings or premium access" in meld and
+          "Sponsorship is never guaranteed" in meld,
+          "MELD free participation or no-guarantee boundary missing")
+    check(errors, "Not yet" in meld and
+          "self-service registration, dashboards and automated matching are not currently live" in meld,
+          "MELD current-stage disclosure missing")
+    check(errors, "ticketing" in meld.lower() and "student community features" in meld.lower(),
+          "MELD scope boundary versus event/social platforms missing")
+    for source, label in ((home, "homepage"), (team, "team"), (lab, "Experiment Lab")):
+        check(errors, source.count('class="nav-meld-link"') == 1 and
+              source.count('href="meld.html"') == 1,
+              label + " must have one MELD navigation card")
+
     # Reject legacy local-directory product language in business categories and redirects.
     # Shared navigation and local links.
     check(errors, 'href="join-us.html"' in home and 'href="join-us.html"' in team and
@@ -263,6 +293,7 @@ def main():
         (team, team_doc, "team"),
         (lab, lab_doc, "Experiment Lab"),
         (vk, vk_doc, "Vyapar Kavach"),
+        (meld, meld_doc, "MELD"),
     ):
         for raw in doc.links:
             if raw.startswith("#"):
@@ -275,6 +306,8 @@ def main():
                 check(errors, fragment in team_doc.ids, f"broken {label} team anchor #{fragment}")
             elif target and fragment and target.resolve() == (ROOT / "join-us.html").resolve():
                 check(errors, fragment in lab_doc.ids, f"broken {label} Experiment Lab anchor #{fragment}")
+            elif target and fragment and target.resolve() == (ROOT / "meld.html").resolve():
+                check(errors, fragment in meld_doc.ids, f"broken {label} MELD anchor #{fragment}")
         for kind, raw in doc.assets:
             target, _ = local_target(raw)
             if target is not None:
@@ -307,15 +340,22 @@ def main():
     check(errors, ".lab-course-card" in lab_css and ".lab-dept-card" in lab_css and
           "@media(max-width:520px)" in lab_css,
           "Experiment Lab stylesheet lacks responsive components")
+    meld_css_path = ROOT / "meld.css"
+    check(errors, meld_css_path.is_file(), "MELD stylesheet missing")
+    meld_css = meld_css_path.read_text(encoding="utf-8") if meld_css_path.is_file() else ""
+    check(errors, ".meld-hero" in meld_css and ".meld-audience-grid" in meld_css and
+          "@media(max-width:720px)" in meld_css and "prefers-reduced-motion:reduce" in meld_css,
+          "MELD stylesheet lacks core layout, mobile or reduced-motion rules")
 
     robots = (ROOT / "robots.txt").read_text(encoding="utf-8")
     sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8")
     check(errors, "Allow: /" in robots and "Disallow: /" not in robots,
           "robots.txt must allow crawling")
-    check(errors, sitemap.count("<loc>") == 4 and
+    check(errors, sitemap.count("<loc>") == 5 and
           "https://sgpalya.in/our-team.html" in sitemap and
           "https://sgpalya.in/join-us.html" in sitemap and
-          "https://sgpalya.in/vyapar-kavach.html" in sitemap,
+          "https://sgpalya.in/vyapar-kavach.html" in sitemap and
+          "https://sgpalya.in/meld.html" in sitemap,
           "sitemap should list homepage, team, Experiment Lab and Vyapar Kavach")
     check(errors, (ROOT / "CNAME").read_text(encoding="utf-8").strip() == "sgpalya.in",
           "custom domain mapping changed")
@@ -325,7 +365,7 @@ def main():
         for error in errors:
             print("FAIL: " + error)
         return 1
-    print("PASS: BENGALOOP ecosystem, Experiment Lab, standalone Vyapar Kavach stages and boundaries, "
+    print("PASS: BENGALOOP ecosystem, Experiment Lab, standalone Vyapar Kavach and MELD boundaries, "
           "navigation, four-field form, team hierarchy, links, assets and crawl settings.")
     return 0
 
