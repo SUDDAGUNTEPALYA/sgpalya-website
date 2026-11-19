@@ -161,7 +161,7 @@ body.meld-page{margin:0;background:var(--meld-paper);color:var(--meld-ink);font-
 .meld-process-step>small{font-family:var(--meld-mono);font-size:8px;letter-spacing:.1em;color:#aaaac0}
 .meld-process-step h3{margin:10px 0;font-family:var(--meld-display);font-size:23px;letter-spacing:-.06em}
 .meld-process-step p{max-width:235px;margin:0;color:#b5b6c5;font-size:10px;line-height:1.8}
-.meld-process-note{max-width:1280px;margin:19px auto 0;padding:16px 18px;border-left:2px solid var(--meld-lime);background:#fff08;color:#c9cad5;font-size:10px;line-height:1.7}
+.meld-process-note{max-width:1280px;margin:19px auto 0;padding:16px 18px;border-left:2px solid var(--meld-lime);background:#ffffff08;color:#c9cad5;font-size:10px;line-height:1.7}
 .meld-process-note span{margin-right:12px;color:var(--meld-lime);font-family:var(--meld-mono);font-size:8px;letter-spacing:.1em}
 .meld-territory{position:relative;display:grid;grid-template-columns:.85fr 1.15fr;gap:8%;align-items:center;min-height:470px;padding:clamp(60px,8vw,100px) clamp(22px,9vw,136px);overflow:hidden;background:var(--meld-lime)}
 .meld-territory-orbit{position:relative;width:min(29vw,330px);aspect-ratio:1;border:1px solid #17192e58;border-radius:50%;transform:rotate(-30deg)}

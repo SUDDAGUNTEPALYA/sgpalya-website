@@ -126,7 +126,8 @@ try {
   assert.equal(await meldDesktop.locator(".meld-faq-list details").count(), 5);
   assert.ok((await meldDesktop.locator(".meld-independent-note").innerText()).includes("independent initiative"));
   assert.ok((await meldDesktop.locator(".meld-network-copy").innerText()).includes("BENGALOOP's network"));
-  assert.ok((await meldDesktop.locator(".meld-faq-list").innerText()).includes("Not yet"));
+  await meldDesktop.locator(".meld-faq-list details").last().locator("summary").click();
+  assert.ok((await meldDesktop.locator(".meld-faq-list details").last().innerText()).includes("Not yet"));
   await noOverflow(meldDesktop, "desktop MELD");
   await meldDesktop.screenshot({ path: path.join(out, "desktop-meld.png"), fullPage: true });
   await meldDesktop.close();
