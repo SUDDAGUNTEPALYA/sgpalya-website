@@ -94,7 +94,8 @@ async function checkMobileAlignment(page, width, label) {
       "main h1", "main h2", "main h3", ".agency-service-card", ".lab-course-card",
       ".lab-dept-card", ".team-card", ".meld-audience-card", ".meld-support-grid article",
       ".meld-process-step", ".vk-risk-card", ".vk-stage", ".vk-compare-grid article",
-      ".site-header .header-inner", ".meld-mobile-menu", ".vk-collaboration", ".vk-back-link"
+      ".site-header .header-inner", ".meld-mobile-menu", ".vk-collaboration", ".vk-back-link",
+      ".meld-event-type", ".meld-board-label", ".meld-fit-row", ".meld-match-foot"
     ];
     const bounds = Array.from(document.querySelectorAll(selectors.join(",")))
       .filter(visible)
@@ -107,7 +108,9 @@ async function checkMobileAlignment(page, width, label) {
         };
       });
     const outOfBounds = bounds.filter(item => item.left < -1 || item.right > window.innerWidth + 1);
-    const headingsOverflow = Array.from(document.querySelectorAll("main h1, main h2, main h3"))
+    const headingsOverflow = Array.from(document.querySelectorAll(
+      "main h1, main h2, main h3, .meld-event-type, .meld-board-label, .meld-fit-row, .meld-match-foot"
+    ))
       .filter(visible)
       .filter(node => node.scrollWidth > node.clientWidth + 2)
       .map(node => (node.textContent || "").trim().slice(0, 70));
