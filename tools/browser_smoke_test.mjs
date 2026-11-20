@@ -93,7 +93,8 @@ async function checkMobileAlignment(page, width, label) {
     const selectors = [
       "main h1", "main h2", "main h3", ".agency-service-card", ".lab-course-card",
       ".lab-dept-card", ".team-card", ".meld-audience-card", ".meld-support-grid article",
-      ".meld-process-step", ".vk-risk-card", ".vk-stage", ".vk-compare-grid article"
+      ".meld-process-step", ".vk-risk-card", ".vk-stage", ".vk-compare-grid article",
+      ".site-header .header-inner", ".meld-mobile-menu", ".vk-collaboration", ".vk-back-link"
     ];
     const bounds = Array.from(document.querySelectorAll(selectors.join(",")))
       .filter(visible)
@@ -139,8 +140,8 @@ async function checkMobileAlignment(page, width, label) {
   assert.deepEqual(report.outOfBounds, [], label + " key content should stay inside the viewport: " + JSON.stringify(report.outOfBounds));
   assert.deepEqual(report.headingsOverflow, [], label + " headings should wrap instead of clipping: " + JSON.stringify(report.headingsOverflow));
   assert.deepEqual(report.smallTargets, [], label + " primary controls need usable touch targets: " + JSON.stringify(report.smallTargets));
+  assert.ok(report.headerTop <= 1, label + " header should begin at the top edge, not leave a blank strip");
   if (label.startsWith("BENGALOOP") || label === "Experiment Lab") {
-    assert.ok(report.headerTop <= 1, label + " header should begin at the top edge, not leave a blank strip");
     assert.equal(report.bodyPaddingTop, "0px", label + " should not use legacy fixed-header body padding");
   }
 }
