@@ -101,7 +101,7 @@ body.meld-page{margin:0;background:var(--meld-paper);color:var(--meld-ink);font-
 .meld-business-card>p{color:#c1c2d0}
 .meld-audience-card ul{display:grid;gap:11px;margin:24px 0 28px;padding:0;list-style:none}
 .meld-audience-card li{position:relative;padding-left:19px;color:#4d5060;font-size:11px;line-height:1.65}
-.meld-audience-card li:before{position:absolute;left:0;top:1px;color:var(--meld-violet);content:"↗";font-weight:800}
+.meld-audience-card li:before{position:absolute;left:0;top:1px;color:var(--meld-violet);content:"+";font-weight:800}
 .meld-business-card li{color:#d8d8e2}
 .meld-business-card li:before{color:var(--meld-lime)}
 .meld-card-link{display:flex;justify-content:space-between;gap:12px;align-items:center;padding-top:16px;border-top:1px solid #17192e20;font-family:var(--meld-mono);font-size:8px;letter-spacing:.08em}
@@ -288,4 +288,38 @@ body.meld-page{margin:0;background:var(--meld-paper);color:var(--meld-ink);font-
 @media(prefers-reduced-motion:reduce){
   .meld-button{transition:none}
   .meld-button:hover,.meld-button:active{transform:none}
+}
+
+
+/* Complete MELD interaction treatment: CTAs and expandable FAQ controls. */
+.meld-page :is(button,.meld-button){
+  border-width:2px;
+  border-style:solid;
+  border-radius:2px;
+  transition:transform .16s ease,box-shadow .16s ease,background-color .16s ease;
+}
+.meld-page .meld-faq-list summary{
+  margin:9px 0;
+  padding:18px 14px;
+  border:2px solid var(--meld-night);
+  background:var(--meld-white);
+  box-shadow:5px 5px 0 var(--meld-lilac);
+  transition:transform .16s ease,box-shadow .16s ease,background-color .16s ease;
+}
+.meld-page :is(button,.meld-button,.meld-faq-list summary):hover{
+  transform:translate(-2px,-2px);
+}
+.meld-page .meld-faq-list summary:hover{box-shadow:7px 7px 0 var(--meld-lilac)}
+.meld-page .meld-faq-list summary:active{
+  transform:translate(3px,3px);
+  box-shadow:2px 2px 0 var(--meld-lilac);
+}
+.meld-page :is(button,.meld-button,.meld-faq-list summary):focus-visible{
+  outline:3px solid var(--meld-lime);
+  outline-offset:4px;
+}
+@media(prefers-reduced-motion:reduce){
+  .meld-page :is(button,.meld-button,.meld-faq-list summary){transition:none}
+  .meld-page :is(button,.meld-button,.meld-faq-list summary):hover,
+  .meld-page :is(button,.meld-button,.meld-faq-list summary):active{transform:none}
 }
