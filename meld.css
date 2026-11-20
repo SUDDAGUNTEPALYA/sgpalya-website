@@ -517,10 +517,11 @@ body.meld-page{margin:0;background:var(--meld-paper);color:var(--meld-ink);font-
   }
   .meld-page .meld-event-type{
     max-width:100%;
-    font-size:clamp(46px,13vw,56px);
-    line-height:.9;
-    letter-spacing:-.09em;
-    overflow-wrap:anywhere;
+    font-size:clamp(34px,10.5vw,42px);
+    line-height:.92;
+    letter-spacing:-.085em;
+    overflow-wrap:normal;
+    word-break:normal;
   }
   .meld-page .meld-fit-row{
     grid-template-columns:32px minmax(0,1fr);
@@ -551,6 +552,6 @@ body.meld-page{margin:0;background:var(--meld-paper);color:var(--meld-ink);font-
   .meld-page .meld-match-foot>*{min-width:0;max-width:100%;overflow-wrap:anywhere}
 }
 @media(max-width:380px){
-  .meld-page .meld-event-type{font-size:46px}
+  .meld-page .meld-event-type{font-size:35px}
   .meld-page .meld-board-label{font-size:7px}
 }
