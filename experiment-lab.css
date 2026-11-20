@@ -327,3 +327,16 @@
   .experiment-page .lab-stat{padding:11px 8px}
   .experiment-page .lab-stat span{font-size:7px}
 }
+@media(max-width:760px){
+  .experiment-page .lab-case-intro small,
+  .experiment-page .lab-perspective p,
+  .experiment-page .lab-project-step p,
+  .experiment-page .lab-collab-list li,
+  .experiment-page .lab-apply-point{font-size:12px;line-height:1.75}
+  .experiment-page .lab-course-note{font-size:11px;line-height:1.7}
+  .experiment-page .lab-independence{font-size:11px;line-height:1.75}
+  .experiment-page .join-fields label{font-size:11px;line-height:1.5}
+  .experiment-page .join-status{font-size:11px;line-height:1.7}
+  .experiment-page .join-note,
+  .experiment-page .lab-footer-note{font-size:10px;line-height:1.7}
+}
