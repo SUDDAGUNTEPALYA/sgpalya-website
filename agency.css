@@ -398,3 +398,6 @@ body.agency-home{
   .agency-home .site-nav.drawer-nav{scroll-behavior:auto}
   .agency-home .agency-floating-bottom{transform:none}
 }
+@media(max-width:820px){
+  .agency-home .drawer-close{width:44px;height:44px;min-width:44px;min-height:44px}
+}
