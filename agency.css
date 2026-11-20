@@ -142,3 +142,85 @@ html{scroll-behavior:smooth;scroll-padding-top:94px;overflow-x:clip}body.agency-
   transform:translate(3px,3px)!important;
   box-shadow:2px 2px 0 var(--agc)!important;
 }
+
+
+/* COMPLETE tactile neo-brutalist interaction system — all BENGALOOP controls. */
+.agency-home :is(
+  button,.button,.nav-cta,.agency-button,.agency-text-link,.agency-member-count,
+  .team-linkedin,.profile-linkedin,.team-volunteer-button,.hiring-button,
+  .text-button,.listing-action,.refresh-button,.filter-chip
+){
+  border:2px solid var(--agf);
+  border-radius:3px;
+  box-shadow:5px 5px 0 var(--agc);
+  transition:transform .16s ease,box-shadow .16s ease,background-color .16s ease,border-color .16s ease;
+}
+.agency-home :is(button,.button,.nav-cta,.agency-button,.agency-text-link,.agency-member-count,.team-linkedin,.profile-linkedin,.hiring-button,.text-button,.listing-action,.refresh-button,.filter-chip):hover{
+  transform:translate(-2px,-2px);
+  box-shadow:7px 7px 0 var(--agc);
+}
+.agency-home :is(button,.button,.nav-cta,.agency-button,.agency-text-link,.agency-member-count,.team-linkedin,.profile-linkedin,.hiring-button,.text-button,.listing-action,.refresh-button,.filter-chip):active{
+  transform:translate(3px,3px);
+  box-shadow:2px 2px 0 var(--agc);
+}
+.agency-home :is(button,.button,.nav-cta,.agency-button,.agency-text-link,.agency-member-count,.team-linkedin,.profile-linkedin,.team-volunteer-button,.hiring-button,.text-button,.listing-action,.refresh-button,.filter-chip):focus-visible{
+  outline:3px solid var(--agc);
+  outline-offset:4px;
+}
+.agency-home button:not(:disabled){cursor:pointer}
+.agency-home button:disabled,.agency-home [aria-disabled="true"]{cursor:not-allowed}
+.agency-home .menu-toggle,.agency-home .drawer-close{
+  border:2px solid var(--agf);
+  border-radius:3px;
+  box-shadow:4px 4px 0 var(--agc);
+  background:var(--agw);
+}
+.agency-home .agency-text-link{
+  display:inline-flex;
+  min-height:48px;
+  align-items:center;
+  justify-content:center;
+  padding:0 16px;
+  background:var(--agw);
+  color:var(--agf);
+  text-decoration:none;
+}
+.agency-home .agency-member-count{
+  border-color:var(--agf);
+  box-shadow:5px 5px 0 var(--agc);
+}
+.agency-home .agency-member-count:hover{
+  transform:translate(-2px,-2px);
+  box-shadow:7px 7px 0 var(--agc);
+}
+.agency-home .agency-member-count:active{
+  transform:translate(3px,3px);
+  box-shadow:2px 2px 0 var(--agc);
+}
+.agency-home .site-nav .nav-cta{
+  justify-content:center;
+  gap:0;
+  border-radius:3px;
+}
+.agency-home .site-nav.drawer-nav .nav-cta{
+  justify-content:center;
+  gap:0;
+}
+.agency-home .site-nav.drawer-nav a.nav-meld-link strong .nav-meld-mark{
+  display:block;
+  width:10px;
+  height:10px;
+  flex:0 0 auto;
+  border:1px solid var(--meld-lime,#d9f46a);
+  background:var(--meld-lime,#d9f46a);
+  box-shadow:2px 2px 0 #aaaaff;
+}
+@media(prefers-reduced-motion:reduce){
+  .agency-home :is(button,.button,.nav-cta,.agency-button,.agency-text-link,.agency-member-count,.team-linkedin,.profile-linkedin,.team-volunteer-button,.hiring-button,.text-button,.listing-action,.refresh-button,.filter-chip){
+    transition:none;
+  }
+  .agency-home :is(button,.button,.nav-cta,.agency-button,.agency-text-link,.agency-member-count,.team-linkedin,.profile-linkedin,.hiring-button,.text-button,.listing-action,.refresh-button,.filter-chip):hover,
+  .agency-home :is(button,.button,.nav-cta,.agency-button,.agency-text-link,.agency-member-count,.team-linkedin,.profile-linkedin,.hiring-button,.text-button,.listing-action,.refresh-button,.filter-chip):active{
+    transform:none;
+  }
+}
