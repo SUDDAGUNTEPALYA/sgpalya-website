@@ -81,6 +81,119 @@ async function checkDisclosure(page, selector, expectedCount, expectedItems, lab
   assert.equal(await first.getAttribute("open"), null, label + " should collapse with the keyboard");
 }
 
+async function checkMobileAlignment(page, width, label) {
+  await noOverflow(page, label + " " + width + "px");
+  const report = await page.evaluate(() => {
+    const visible = element => {
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      return rect.width > 0 && rect.height > 0 && style.display !== "none" &&
+        style.visibility !== "hidden" && Number(style.opacity) > 0;
+    };
+    const selectors = [
+      "main h1", "main h2", "main h3", ".agency-service-card", ".lab-course-card",
+      ".lab-dept-card", ".team-card", ".meld-audience-card", ".meld-support-grid article",
+      ".meld-process-step", ".vk-risk-card", ".vk-stage", ".vk-compare-grid article",
+      ".site-header .header-inner", ".meld-mobile-menu", ".vk-collaboration", ".vk-back-link",
+      ".meld-event-type", ".meld-board-label", ".meld-fit-row", ".meld-match-foot"
+    ];
+    const bounds = Array.from(document.querySelectorAll(selectors.join(",")))
+      .filter(visible)
+      .map(node => {
+        const rect = node.getBoundingClientRect();
+        return {
+          selector: node.tagName.toLowerCase() + (node.className && typeof node.className === "string" ? "." + node.className.trim().split(/\\s+/).join(".") : ""),
+          left: Math.round(rect.left * 10) / 10,
+          right: Math.round(rect.right * 10) / 10
+        };
+      });
+    const outOfBounds = bounds.filter(item => item.left < -1 || item.right > window.innerWidth + 1);
+    const textOverflow = Array.from(document.querySelectorAll(
+      "main h1, main h2, main h3, main h4, main p, main li, main summary, main button, main a, main label, main small, main strong, .meld-event-type, .meld-board-label, .meld-fit-row, .meld-match-foot"
+    ))
+      .filter(visible)
+      .filter(node => node.clientWidth > 0 && node.scrollWidth > node.clientWidth + 2)
+      .map(node => (node.textContent || "").trim().slice(0, 70));
+    const smallFormLabels = Array.from(document.querySelectorAll(
+      ".agency-field>span, .join-fields>label"
+    ))
+      .filter(visible)
+      .filter(node => parseFloat(getComputedStyle(node).fontSize) < 10.5)
+      .map(node => (node.textContent || "").trim().slice(0, 70));
+    const undersizedFields = Array.from(document.querySelectorAll(
+      "input:not([type=checkbox]):not([type=radio]), select, textarea"
+    ))
+      .filter(visible)
+      .filter(node => {
+        const rect = node.getBoundingClientRect();
+        const style = getComputedStyle(node);
+        return rect.height < 44 || parseFloat(style.fontSize) < 16;
+      })
+      .map(node => node.name || node.tagName);
+    const tapTargets = Array.from(document.querySelectorAll(
+      "button, summary, a.agency-button, a.nav-cta, a.meld-button, a.vk-button, a.join-submit"
+    )).filter(visible).map(node => {
+      const rect = node.getBoundingClientRect();
+      return {label:(node.innerText || node.getAttribute("aria-label") || node.tagName).trim().slice(0,70),
+        width:rect.width,height:rect.height};
+    });
+    const smallTargets = tapTargets.filter(item => item.width < 40 || item.height < 40);
+    const header = document.querySelector("header");
+    const headerRect = header?.getBoundingClientRect();
+    const brand = document.querySelector(".agency-home .site-header .brand img, .meld-wordmark-header, .vk-collaboration");
+    return {
+      viewport: document.documentElement.clientWidth,
+      bodyPaddingTop: getComputedStyle(document.body).paddingTop,
+      headerTop: headerRect ? Math.round(headerRect.top) : null,
+      headerHeight: headerRect ? Math.round(headerRect.height) : null,
+      headerVisible: !!header && visible(header),
+      brandVisible: !!brand && visible(brand),
+      outOfBounds: outOfBounds.slice(0, 12),
+      textOverflow: textOverflow.slice(0, 12),
+      smallFormLabels: smallFormLabels.slice(0, 12),
+      undersizedFields: undersizedFields.slice(0, 12),
+      smallTargets: smallTargets.slice(0, 12)
+    };
+  });
+  assert.ok(report.headerVisible, label + " header should be visible at " + width + "px: " + JSON.stringify(report));
+  assert.ok(report.brandVisible, label + " brand/partner identity should be visible at " + width + "px: " + JSON.stringify(report));
+  assert.ok(report.headerHeight >= 44, label + " header must retain a usable mobile height: " + JSON.stringify(report));
+  assert.deepEqual(report.outOfBounds, [], label + " key content should stay inside the viewport: " + JSON.stringify(report.outOfBounds));
+  assert.deepEqual(report.textOverflow, [], label + " visible text should wrap instead of clipping: " + JSON.stringify(report.textOverflow));
+  assert.deepEqual(report.smallFormLabels, [], label + " mobile form labels should remain readable: " + JSON.stringify(report.smallFormLabels));
+  assert.deepEqual(report.undersizedFields, [], label + " form controls should be at least 44px tall with 16px text: " + JSON.stringify(report.undersizedFields));
+  assert.deepEqual(report.smallTargets, [], label + " primary controls need usable touch targets: " + JSON.stringify(report.smallTargets));
+  assert.ok(report.headerTop <= 1, label + " header should begin at the top edge, not leave a blank strip");
+  if (label.startsWith("BENGALOOP") || label === "Experiment Lab") {
+    assert.equal(report.bodyPaddingTop, "0px", label + " should not use legacy fixed-header body padding");
+  }
+}
+
+async function auditMobileHeaderInteractions(page, label) {
+  const bengaloopToggle = page.locator("#menu");
+  if (await bengaloopToggle.count()) {
+    assert.ok(await bengaloopToggle.isVisible(), label + " BENGALOOP menu toggle should be visible");
+    const box = await bengaloopToggle.boundingBox();
+    assert.ok(box && box.width >= 40 && box.height >= 40, label + " menu toggle should be easy to tap");
+    await bengaloopToggle.click();
+    await page.waitForFunction(() => document.querySelector("#nav")?.classList.contains("open"));
+    await noOverflow(page, label + " navigation open");
+    await page.locator("#navClose").click();
+    await page.waitForFunction(() => !document.querySelector("#nav")?.classList.contains("open"));
+  }
+  const meldMenu = page.locator(".meld-mobile-menu");
+  if (await meldMenu.count()) {
+    const summary = meldMenu.locator("summary");
+    assert.ok(await summary.isVisible(), label + " MELD mobile menu should be visible");
+    await summary.click();
+    assert.notEqual(await meldMenu.getAttribute("open"), null, label + " MELD menu should expand");
+    assert.equal(await meldMenu.locator("nav a").count(), 4, label + " MELD mobile menu should expose all destinations");
+    await noOverflow(page, label + " MELD menu open");
+    await summary.click();
+    assert.equal(await meldMenu.getAttribute("open"), null, label + " MELD menu should close");
+  }
+}
+
 async function checkStudentForm(page, label) {
   const form = page.locator("#studentApplicationForm");
   assert.equal(await form.getAttribute("data-form-endpoint"), "", label + " form must remain safely disabled");
@@ -188,7 +301,7 @@ try {
   assert.equal(await meldDesktop.locator(".meld-process-step").count(), 4);
   assert.equal(await meldDesktop.locator(".meld-faq-list details").count(), 5);
   await checkDisclosure(meldDesktop, ".meld-audience-details", 2, 4, "MELD audience details");
-  await checkTactileButtons(meldDesktop, "button, .meld-button, .meld-faq-list summary, .meld-audience-details>summary", "MELD");
+  await checkTactileButtons(meldDesktop, "button, .meld-button, .meld-faq-list summary, .meld-audience-details>summary, .meld-mobile-menu>summary", "MELD");
   await checkNoArrowGlyphs(meldDesktop, "MELD");
   assert.ok((await meldDesktop.locator(".meld-independent-note").innerText()).includes("independent initiative"));
   assert.ok((await meldDesktop.locator(".meld-network-copy").innerText()).includes("BENGALOOP's network"));
@@ -288,6 +401,27 @@ try {
   await checkNoArrowGlyphs(notFound, "404 page");
   await notFound.close();
 
+  // Mobile-first audit: all public pages at narrow-phone through large-phone widths.
+  const mobileRoutes = [
+    { route: "/index.html", label: "BENGALOOP homepage", file: "home" },
+    { route: "/our-team.html", label: "BENGALOOP team", file: "team" },
+    { route: "/join-us.html", label: "Experiment Lab", file: "experiment-lab" },
+    { route: "/meld.html", label: "MELD", file: "meld" },
+    { route: "/vyapar-kavach.html", label: "Vyapar Kavach", file: "vyapar-kavach" },
+    { route: "/404.html", label: "404 page", file: "404" }
+  ];
+  for (const width of [320, 360, 375, 390, 430]) {
+    for (const item of mobileRoutes) {
+      const page = await openPage(item.route, { width, height: 844 }, item.label + " mobile audit");
+      await checkMobileAlignment(page, width, item.label);
+      if (width === 320) {
+        await page.screenshot({ path: path.join(out, "mobile-audit-320-" + item.file + ".png") });
+        await auditMobileHeaderInteractions(page, item.label);
+      }
+      await page.close();
+    }
+  }
+
   // Legacy entry route still lands on the business enquiry section.
   const legacy = await browser.newPage();
   await legacy.goto(base + "/business-registration.html", { waitUntil: "domcontentloaded" });
@@ -295,7 +429,7 @@ try {
   await legacy.close();
 
   assert.deepEqual(errors, [], "browser errors: " + errors.join(" | "));
-  console.log("PASS: homepage, shared navigation including MELD, MELD desktop/mobile microsite, team hierarchy, Experiment Lab desktop/mobile layouts, forms, and legacy route.");
+  console.log("PASS: desktop and mobile-first audit across 320/360/375/390/430px for all six public pages, including headers, touch targets, heading wrapping, card bounds, menus, expanders, forms and legacy route.");
 } finally {
   await browser.close();
 }

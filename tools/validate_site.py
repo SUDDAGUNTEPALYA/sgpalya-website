@@ -291,6 +291,10 @@ def main():
     check(errors, meld.count('<details class="meld-audience-details">') == 2 and
           "VIEW 4 ORGANISER STEPS" in meld and "VIEW 4 BUSINESS MATCHING STEPS" in meld,
           "MELD audience guidance must be available through two clear expandable controls")
+    check(errors, '<details class="meld-mobile-menu">' in meld and
+          'aria-label="Mobile MELD navigation"' in meld and
+          'href="index.html">Back to BENGALOOP</a>' in meld,
+          "MELD needs a complete native mobile navigation menu")
     for source, label in ((home, "homepage"), (team, "team"), (lab, "Experiment Lab")):
         check(errors, source.count('class="nav-meld-link"') == 1 and
               source.count('href="meld.html"') == 1,
@@ -348,17 +352,39 @@ def main():
     check(errors, "@media(max-width:600px)" in agency_css and
           "prefers-reduced-motion:reduce" in agency_css,
           "shared mobile/reduced-motion styles missing")
+    check(errors, "body.agency-home" in agency_css and
+          "padding-top:0!important" in agency_css and
+          "position:sticky!important" in agency_css and
+          "agency-floating-bottom" in agency_css and "position:relative" in agency_css,
+          "BENGALOOP mobile header flow or hero-image caption overlap correction missing")
     check(errors, ".eco-model-section" in ecosystem_css and "@media(max-width:600px)" in ecosystem_css,
           "homepage ecosystem stylesheet lacks responsive rules")
     check(errors, ".lab-course-card" in lab_css and ".lab-dept-card" in lab_css and
           "@media(max-width:520px)" in lab_css,
           "Experiment Lab stylesheet lacks responsive components")
+    check(errors, "@media(max-width:760px)" in lab_css and
+          "font-size:16px" in lab_css and "min-height:48px" in lab_css,
+          "Experiment Lab mobile typography and form targets are not configured")
     meld_css_path = ROOT / "meld.css"
     check(errors, meld_css_path.is_file(), "MELD stylesheet missing")
     meld_css = meld_css_path.read_text(encoding="utf-8") if meld_css_path.is_file() else ""
     check(errors, ".meld-hero" in meld_css and ".meld-audience-grid" in meld_css and
           "@media(max-width:720px)" in meld_css and "prefers-reduced-motion:reduce" in meld_css,
           "MELD stylesheet lacks core layout, mobile or reduced-motion rules")
+    check(errors, ".meld-mobile-menu" in meld_css and
+          ".meld-mobile-menu-panel" in meld_css and
+          "@media(max-width:380px)" in meld_css,
+          "MELD mobile navigation or narrow-screen styles are missing")
+    check(errors, ".meld-page .meld-event-type" in meld_css and
+          ".meld-page .meld-board-label" in meld_css and
+          "grid-template-columns:32px minmax(0,1fr);" in meld_css and
+          ".meld-page .meld-match-foot" in meld_css,
+          "MELD matching example needs mobile-safe title, labels and fit rows")
+    vk_css_path = ROOT / "vyapar-kavach.css"
+    vk_css = vk_css_path.read_text(encoding="utf-8") if vk_css_path.is_file() else ""
+    check(errors, ".vk-page .vk-risk-grid{grid-template-columns:minmax(0,1fr);" in vk_css and
+          ".vk-page .vk-stage-main>p" in vk_css and "@media(max-width:380px)" in vk_css,
+          "Vyapar Kavach mobile card and typography overrides are missing")
 
     robots = (ROOT / "robots.txt").read_text(encoding="utf-8")
     sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8")

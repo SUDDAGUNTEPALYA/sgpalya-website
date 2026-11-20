@@ -244,3 +244,99 @@
 .experiment-page .lab-course-details>ul,.experiment-page .lab-dept-details>ul{margin-top:9px}
 @media(max-width:520px){.experiment-page :is(.lab-course-details,.lab-dept-details)>summary{min-height:44px;padding:9px 11px;font-size:8px}}
 @media(prefers-reduced-motion:reduce){.experiment-page :is(.lab-course-details,.lab-dept-details)>summary,.experiment-page :is(.lab-course-details,.lab-dept-details)>summary>b{transition:none}.experiment-page :is(.lab-course-details,.lab-dept-details)>summary:hover,.experiment-page :is(.lab-course-details,.lab-dept-details)>summary:active{transform:none}}
+/* Mobile-first type, spacing and form controls for Experiment Lab. */
+.experiment-page .lab-course-card,
+.experiment-page .lab-dept-card,
+.experiment-page .lab-outcome-card{min-width:0}
+.experiment-page .lab-course-card>p,
+.experiment-page .lab-dept-card>p,
+.experiment-page .lab-outcome-card p{font-size:13px;line-height:1.75}
+.experiment-page .lab-course-impact{font-size:12px;line-height:1.75}
+.experiment-page .lab-role strong{font-size:12px;line-height:1.5}
+.experiment-page .lab-role span{font-size:11px;line-height:1.65}
+.experiment-page .lab-dept-note{font-size:11px;line-height:1.7}
+.experiment-page .lab-course-details>ul,
+.experiment-page .lab-dept-details>ul{font-size:12px;line-height:1.7}
+.experiment-page .join-form input,
+.experiment-page .join-form select,
+.experiment-page .join-form textarea{
+  width:100%;
+  min-width:0;
+  min-height:48px;
+  font-size:16px;
+}
+.experiment-page .join-form button{min-height:48px}
+@media(max-width:760px){
+  .experiment-page .lab-shell{width:calc(100% - 32px);max-width:620px}
+  .experiment-page .lab-section{padding:54px 0}
+  .experiment-page .lab-hero{padding:42px 0 44px}
+  .experiment-page .lab-hero-grid{grid-template-columns:minmax(0,1fr);gap:24px}
+  .experiment-page .lab-hero-copy,
+  .experiment-page .lab-hero-panel{min-width:0;width:100%;max-width:none}
+  .experiment-page .lab-hero h1{font-size:clamp(42px,11vw,62px);line-height:1.02;letter-spacing:-2px}
+  .experiment-page .lab-hero-copy>p{font-size:14px;line-height:1.8}
+  .experiment-page .lab-hero-actions{display:grid;grid-template-columns:1fr;gap:10px}
+  .experiment-page .lab-hero-actions .agency-button{width:100%;min-height:48px}
+  .experiment-page .lab-section-head{margin-bottom:23px}
+  .experiment-page .lab-section-head h2{font-size:clamp(30px,8vw,40px);line-height:1.08;letter-spacing:-1.2px}
+  .experiment-page .lab-section-head>p{font-size:13px;line-height:1.75}
+  .experiment-page .lab-course-grid,
+  .experiment-page .lab-dept-grid,
+  .experiment-page .lab-outcome-grid,
+  .experiment-page .lab-perspectives,
+  .experiment-page .lab-project-steps,
+  .experiment-page .lab-roadmap-grid,
+  .experiment-page .lab-collab-panel,
+  .experiment-page .lab-apply-grid{grid-template-columns:minmax(0,1fr)}
+  .experiment-page .lab-course-card,
+  .experiment-page .lab-dept-card{padding:20px 18px;border-radius:12px}
+  .experiment-page .lab-course-card h3,
+  .experiment-page .lab-dept-card h3{font-size:clamp(19px,5.5vw,23px);line-height:1.22}
+  .experiment-page .lab-course-card>p,
+  .experiment-page .lab-dept-card>p,
+  .experiment-page .lab-outcome-card p{font-size:13px;line-height:1.75}
+  .experiment-page .lab-course-impact{font-size:12px}
+  .experiment-page .lab-course-list,
+  .experiment-page .lab-role-list{gap:8px}
+  .experiment-page .lab-course-list li{font-size:12px;line-height:1.65}
+  .experiment-page .lab-role{grid-template-columns:minmax(0,1fr);gap:3px}
+  .experiment-page .lab-role strong{font-size:12px}
+  .experiment-page .lab-role span{font-size:11px;line-height:1.65}
+  .experiment-page .lab-course-details>summary,
+  .experiment-page .lab-dept-details>summary{min-height:46px;font-size:9px}
+  .experiment-page .lab-outcome-card{padding:22px;min-height:0}
+  .experiment-page .lab-case-grid{grid-template-columns:minmax(0,1fr)}
+  .experiment-page .join-fields{grid-template-columns:minmax(0,1fr);gap:12px}
+  .experiment-page .join-fields .full{grid-column:auto}
+  .experiment-page .join-form{min-width:0;padding:20px 16px}
+  .experiment-page .join-form input,
+  .experiment-page .join-form select,
+  .experiment-page .join-form textarea{font-size:16px}
+  .experiment-page .join-form button{width:100%;min-height:48px}
+  .experiment-page .lab-collab-panel{padding:21px}
+}
+@media(max-width:380px){
+  .experiment-page .lab-shell{width:calc(100% - 24px)}
+  .experiment-page .lab-hero h1{font-size:40px;letter-spacing:-1.8px}
+  .experiment-page .lab-course-card,
+  .experiment-page .lab-dept-card{padding:17px 15px}
+  .experiment-page .lab-course-top{align-items:flex-start;flex-wrap:wrap}
+  .experiment-page .lab-course-number{font-size:8px;letter-spacing:1px}
+  .experiment-page .lab-course-code{min-width:48px}
+  .experiment-page .lab-stat-grid{gap:6px}
+  .experiment-page .lab-stat{padding:11px 8px}
+  .experiment-page .lab-stat span{font-size:7px}
+}
+@media(max-width:760px){
+  .experiment-page .lab-case-intro small,
+  .experiment-page .lab-perspective p,
+  .experiment-page .lab-project-step p,
+  .experiment-page .lab-collab-list li,
+  .experiment-page .lab-apply-point{font-size:12px;line-height:1.75}
+  .experiment-page .lab-course-note{font-size:11px;line-height:1.7}
+  .experiment-page .lab-independence{font-size:11px;line-height:1.75}
+  .experiment-page .join-fields label{font-size:11px;line-height:1.5}
+  .experiment-page .join-status{font-size:11px;line-height:1.7}
+  .experiment-page .join-note,
+  .experiment-page .lab-footer-note{font-size:10px;line-height:1.7}
+}

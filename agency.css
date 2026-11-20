@@ -242,3 +242,170 @@ html{scroll-behavior:smooth;scroll-padding-top:94px;overflow-x:clip}body.agency-
 @media(max-width:1100px){.agency-service-card{min-height:350px}}
 @media(max-width:600px){.agency-service-card{min-height:0}.agency-service-details>summary{min-height:44px;font-size:8px}}
 @media(prefers-reduced-motion:reduce){.agency-service-details>summary,.agency-service-details>summary>b{transition:none}.agency-service-details>summary:hover,.agency-service-details>summary:active{transform:none}}
+/* Mobile-first responsive foundation.
+   Use the header in normal document flow instead of combining a fixed header
+   with legacy body padding. This removes the duplicate top gap on every
+   BENGALOOP page while keeping the header sticky during scroll. */
+body.agency-home{
+  padding-top:0!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+}
+.agency-home .site-shell{
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  overflow-x:clip;
+}
+.agency-home .site-header{
+  position:sticky!important;
+  top:0;
+  right:auto;
+  left:auto;
+  width:100%;
+  padding:8px 4.5%;
+  margin:0;
+  z-index:150!important;
+  background:#fffefaF5;
+  border-bottom:1px solid #173a2e18;
+  backdrop-filter:blur(18px);
+}
+.agency-home .header-inner{
+  width:100%;
+  max-width:1440px;
+  min-height:70px;
+  margin:0 auto;
+  padding:0 4.5%;
+  gap:12px;
+}
+.agency-home .site-header .brand{min-width:0;max-width:calc(100% - 58px)}
+.agency-home .site-header .brand img{
+  width:min(245px,calc(100vw - 116px));
+  max-width:100%;
+  height:auto;
+}
+.agency-home .menu-toggle{
+  width:46px;
+  min-width:46px;
+  height:46px;
+  min-height:46px;
+  flex:0 0 auto;
+}
+.agency-home .site-nav.drawer-nav{z-index:160}
+.agency-home .site-nav.drawer-nav .nav-cta{min-height:48px}
+.agency-home .site-nav.drawer-nav a:not(.nav-cta){min-height:48px}
+.agency-home .agency-text-link{min-height:44px;padding:8px 0}
+.agency-home .agency-button{min-height:48px}
+.agency-home .agency-service-card>p{font-size:12px;line-height:1.75}
+.agency-home .agency-service-details>ul{font-size:12px;line-height:1.75}
+.agency-home .agency-next-card>p{font-size:12px;line-height:1.75}
+.agency-home .agency-process-grid p{font-size:12px;line-height:1.7}
+.agency-home .agency-service-note p{font-size:11px;line-height:1.7}
+.agency-home .team-page-masthead p,
+.agency-home .team-heading>p{font-size:13px;line-height:1.75}
+.agency-home .team-card .team-designation,
+.agency-home .team-card .team-education{line-height:1.65}
+.agency-home .team-card .team-responsibilities span{line-height:1.5}
+.agency-home .site-header .header-inner>.agency-button{
+  width:auto;
+  min-height:42px;
+  flex:0 0 auto;
+  white-space:nowrap;
+}
+@media(max-width:820px){
+  body.agency-home{padding-top:0!important}
+  .agency-home .site-header{padding:8px 4%}
+  .agency-home .header-inner{min-height:68px;padding:0 12px}
+  .agency-home .site-header .brand img{width:min(230px,calc(100vw - 112px))}
+  .agency-home .site-nav.drawer-nav{
+    top:7px;
+    right:3%;
+    width:min(410px,94vw);
+    height:calc(100dvh - 14px);
+    min-height:0;
+    max-height:calc(100vh - 14px);
+    padding-top:max(22px,env(safe-area-inset-top));
+    padding-bottom:max(22px,env(safe-area-inset-bottom));
+  }
+}
+@media(max-width:600px){
+  html{scroll-padding-top:78px}
+  .agency-home .site-header{padding:6px 4%}
+  .agency-home .header-inner{min-height:62px;padding:0 10px;gap:9px;border-radius:13px}
+  .agency-home .site-header .brand{max-width:calc(100% - 54px)}
+  .agency-home .site-header .brand img{width:min(215px,calc(100vw - 106px))}
+  .agency-home .menu-toggle{width:43px;min-width:43px;height:43px;min-height:43px}
+  .agency-home .agency-hero{padding-top:34px}
+  .agency-home .agency-hero-art{padding:0 0 0 10px}
+  .agency-home .agency-hero-image{height:clamp(280px,82vw,340px)}
+  .agency-home .agency-image-label{left:17px;bottom:19px;max-width:72%}
+  .agency-home .agency-image-label strong{font-size:clamp(22px,6vw,26px);line-height:1.08}
+  /* The lower proof card now sits beneath the photo instead of covering its caption. */
+  .agency-home .agency-floating-bottom{
+    position:relative;
+    right:auto;
+    bottom:auto;
+    width:calc(100% - 12px);
+    max-width:310px;
+    margin:-5px 0 0 auto;
+    padding:10px 12px;
+    transform:none;
+  }
+  .agency-home .agency-floating-bottom strong{font-size:11px;line-height:1.4}
+  .agency-home .agency-floating-top{top:17px;left:-5px}
+  .agency-home .agency-section-head>p{font-size:12px;line-height:1.75}
+  .agency-home .agency-section-head h2{line-height:1.08}
+  .agency-home .agency-service-card{padding:19px 16px}
+  .agency-home .agency-service-card>p{font-size:12px}
+  .agency-home .agency-service-details>ul{font-size:12px}
+  .agency-home .agency-service-details>summary{font-size:9px}
+  .agency-home .agency-next-card summary{min-height:60px}
+  .agency-home .agency-next-card>p{padding:0 14px 15px 14px;font-size:12px}
+  .agency-home .agency-process-grid p{font-size:12px}
+  .agency-home .agency-enquiry-copy>p{font-size:12px;line-height:1.75}
+  .agency-home .agency-form-panel{max-width:100%;min-width:0}
+  .agency-home .business-form-grid{grid-template-columns:1fr}
+  .agency-home .agency-field input,
+  .agency-home .agency-field select,
+  .agency-home .agency-field textarea{min-height:48px;font-size:16px}
+  .agency-home .team-page-masthead{padding:40px 5% 32px}
+  .agency-home .team-page-masthead h1{font-size:clamp(34px,9.2vw,42px);line-height:1.04;letter-spacing:-1.6px}
+  .agency-home .team-page-countbar{padding:13px 5%;gap:9px}
+  .agency-home .team-heading h2{font-size:clamp(29px,8vw,34px)}
+  .agency-home .team-level-heading h3{font-size:22px;line-height:1.2}
+  .agency-home .team-level-heading p{font-size:12px;line-height:1.7}
+  .agency-home .team-card{min-width:0}
+  .agency-home .site-header .header-inner>.agency-button{
+    min-height:40px;
+    padding:0 9px;
+    gap:5px;
+    font-size:9px;
+  }
+  .agency-home .site-header .header-inner:has(>.agency-button) .brand img{
+    width:min(178px,calc(100vw - 168px));
+  }
+}
+@media(max-width:360px){
+  .agency-home .agency-hero h1{font-size:clamp(36px,11vw,42px);letter-spacing:-1.8px}
+  .agency-home .agency-eyebrow{letter-spacing:1px}
+  .agency-home .agency-floating-top{max-width:190px}
+  .agency-home .site-nav.drawer-nav{padding-left:20px;padding-right:20px}
+  .agency-home .team-card{padding:18px 15px}
+}
+@media(prefers-reduced-motion:reduce){
+  .agency-home .site-header,
+  .agency-home .site-nav.drawer-nav{scroll-behavior:auto}
+  .agency-home .agency-floating-bottom{transform:none}
+}
+@media(max-width:820px){
+  .agency-home .drawer-close{width:44px;height:44px;min-width:44px;min-height:44px}
+}
+@media(max-width:600px){
+  .agency-home .agency-field>span,
+  .agency-home .agency-service-select legend{font-size:11px;line-height:1.5}
+  .agency-home .agency-field small,
+  .agency-home .agency-service-select legend small{font-size:10px}
+  .agency-home .agency-consent{font-size:11px;line-height:1.7}
+  .agency-home .form-intro{font-size:12px;line-height:1.7}
+}
