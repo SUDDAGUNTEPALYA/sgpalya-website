@@ -401,3 +401,11 @@ body.agency-home{
 @media(max-width:820px){
   .agency-home .drawer-close{width:44px;height:44px;min-width:44px;min-height:44px}
 }
+@media(max-width:600px){
+  .agency-home .agency-field>span,
+  .agency-home .agency-service-select legend{font-size:11px;line-height:1.5}
+  .agency-home .agency-field small,
+  .agency-home .agency-service-select legend small{font-size:10px}
+  .agency-home .agency-consent{font-size:11px;line-height:1.7}
+  .agency-home .form-intro{font-size:12px;line-height:1.7}
+}
