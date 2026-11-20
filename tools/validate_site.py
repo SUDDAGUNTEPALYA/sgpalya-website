@@ -377,7 +377,8 @@ def main():
           "MELD mobile navigation or narrow-screen styles are missing")
     check(errors, ".meld-page .meld-event-type" in meld_css and
           ".meld-page .meld-board-label" in meld_css and
-          ".meld-page .meld-fit-row{grid-template-columns:32px minmax(0,1fr)}" in meld_css,
+          "grid-template-columns:32px minmax(0,1fr);" in meld_css and
+          ".meld-page .meld-match-foot" in meld_css,
           "MELD matching example needs mobile-safe title, labels and fit rows")
     vk_css_path = ROOT / "vyapar-kavach.css"
     vk_css = vk_css_path.read_text(encoding="utf-8") if vk_css_path.is_file() else ""
