@@ -52,3 +52,28 @@
   .vk-button{transition:none}
   .vk-button:hover,.vk-button:active{transform:none}
 }
+
+
+/* Complete Vyapar Kavach interaction treatment for every button-style control. */
+.vk-page :is(button,.vk-button){
+  border:2px solid #f8e9c4;
+  border-radius:3px;
+  box-shadow:6px 6px 0 #8a6326;
+  transition:transform .16s ease,box-shadow .16s ease,background-color .16s ease,color .16s ease;
+}
+.vk-page :is(button,.vk-button):hover:not(:disabled){
+  transform:translate(-2px,-2px);
+  box-shadow:8px 8px 0 #8a6326;
+}
+.vk-page :is(button,.vk-button):active:not(:disabled){
+  transform:translate(3px,3px);
+  box-shadow:2px 2px 0 #8a6326;
+}
+.vk-page :is(button,.vk-button):focus-visible{
+  outline:3px solid #ffe6a5;
+  outline-offset:4px;
+}
+@media(prefers-reduced-motion:reduce){
+  .vk-page :is(button,.vk-button){transition:none}
+  .vk-page :is(button,.vk-button):hover,.vk-page :is(button,.vk-button):active{transform:none}
+}
