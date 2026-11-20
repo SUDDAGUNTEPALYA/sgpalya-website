@@ -339,3 +339,154 @@ body.meld-page{margin:0;background:var(--meld-paper);color:var(--meld-ink);font-
 .meld-page .meld-audience-details>ul{margin-top:17px}
 @media(max-width:720px){.meld-page .meld-audience-details>summary{min-height:46px;padding:9px 11px;font-size:8px}}
 @media(prefers-reduced-motion:reduce){.meld-page .meld-audience-details>summary,.meld-page .meld-audience-details>summary>b{transition:none}.meld-page .meld-audience-details>summary:hover,.meld-page .meld-audience-details>summary:active{transform:none}}
+/* Mobile navigation and legibility corrections for the independent MELD microsite. */
+.meld-mobile-menu{display:none;position:relative;flex:0 0 auto}
+.meld-mobile-menu>summary{
+  display:flex;
+  min-width:82px;
+  min-height:44px;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:0 11px;
+  list-style:none;
+  border:2px solid var(--meld-night);
+  border-radius:2px;
+  background:var(--meld-lime);
+  color:var(--meld-night);
+  box-shadow:4px 4px 0 var(--meld-night);
+  font-family:var(--meld-mono);
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:.08em;
+  cursor:pointer;
+  transition:transform .18s,box-shadow .18s;
+}
+.meld-mobile-menu>summary::-webkit-details-marker{display:none}
+.meld-mobile-menu>summary>b{
+  font-family:var(--meld-body);
+  font-size:18px;
+  font-weight:500;
+  transition:transform .18s;
+}
+.meld-mobile-menu[open]>summary>b{transform:rotate(45deg)}
+.meld-mobile-menu>summary:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--meld-violet)}
+.meld-mobile-menu>summary:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--meld-night)}
+.meld-mobile-menu>summary:focus-visible{outline:3px solid var(--meld-violet);outline-offset:4px}
+.meld-mobile-menu-panel{
+  position:absolute;
+  z-index:90;
+  top:calc(100% + 10px);
+  right:0;
+  display:grid;
+  width:min(270px,calc(100vw - 32px));
+  padding:8px;
+  border:1px solid #17192e22;
+  background:var(--meld-white);
+  box-shadow:8px 8px 0 var(--meld-night);
+}
+.meld-page .meld-mobile-menu-panel a{
+  display:flex;
+  min-height:46px;
+  align-items:center;
+  padding:10px 12px;
+  border-bottom:1px solid #17192e12;
+  color:var(--meld-night);
+  font-size:12px;
+  font-weight:800;
+}
+.meld-page .meld-mobile-menu-panel a:last-child{border:0;color:var(--meld-violet)}
+@media(max-width:720px){
+  .meld-header{
+    position:sticky;
+    top:0;
+    z-index:80;
+    isolation:isolate;
+    display:flex;
+    min-height:68px;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:0 18px;
+    background:#f4f3ed;
+  }
+  .meld-wordmark-header{
+    display:inline-flex;
+    flex:0 0 auto;
+    visibility:visible;
+    opacity:1;
+    color:var(--meld-night)!important;
+    font-size:32px;
+    line-height:1;
+  }
+  .meld-nav,.meld-back{display:none!important}
+  .meld-mobile-menu{display:block}
+  .meld-hero-topline{font-size:8px;line-height:1.6}
+  .meld-hero h1{font-size:clamp(52px,13.5vw,76px);line-height:.94;letter-spacing:-.085em}
+  .meld-hero-intro{font-size:13px;line-height:1.8}
+  .meld-hero-actions .meld-button{min-height:48px;font-size:11px}
+  .meld-hero-bottom{font-size:8px;line-height:1.6}
+  .meld-manifesto-copy p,
+  .meld-audience-card>p,
+  .meld-match-heading>p,
+  .meld-support-head>p,
+  .meld-process-head>p,
+  .meld-territory-copy>p,
+  .meld-network-copy>p{font-size:12px;line-height:1.8}
+  .meld-section-kicker{font-size:8px;line-height:1.6}
+  .meld-audience-card{padding:24px 20px}
+  .meld-audience-card h2{font-size:clamp(42px,11vw,52px);line-height:.98}
+  .meld-audience-card li{font-size:12px;line-height:1.7}
+  .meld-audience-details>summary{min-height:46px;font-size:9px}
+  .meld-audience-details>ul{gap:10px}
+  .meld-card-link{min-height:44px;font-size:9px}
+  .meld-board-label{font-size:9px}
+  .meld-event-brief>p{font-size:12px;line-height:1.75}
+  .meld-event-tags span{font-size:8px}
+  .meld-match-connector small{font-size:8px}
+  .meld-fit-row strong{font-size:12px}
+  .meld-fit-row small,.meld-fit-note{font-size:10px;line-height:1.6}
+  .meld-fit-row>b{font-size:7px}
+  .meld-match-foot{font-size:8px;line-height:1.6}
+  .meld-support-grid article{padding:18px 12px;min-width:0}
+  .meld-support-icon{margin-bottom:15px}
+  .meld-support-grid h3{font-size:20px;line-height:1.15}
+  .meld-support-grid p{min-height:0;font-size:11px;line-height:1.7}
+  .meld-support-grid b{font-size:8px;line-height:1.6}
+  .meld-process-step{min-width:0}
+  .meld-process-step h3{font-size:19px;line-height:1.2}
+  .meld-process-step p{font-size:11px;line-height:1.7}
+  .meld-process-note{font-size:11px;line-height:1.7}
+  .meld-network-equation span,.meld-network-equation b,.meld-network-equation strong{font-size:8px}
+  .meld-network-copy>small{font-size:10px}
+  .meld-guardrail-list h3{font-size:18px}
+  .meld-guardrail-list p{font-size:12px;line-height:1.75}
+  .meld-faq-list summary{min-height:48px;padding:14px 0;font-size:12px;line-height:1.5}
+  .meld-faq-list details p{font-size:12px;line-height:1.75;padding-right:25px}
+  .meld-final-cta p{font-size:12px;line-height:1.8}
+  .meld-final-actions .meld-button{min-height:48px}
+  .meld-footer-main>p{font-size:9px;line-height:1.7}
+  .meld-footer-bottom{font-size:8px;line-height:1.6}
+  .meld-footer-disclaimer{font-size:9px;line-height:1.7}
+}
+@media(max-width:380px){
+  .meld-header{padding:0 14px}
+  .meld-wordmark-header{font-size:30px}
+  .meld-mobile-menu>summary{min-width:76px;padding:0 9px}
+  .meld-hero{padding-left:16px;padding-right:16px}
+  .meld-hero h1{font-size:clamp(48px,13.8vw,56px)}
+  .meld-hero-copy{padding-top:47px}
+  .meld-audience,.meld-match,.meld-support,.meld-process{padding-left:16px;padding-right:16px}
+  .meld-audience-card{padding:21px 17px}
+  .meld-audience-card h2{font-size:44px}
+  .meld-support-grid article{padding:16px 9px}
+  .meld-process-step{padding-right:10px}
+  .meld-process-step:not(:first-child){padding-left:10px}
+  .meld-territory,.meld-network,.meld-guardrails,.meld-faq{padding-left:16px;padding-right:16px}
+  .meld-fit-row{grid-template-columns:30px minmax(0,1fr);gap:8px}
+  .meld-fit-row>b{grid-column:2;justify-self:start}
+}
+@media(prefers-reduced-motion:reduce){
+  .meld-mobile-menu>summary,.meld-mobile-menu>summary>b{transition:none}
+  .meld-mobile-menu>summary:hover,.meld-mobile-menu>summary:active{transform:none}
+}
