@@ -108,12 +108,28 @@ async function checkMobileAlignment(page, width, label) {
         };
       });
     const outOfBounds = bounds.filter(item => item.left < -1 || item.right > window.innerWidth + 1);
-    const headingsOverflow = Array.from(document.querySelectorAll(
-      "main h1, main h2, main h3, .meld-event-type, .meld-board-label, .meld-fit-row, .meld-match-foot"
+    const textOverflow = Array.from(document.querySelectorAll(
+      "main h1, main h2, main h3, main h4, main p, main li, main summary, main button, main a, main label, main small, main strong, .meld-event-type, .meld-board-label, .meld-fit-row, .meld-match-foot"
     ))
       .filter(visible)
-      .filter(node => node.scrollWidth > node.clientWidth + 2)
+      .filter(node => node.clientWidth > 0 && node.scrollWidth > node.clientWidth + 2)
       .map(node => (node.textContent || "").trim().slice(0, 70));
+    const smallFormLabels = Array.from(document.querySelectorAll(
+      ".agency-field>span, .join-fields>label"
+    ))
+      .filter(visible)
+      .filter(node => parseFloat(getComputedStyle(node).fontSize) < 10.5)
+      .map(node => (node.textContent || "").trim().slice(0, 70));
+    const undersizedFields = Array.from(document.querySelectorAll(
+      "input:not([type=checkbox]):not([type=radio]), select, textarea"
+    ))
+      .filter(visible)
+      .filter(node => {
+        const rect = node.getBoundingClientRect();
+        const style = getComputedStyle(node);
+        return rect.height < 44 || parseFloat(style.fontSize) < 16;
+      })
+      .map(node => node.name || node.tagName);
     const tapTargets = Array.from(document.querySelectorAll(
       "button, summary, a.agency-button, a.nav-cta, a.meld-button, a.vk-button, a.join-submit"
     )).filter(visible).map(node => {
@@ -133,7 +149,9 @@ async function checkMobileAlignment(page, width, label) {
       headerVisible: !!header && visible(header),
       brandVisible: !!brand && visible(brand),
       outOfBounds: outOfBounds.slice(0, 12),
-      headingsOverflow: headingsOverflow.slice(0, 12),
+      textOverflow: textOverflow.slice(0, 12),
+      smallFormLabels: smallFormLabels.slice(0, 12),
+      undersizedFields: undersizedFields.slice(0, 12),
       smallTargets: smallTargets.slice(0, 12)
     };
   });
@@ -141,7 +159,9 @@ async function checkMobileAlignment(page, width, label) {
   assert.ok(report.brandVisible, label + " brand/partner identity should be visible at " + width + "px: " + JSON.stringify(report));
   assert.ok(report.headerHeight >= 44, label + " header must retain a usable mobile height: " + JSON.stringify(report));
   assert.deepEqual(report.outOfBounds, [], label + " key content should stay inside the viewport: " + JSON.stringify(report.outOfBounds));
-  assert.deepEqual(report.headingsOverflow, [], label + " headings should wrap instead of clipping: " + JSON.stringify(report.headingsOverflow));
+  assert.deepEqual(report.textOverflow, [], label + " visible text should wrap instead of clipping: " + JSON.stringify(report.textOverflow));
+  assert.deepEqual(report.smallFormLabels, [], label + " mobile form labels should remain readable: " + JSON.stringify(report.smallFormLabels));
+  assert.deepEqual(report.undersizedFields, [], label + " form controls should be at least 44px tall with 16px text: " + JSON.stringify(report.undersizedFields));
   assert.deepEqual(report.smallTargets, [], label + " primary controls need usable touch targets: " + JSON.stringify(report.smallTargets));
   assert.ok(report.headerTop <= 1, label + " header should begin at the top edge, not leave a blank strip");
   if (label.startsWith("BENGALOOP") || label === "Experiment Lab") {
