@@ -29,6 +29,22 @@ async function noOverflow(page, label) {
   );
 }
 
+async function checkTactileButtons(page, selector, label) {
+  const buttons = page.locator(selector);
+  const count = await buttons.count();
+  assert.ok(count > 0, label + " should contain at least one CTA button");
+  const states = await buttons.evaluateAll(nodes => nodes.map(node => {
+    const style = getComputedStyle(node);
+    return { borderWidth: style.borderTopWidth, shadow: style.boxShadow, text: node.textContent || "" };
+  }));
+  for (const state of states) {
+    assert.equal(state.borderWidth, "2px", label + " CTA should have a tactile 2px border");
+    assert.notEqual(state.shadow, "none", label + " CTA should have a hard offset shadow");
+    const hasArrow = ["→","↗","↘","↓","➜","⟶"].some(glyph => state.text.includes(glyph));
+    assert.equal(hasArrow, false, label + " CTA should not contain a decorative arrow");
+  }
+}
+
 async function checkStudentForm(page, label) {
   const form = page.locator("#studentApplicationForm");
   assert.equal(await form.getAttribute("data-form-endpoint"), "", label + " form must remain safely disabled");
@@ -60,6 +76,7 @@ try {
   assert.ok((await desktop.locator("#services").innerText()).includes("Business strategy & research"));
   assert.ok((await desktop.locator("#services").innerText()).includes("Operations, projects & people"));
   assert.equal(await desktop.locator(".agency-leader-card").count(), 2);
+  await checkTactileButtons(desktop, ".agency-button, .nav-cta", "BENGALOOP");
   assert.ok((await desktop.locator(".agency-member-count").innerText()).includes("18"));
   assert.equal(await desktop.locator("#businessEnquiryForm").getAttribute("data-form-endpoint"), "");
   await noOverflow(desktop, "desktop homepage");
@@ -83,6 +100,7 @@ try {
   assert.equal(await desktop.locator(".team-level-cofounders .team-card").count(), 0);
   assert.equal(await desktop.locator(".team-level-members .team-card").count(), 18);
   assert.equal(await desktop.locator(".team-level-members .team-status").count(), 18);
+  await checkTactileButtons(desktop, ".team-linkedin", "BENGALOOP team links");
   assert.equal(await desktop.locator(".team-level-members .team-card-new").count(), 0);
   assert.equal(await desktop.locator(".team-level-members .team-card").filter({ hasText: "Jenneth Pinto" }).count(), 1);
   const jennethPhoto = desktop.locator(".team-level-members .team-card").filter({ hasText: "Jenneth Pinto" }).locator("img");
@@ -100,6 +118,7 @@ try {
   assert.equal(await vkDesktop.locator(".vk-stage").count(), 3);
   assert.ok((await vkDesktop.locator(".vk-collaboration").innerText()).includes("CUFFLINKSIA"));
   assert.ok((await vkDesktop.locator("#vk-unbiased").innerText()).includes("No insurer preferred by default"));
+  await checkTactileButtons(vkDesktop, ".vk-button", "Vyapar Kavach");
   await noOverflow(vkDesktop, "desktop Vyapar Kavach");
   await vkDesktop.screenshot({ path: path.join(out, "desktop-vyapar-kavach.png"), fullPage: true });
   await vkDesktop.close();
@@ -124,6 +143,7 @@ try {
   assert.equal(await meldDesktop.locator(".meld-support-grid article").count(), 4);
   assert.equal(await meldDesktop.locator(".meld-process-step").count(), 4);
   assert.equal(await meldDesktop.locator(".meld-faq-list details").count(), 5);
+  await checkTactileButtons(meldDesktop, ".meld-button", "MELD");
   assert.ok((await meldDesktop.locator(".meld-independent-note").innerText()).includes("independent initiative"));
   assert.ok((await meldDesktop.locator(".meld-network-copy").innerText()).includes("BENGALOOP's network"));
   await meldDesktop.locator(".meld-faq-list details").last().locator("summary").click();
@@ -149,6 +169,7 @@ try {
   assert.equal(await labDesktop.locator(".lab-course-card").count(), 4);
   assert.equal(await labDesktop.locator(".lab-dept-card").count(), 6);
   assert.equal(await labDesktop.locator(".lab-role").count(), 19);
+  await checkTactileButtons(labDesktop, ".agency-button, .join-submit", "Experiment Lab");
   assert.equal(await labDesktop.locator(".nav-project-link").count(), 1);
   assert.ok((await labDesktop.locator(".lab-independence").innerText()).includes("not an official project"));
   await noOverflow(labDesktop, "desktop Experiment Lab");
