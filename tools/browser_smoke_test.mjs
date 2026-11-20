@@ -57,6 +57,30 @@ async function checkNoArrowGlyphs(page, label) {
   assert.equal(result.pseudoHasArrow, false, label + " should not generate arrow glyphs through CSS");
 }
 
+async function checkDisclosure(page, selector, expectedCount, expectedItems, label) {
+  const disclosures = page.locator(selector);
+  assert.equal(await disclosures.count(), expectedCount, label + " disclosure count");
+  const first = disclosures.first();
+  assert.equal(await first.getAttribute("open"), null, label + " should start collapsed");
+  const summary = first.locator("summary");
+  assert.ok(await summary.isVisible(), label + " expand control should be visible");
+  const list = first.locator("ul");
+  assert.equal(await list.isVisible(), false, label + " detail list should start hidden");
+  await summary.click();
+  assert.notEqual(await first.getAttribute("open"), null, label + " should open on activation");
+  assert.equal(await list.isVisible(), true, label + " detail list should be visible when expanded");
+  assert.equal(await list.locator("li").count(), expectedItems, label + " expanded item count");
+  await noOverflow(page, label + " expanded");
+  await summary.click();
+  assert.equal(await first.getAttribute("open"), null, label + " should collapse on second activation");
+  assert.equal(await list.isVisible(), false, label + " detail list should hide after collapse");
+  await summary.focus();
+  await page.keyboard.press("Enter");
+  assert.notEqual(await first.getAttribute("open"), null, label + " should expand with the keyboard");
+  await page.keyboard.press("Enter");
+  assert.equal(await first.getAttribute("open"), null, label + " should collapse with the keyboard");
+}
+
 async function checkStudentForm(page, label) {
   const form = page.locator("#studentApplicationForm");
   assert.equal(await form.getAttribute("data-form-endpoint"), "", label + " form must remain safely disabled");
@@ -83,12 +107,13 @@ try {
   assert.equal(await desktop.locator(".eco-model-card").count(), 2);
   assert.equal(await desktop.locator(".eco-journey-step").count(), 3);
   assert.equal(await desktop.locator(".agency-service-card").count(), 6);
+  await checkDisclosure(desktop, ".agency-service-details", 6, 4, "BENGALOOP service details");
   assert.equal(await desktop.locator(".agency-next-card").count(), 3);
   assert.equal(await desktop.locator('#businessEnquiryForm input[name="services"]').count(), 6);
   assert.ok((await desktop.locator("#services").innerText()).includes("Business strategy & research"));
   assert.ok((await desktop.locator("#services").innerText()).includes("Operations, projects & people"));
   assert.equal(await desktop.locator(".agency-leader-card").count(), 2);
-  await checkTactileButtons(desktop, "button, .agency-button, .nav-cta, .agency-text-link, .agency-member-count", "BENGALOOP homepage");
+  await checkTactileButtons(desktop, "button, .agency-button, .nav-cta, .agency-text-link, .agency-member-count, .agency-service-details>summary", "BENGALOOP homepage");
   await checkNoArrowGlyphs(desktop, "BENGALOOP homepage");
   assert.ok((await desktop.locator(".agency-member-count").innerText()).includes("18"));
   assert.equal(await desktop.locator("#businessEnquiryForm").getAttribute("data-form-endpoint"), "");
@@ -130,9 +155,10 @@ try {
   assert.ok((await vkDesktop.title()).includes("Vyapar Kavach"));
   assert.equal(await vkDesktop.locator("h1").count(), 1);
   assert.equal(await vkDesktop.locator(".vk-stage").count(), 3);
+  await checkDisclosure(vkDesktop, ".vk-stage-details", 3, 4, "Vyapar Kavach stage activities");
   assert.ok((await vkDesktop.locator(".vk-collaboration").innerText()).includes("CUFFLINKSIA"));
   assert.ok((await vkDesktop.locator("#vk-unbiased").innerText()).includes("No insurer preferred by default"));
-  await checkTactileButtons(vkDesktop, "button, .vk-button", "Vyapar Kavach");
+  await checkTactileButtons(vkDesktop, "button, .vk-button, .vk-stage-details>summary", "Vyapar Kavach");
   await checkNoArrowGlyphs(vkDesktop, "Vyapar Kavach");
   await noOverflow(vkDesktop, "desktop Vyapar Kavach");
   await vkDesktop.screenshot({ path: path.join(out, "desktop-vyapar-kavach.png"), fullPage: true });
@@ -141,7 +167,8 @@ try {
   const vkMobile = await openPage("/vyapar-kavach.html", { width: 390, height: 844 }, "mobile Vyapar Kavach 390");
   assert.equal(await vkMobile.locator(".vk-stage").count(), 3);
   await checkNoArrowGlyphs(vkMobile, "mobile Vyapar Kavach");
-  await checkTactileButtons(vkMobile, "button, .vk-button", "mobile Vyapar Kavach");
+  await checkDisclosure(vkMobile, ".vk-stage-details", 3, 4, "mobile Vyapar Kavach stage activities");
+  await checkTactileButtons(vkMobile, "button, .vk-button, .vk-stage-details>summary", "mobile Vyapar Kavach");
   await noOverflow(vkMobile, "mobile Vyapar Kavach 390");
   await vkMobile.screenshot({ path: path.join(out, "mobile-vyapar-kavach-390.png"), fullPage: true });
   await vkMobile.close();
@@ -160,7 +187,8 @@ try {
   assert.equal(await meldDesktop.locator(".meld-support-grid article").count(), 4);
   assert.equal(await meldDesktop.locator(".meld-process-step").count(), 4);
   assert.equal(await meldDesktop.locator(".meld-faq-list details").count(), 5);
-  await checkTactileButtons(meldDesktop, "button, .meld-button, .meld-faq-list summary", "MELD");
+  await checkDisclosure(meldDesktop, ".meld-audience-details", 2, 4, "MELD audience details");
+  await checkTactileButtons(meldDesktop, "button, .meld-button, .meld-faq-list summary, .meld-audience-details>summary", "MELD");
   await checkNoArrowGlyphs(meldDesktop, "MELD");
   assert.ok((await meldDesktop.locator(".meld-independent-note").innerText()).includes("independent initiative"));
   assert.ok((await meldDesktop.locator(".meld-network-copy").innerText()).includes("BENGALOOP's network"));
@@ -174,7 +202,8 @@ try {
   assert.equal(await meldMobile.locator(".meld-audience-card").count(), 2);
   assert.equal(await meldMobile.locator(".meld-process-step").count(), 4);
   await checkNoArrowGlyphs(meldMobile, "mobile MELD");
-  await checkTactileButtons(meldMobile, "button, .meld-button, .meld-faq-list summary", "mobile MELD");
+  await checkDisclosure(meldMobile, ".meld-audience-details", 2, 4, "mobile MELD audience details");
+  await checkTactileButtons(meldMobile, "button, .meld-button, .meld-faq-list summary, .meld-audience-details>summary", "mobile MELD");
   await noOverflow(meldMobile, "mobile MELD 390");
   await meldMobile.screenshot({ path: path.join(out, "mobile-meld-390.png"), fullPage: true });
   await meldMobile.close();
@@ -189,7 +218,9 @@ try {
   assert.equal(await labDesktop.locator(".lab-course-card").count(), 4);
   assert.equal(await labDesktop.locator(".lab-dept-card").count(), 6);
   assert.equal(await labDesktop.locator(".lab-role").count(), 19);
-  await checkTactileButtons(labDesktop, "button, .agency-button, .nav-cta, .join-submit", "Experiment Lab");
+  await checkDisclosure(labDesktop, ".lab-course-details", 4, 5, "Experiment Lab course contributions");
+  await checkDisclosure(labDesktop, ".lab-dept-details", 6, 3, "Experiment Lab role pathways");
+  await checkTactileButtons(labDesktop, "button, .agency-button, .nav-cta, .join-submit, .lab-course-details>summary, .lab-dept-details>summary", "Experiment Lab");
   await checkNoArrowGlyphs(labDesktop, "Experiment Lab");
   assert.equal(await labDesktop.locator(".nav-project-link").count(), 1);
   assert.ok((await labDesktop.locator(".lab-independence").innerText()).includes("not an official project"));
@@ -201,7 +232,8 @@ try {
   // Mobile homepage, drawer and business-enquiry disabled-submission boundary.
   const mobile = await openPage("/index.html", { width: 390, height: 844 }, "mobile homepage 390");
   await mobile.screenshot({ path: path.join(out, "mobile-ecosystem-home-390.png"), fullPage: true });
-  await checkTactileButtons(mobile, "button, .agency-button, .nav-cta, .agency-text-link, .agency-member-count", "mobile BENGALOOP homepage");
+  await checkDisclosure(mobile, ".agency-service-details", 6, 4, "mobile BENGALOOP service details");
+  await checkTactileButtons(mobile, "button, .agency-button, .nav-cta, .agency-text-link, .agency-member-count, .agency-service-details>summary", "mobile BENGALOOP homepage");
   await checkNoArrowGlyphs(mobile, "mobile BENGALOOP homepage");
   await mobile.locator("#menu").click();
   await mobile.waitForFunction(() => document.querySelector("#nav").classList.contains("open"));
@@ -237,7 +269,9 @@ try {
   assert.equal(await labMobile.locator(".lab-course-card").count(), 4);
   assert.equal(await labMobile.locator(".lab-dept-card").count(), 6);
   assert.equal(await labMobile.locator(".lab-role").count(), 19);
-  await checkTactileButtons(labMobile, "button, .agency-button, .nav-cta, .join-submit", "mobile Experiment Lab");
+  await checkDisclosure(labMobile, ".lab-course-details", 4, 5, "mobile Experiment Lab course contributions");
+  await checkDisclosure(labMobile, ".lab-dept-details", 6, 3, "mobile Experiment Lab role pathways");
+  await checkTactileButtons(labMobile, "button, .agency-button, .nav-cta, .join-submit, .lab-course-details>summary, .lab-dept-details>summary", "mobile Experiment Lab");
   await checkNoArrowGlyphs(labMobile, "mobile Experiment Lab");
   await noOverflow(labMobile, "mobile Experiment Lab 390");
   await labMobile.screenshot({ path: path.join(out, "mobile-experiment-lab-390.png"), fullPage: true });

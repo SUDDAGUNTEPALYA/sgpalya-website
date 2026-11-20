@@ -227,3 +227,20 @@
   .experiment-page :is(button,.agency-button,.nav-cta,.join-submit):hover,
   .experiment-page :is(button,.agency-button,.nav-cta,.join-submit):active{transform:none}
 }
+/* Tactile disclosure controls for course contributions and department role pathways. */
+.experiment-page .lab-course-details,.experiment-page .lab-dept-details{margin-top:13px}
+.experiment-page :is(.lab-course-details,.lab-dept-details)>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:46px;padding:10px 13px;list-style:none;border:2px solid var(--lab-forest);border-radius:8px;background:#edf1e9;color:var(--lab-forest);box-shadow:4px 4px 0 var(--lab-forest);font-size:9px;font-weight:900;letter-spacing:.8px;line-height:1.4;cursor:pointer;transition:transform .18s,box-shadow .18s,background .18s,color .18s}
+.experiment-page :is(.lab-course-details,.lab-dept-details)>summary::-webkit-details-marker{display:none}
+.experiment-page :is(.lab-course-details,.lab-dept-details)>summary .lab-expand-close{display:none}
+.experiment-page :is(.lab-course-details,.lab-dept-details)[open]>summary .lab-expand-open{display:none}
+.experiment-page :is(.lab-course-details,.lab-dept-details)[open]>summary .lab-expand-close{display:inline}
+.experiment-page :is(.lab-course-details,.lab-dept-details)>summary>b{display:grid;width:23px;height:23px;flex:0 0 auto;place-items:center;border:1px solid currentColor;border-radius:5px;font-size:17px;font-weight:500;line-height:1;transition:transform .18s}
+.experiment-page :is(.lab-course-details,.lab-dept-details)[open]>summary>b{transform:rotate(45deg)}
+.experiment-page :is(.lab-course-details,.lab-dept-details)[open]>summary{background:var(--lab-forest);color:var(--lab-white)}
+.experiment-page :is(.lab-course-details,.lab-dept-details)>summary:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--lab-accent)}
+.experiment-page :is(.lab-course-details,.lab-dept-details)>summary:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--lab-forest)}
+.experiment-page :is(.lab-course-details,.lab-dept-details)>summary:focus-visible{outline:3px solid var(--lab-accent);outline-offset:4px}
+.experiment-page .lab-course-details>h4,.experiment-page .lab-dept-details>h4{margin-top:16px}
+.experiment-page .lab-course-details>ul,.experiment-page .lab-dept-details>ul{margin-top:9px}
+@media(max-width:520px){.experiment-page :is(.lab-course-details,.lab-dept-details)>summary{min-height:44px;padding:9px 11px;font-size:8px}}
+@media(prefers-reduced-motion:reduce){.experiment-page :is(.lab-course-details,.lab-dept-details)>summary,.experiment-page :is(.lab-course-details,.lab-dept-details)>summary>b{transition:none}.experiment-page :is(.lab-course-details,.lab-dept-details)>summary:hover,.experiment-page :is(.lab-course-details,.lab-dept-details)>summary:active{transform:none}}

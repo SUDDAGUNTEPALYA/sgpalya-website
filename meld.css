@@ -323,3 +323,19 @@ body.meld-page{margin:0;background:var(--meld-paper);color:var(--meld-ink);font-
   .meld-page :is(button,.meld-button,.meld-faq-list summary):hover,
   .meld-page :is(button,.meld-button,.meld-faq-list summary):active{transform:none}
 }
+/* MELD audience details: a distinct lime-and-lilac tactile disclosure, shared behaviour with the other initiatives. */
+.meld-page .meld-audience-details{margin-top:20px}
+.meld-page .meld-audience-details>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;padding:10px 13px;list-style:none;border:2px solid var(--meld-night);border-radius:2px;background:var(--meld-lime);color:var(--meld-night);box-shadow:5px 5px 0 var(--meld-night);font-family:var(--meld-mono);font-size:9px;font-weight:700;letter-spacing:.06em;line-height:1.45;cursor:pointer;transition:transform .18s,box-shadow .18s,background .18s,color .18s}
+.meld-page .meld-audience-details>summary::-webkit-details-marker{display:none}
+.meld-page .meld-audience-details>summary .meld-expand-close{display:none}
+.meld-page .meld-audience-details[open]>summary .meld-expand-open{display:none}
+.meld-page .meld-audience-details[open]>summary .meld-expand-close{display:inline}
+.meld-page .meld-audience-details>summary>b{display:grid;width:24px;height:24px;flex:0 0 auto;place-items:center;border:1px solid currentColor;font-family:var(--meld-body);font-size:18px;font-weight:500;line-height:1;transition:transform .18s}
+.meld-page .meld-audience-details[open]>summary{background:var(--meld-night);color:var(--meld-lime)}
+.meld-page .meld-audience-details[open]>summary>b{transform:rotate(45deg)}
+.meld-page .meld-audience-details>summary:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--meld-lilac)}
+.meld-page .meld-audience-details>summary:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--meld-night)}
+.meld-page .meld-audience-details>summary:focus-visible{outline:3px solid var(--meld-violet);outline-offset:4px}
+.meld-page .meld-audience-details>ul{margin-top:17px}
+@media(max-width:720px){.meld-page .meld-audience-details>summary{min-height:46px;padding:9px 11px;font-size:8px}}
+@media(prefers-reduced-motion:reduce){.meld-page .meld-audience-details>summary,.meld-page .meld-audience-details>summary>b{transition:none}.meld-page .meld-audience-details>summary:hover,.meld-page .meld-audience-details>summary:active{transform:none}}

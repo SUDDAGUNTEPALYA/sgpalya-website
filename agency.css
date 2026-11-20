@@ -224,3 +224,21 @@ html{scroll-behavior:smooth;scroll-padding-top:94px;overflow-x:clip}body.agency-
     transform:none;
   }
 }
+/* Scannable service cards: keep the service proposition visible and disclose the detailed scope on demand. */
+.agency-service-card{min-height:360px}
+.agency-service-details{margin-top:2px}
+.agency-service-details>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:46px;padding:9px 12px;list-style:none;border:2px solid var(--agf);background:#edf1e9;color:var(--agf);box-shadow:4px 4px 0 var(--agf);font-size:9px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:transform .18s,box-shadow .18s,background .18s,color .18s}
+.agency-service-details>summary::-webkit-details-marker{display:none}
+.agency-service-details>summary .service-expand-close{display:none}
+.agency-service-details[open]>summary .service-expand-open{display:none}
+.agency-service-details[open]>summary .service-expand-close{display:inline}
+.agency-service-details>summary>b{display:grid;width:23px;height:23px;flex:0 0 auto;place-items:center;border:1px solid currentColor;font-size:17px;font-weight:500;line-height:1;transition:transform .18s}
+.agency-service-details[open]>summary>b{transform:rotate(45deg)}
+.agency-service-details[open]>summary{background:var(--agf);color:#fff}
+.agency-service-details>ul{margin-top:12px}
+.agency-service-details>summary:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--agc)}
+.agency-service-details>summary:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--agf)}
+.agency-service-details>summary:focus-visible{outline:3px solid var(--agc);outline-offset:4px}
+@media(max-width:1100px){.agency-service-card{min-height:350px}}
+@media(max-width:600px){.agency-service-card{min-height:0}.agency-service-details>summary{min-height:44px;font-size:8px}}
+@media(prefers-reduced-motion:reduce){.agency-service-details>summary,.agency-service-details>summary>b{transition:none}.agency-service-details>summary:hover,.agency-service-details>summary:active{transform:none}}
