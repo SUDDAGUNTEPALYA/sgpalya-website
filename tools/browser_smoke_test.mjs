@@ -50,7 +50,7 @@ async function checkNoArrowGlyphs(page, label) {
     const pseudoContent = Array.from(document.querySelectorAll("*")).flatMap(node =>
       ["::before", "::after"].map(pseudo => getComputedStyle(node, pseudo).content || "")
     ).join(" ");
-    const arrowPattern = /[\\u2190-\\u21FF\\u27F0-\\u27FF\\u2900-\\u297F]/u;
+    const arrowPattern = /[\u2190-\u21FF\u27F0-\u27FF\u2900-\u297F]/u;
     return { bodyHasArrow: arrowPattern.test(bodyText), pseudoHasArrow: arrowPattern.test(pseudoContent) };
   });
   assert.equal(result.bodyHasArrow, false, label + " should not contain arrow glyphs in markup");
@@ -141,6 +141,7 @@ try {
   const vkMobile = await openPage("/vyapar-kavach.html", { width: 390, height: 844 }, "mobile Vyapar Kavach 390");
   assert.equal(await vkMobile.locator(".vk-stage").count(), 3);
   await checkNoArrowGlyphs(vkMobile, "mobile Vyapar Kavach");
+  await checkTactileButtons(vkMobile, "button, .vk-button", "mobile Vyapar Kavach");
   await noOverflow(vkMobile, "mobile Vyapar Kavach 390");
   await vkMobile.screenshot({ path: path.join(out, "mobile-vyapar-kavach-390.png"), fullPage: true });
   await vkMobile.close();
@@ -173,6 +174,7 @@ try {
   assert.equal(await meldMobile.locator(".meld-audience-card").count(), 2);
   assert.equal(await meldMobile.locator(".meld-process-step").count(), 4);
   await checkNoArrowGlyphs(meldMobile, "mobile MELD");
+  await checkTactileButtons(meldMobile, "button, .meld-button, .meld-faq-list summary", "mobile MELD");
   await noOverflow(meldMobile, "mobile MELD 390");
   await meldMobile.screenshot({ path: path.join(out, "mobile-meld-390.png"), fullPage: true });
   await meldMobile.close();
@@ -199,6 +201,8 @@ try {
   // Mobile homepage, drawer and business-enquiry disabled-submission boundary.
   const mobile = await openPage("/index.html", { width: 390, height: 844 }, "mobile homepage 390");
   await mobile.screenshot({ path: path.join(out, "mobile-ecosystem-home-390.png"), fullPage: true });
+  await checkTactileButtons(mobile, "button, .agency-button, .nav-cta, .agency-text-link, .agency-member-count", "mobile BENGALOOP homepage");
+  await checkNoArrowGlyphs(mobile, "mobile BENGALOOP homepage");
   await mobile.locator("#menu").click();
   await mobile.waitForFunction(() => document.querySelector("#nav").classList.contains("open"));
   await mobile.screenshot({ path: path.join(out, "mobile-ecosystem-menu-390.png") });
@@ -225,6 +229,8 @@ try {
   assert.equal(await teamMobile.locator(".team-level-members .team-status").count(), 18);
   await noOverflow(teamMobile, "mobile team 390");
   await teamMobile.screenshot({ path: path.join(out, "mobile-full-team-390.png"), fullPage: true });
+  await checkTactileButtons(teamMobile, "button, .agency-button, .nav-cta, .agency-text-link, .team-linkedin, .profile-linkedin", "mobile BENGALOOP team");
+  await checkNoArrowGlyphs(teamMobile, "mobile BENGALOOP team");
   await teamMobile.close();
 
   const labMobile = await openPage("/join-us.html", { width: 390, height: 844 }, "mobile Experiment Lab 390");
