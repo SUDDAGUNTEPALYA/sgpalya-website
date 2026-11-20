@@ -106,6 +106,9 @@ def main():
           "homepage should show the three-stage growth direction")
     check(errors, home.count('class="agency-service-card"') == 6,
           "homepage must show all six Experiment Lab-aligned business workstreams")
+    check(errors, home.count('<details class="agency-service-details">') == 6 and
+          "VIEW 4 FOCUS AREAS" in home and '<details class="agency-service-details" open>' not in home,
+          "homepage service details must start collapsed behind six clear expand controls")
     for service in (
         "Business strategy &amp; research", "Finance &amp; business analysis",
         "Brand, marketing &amp; creative", "Digital &amp; technology solutions",
@@ -185,6 +188,10 @@ def main():
           "Experiment Lab identity/independence statement missing")
     check(errors, lab.count('class="lab-course-card"') == 4,
           "Experiment Lab must show four academic pathways")
+    check(errors, lab.count('<details class="lab-course-details">') == 4 and
+          lab.count('<details class="lab-dept-details">') == 6 and
+          "VIEW 5 CONTRIBUTION AREAS" in lab and "VIEW 3 ROLE PATHWAYS" in lab,
+          "Experiment Lab course and role details must use clear expandable controls")
     check(errors, lab.count('class="lab-dept-card"') == 6,
           "Experiment Lab must show six departments")
     check(errors, lab.count('class="lab-role"') == 19,
@@ -245,6 +252,9 @@ def main():
                   "PERSONALISED LEARNING &amp; COMPARISON SUPPORT",
                   "MERCHANT INSURANCE AWARENESS PROGRAMME"):
         check(errors, stage in vk, "Vyapar Kavach stage missing: " + stage)
+    check(errors, vk.count('<details class="vk-stage-details">') == 3 and
+          "VIEW 4 PROGRAMME ACTIVITIES" in vk,
+          "Vyapar Kavach stage activities must be expandable while stage headings stay visible")
     check(errors, "No insurer preferred by default" in vk and
           "commercial relationship" in vk and "authorised insurance professional" in vk,
           "Vyapar Kavach impartiality and professional boundaries missing")
@@ -278,6 +288,9 @@ def main():
           "MELD current-stage disclosure missing")
     check(errors, "ticketing" in meld.lower() and "student community features" in meld.lower(),
           "MELD scope boundary versus event/social platforms missing")
+    check(errors, meld.count('<details class="meld-audience-details">') == 2 and
+          "VIEW 4 ORGANISER STEPS" in meld and "VIEW 4 BUSINESS MATCHING STEPS" in meld,
+          "MELD audience guidance must be available through two clear expandable controls")
     for source, label in ((home, "homepage"), (team, "team"), (lab, "Experiment Lab")):
         check(errors, source.count('class="nav-meld-link"') == 1 and
               source.count('href="meld.html"') == 1,
