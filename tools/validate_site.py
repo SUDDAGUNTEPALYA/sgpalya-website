@@ -377,7 +377,7 @@ def main():
           "MELD mobile navigation or narrow-screen styles are missing")
     vk_css_path = ROOT / "vyapar-kavach.css"
     vk_css = vk_css_path.read_text(encoding="utf-8") if vk_css_path.is_file() else ""
-    check(errors, ".vk-page .vk-risk-grid{grid-template-columns:minmax(0,1fr)}" in vk_css and
+    check(errors, ".vk-page .vk-risk-grid{grid-template-columns:minmax(0,1fr);" in vk_css and
           ".vk-page .vk-stage-main>p" in vk_css and "@media(max-width:380px)" in vk_css,
           "Vyapar Kavach mobile card and typography overrides are missing")
 
