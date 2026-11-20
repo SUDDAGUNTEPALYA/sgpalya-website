@@ -70,9 +70,15 @@ async function checkDisclosure(page, selector, expectedCount, expectedItems, lab
   assert.notEqual(await first.getAttribute("open"), null, label + " should open on activation");
   assert.equal(await list.isVisible(), true, label + " detail list should be visible when expanded");
   assert.equal(await list.locator("li").count(), expectedItems, label + " expanded item count");
+  await noOverflow(page, label + " expanded");
   await summary.click();
   assert.equal(await first.getAttribute("open"), null, label + " should collapse on second activation");
   assert.equal(await list.isVisible(), false, label + " detail list should hide after collapse");
+  await summary.focus();
+  await page.keyboard.press("Enter");
+  assert.notEqual(await first.getAttribute("open"), null, label + " should expand with the keyboard");
+  await page.keyboard.press("Enter");
+  assert.equal(await first.getAttribute("open"), null, label + " should collapse with the keyboard");
 }
 
 async function checkStudentForm(page, label) {
