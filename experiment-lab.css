@@ -201,3 +201,29 @@
   .experiment-page .join-submit{transition:none}
   .experiment-page .join-submit:hover,.experiment-page .join-submit:active{transform:none}
 }
+
+
+/* Final override: every Experiment Lab CTA and native button shares the tactile system. */
+.experiment-page :is(button,.agency-button,.nav-cta,.join-submit){
+  border:2px solid var(--lab-forest);
+  border-radius:3px;
+  box-shadow:5px 5px 0 var(--lab-accent);
+  transition:transform .16s ease,box-shadow .16s ease,background-color .16s ease;
+}
+.experiment-page :is(button,.agency-button,.nav-cta,.join-submit):hover:not(:disabled){
+  transform:translate(-2px,-2px);
+  box-shadow:7px 7px 0 var(--lab-accent);
+}
+.experiment-page :is(button,.agency-button,.nav-cta,.join-submit):active:not(:disabled){
+  transform:translate(3px,3px);
+  box-shadow:2px 2px 0 var(--lab-accent);
+}
+.experiment-page :is(button,.agency-button,.nav-cta,.join-submit):focus-visible{
+  outline:3px solid var(--lab-accent);
+  outline-offset:4px;
+}
+@media(prefers-reduced-motion:reduce){
+  .experiment-page :is(button,.agency-button,.nav-cta,.join-submit){transition:none}
+  .experiment-page :is(button,.agency-button,.nav-cta,.join-submit):hover,
+  .experiment-page :is(button,.agency-button,.nav-cta,.join-submit):active{transform:none}
+}
