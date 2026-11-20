@@ -30,19 +30,31 @@ async function noOverflow(page, label) {
 }
 
 async function checkTactileButtons(page, selector, label) {
-  const buttons = page.locator(selector);
-  const count = await buttons.count();
-  assert.ok(count > 0, label + " should contain at least one CTA button");
-  const states = await buttons.evaluateAll(nodes => nodes.map(node => {
+  const controls = page.locator(selector);
+  const count = await controls.count();
+  assert.ok(count > 0, label + " should contain visible tactile controls");
+  const states = await controls.evaluateAll(nodes => nodes.map(node => {
     const style = getComputedStyle(node);
     return { borderWidth: style.borderTopWidth, shadow: style.boxShadow, text: node.textContent || "" };
   }));
   for (const state of states) {
-    assert.equal(state.borderWidth, "2px", label + " CTA should have a tactile 2px border");
-    assert.notEqual(state.shadow, "none", label + " CTA should have a hard offset shadow");
-    const hasArrow = ["→","↗","↘","↓","➜","⟶"].some(glyph => state.text.includes(glyph));
-    assert.equal(hasArrow, false, label + " CTA should not contain a decorative arrow");
+    assert.equal(state.borderWidth, "2px", label + " control should have a tactile 2px border");
+    assert.notEqual(state.shadow, "none", label + " control should have a hard offset shadow");
+    assert.ok(/(?:4|5|6|7|8)px (?:4|5|6|7|8)px 0px/.test(state.shadow), label + " control should use a hard, zero-blur shadow");
   }
+}
+
+async function checkNoArrowGlyphs(page, label) {
+  const result = await page.evaluate(() => {
+    const bodyText = document.body.textContent || "";
+    const pseudoContent = Array.from(document.querySelectorAll("*")).flatMap(node =>
+      ["::before", "::after"].map(pseudo => getComputedStyle(node, pseudo).content || "")
+    ).join(" ");
+    const arrowPattern = /[\\u2190-\\u21FF\\u27F0-\\u27FF\\u2900-\\u297F]/u;
+    return { bodyHasArrow: arrowPattern.test(bodyText), pseudoHasArrow: arrowPattern.test(pseudoContent) };
+  });
+  assert.equal(result.bodyHasArrow, false, label + " should not contain arrow glyphs in markup");
+  assert.equal(result.pseudoHasArrow, false, label + " should not generate arrow glyphs through CSS");
 }
 
 async function checkStudentForm(page, label) {
@@ -76,7 +88,8 @@ try {
   assert.ok((await desktop.locator("#services").innerText()).includes("Business strategy & research"));
   assert.ok((await desktop.locator("#services").innerText()).includes("Operations, projects & people"));
   assert.equal(await desktop.locator(".agency-leader-card").count(), 2);
-  await checkTactileButtons(desktop, ".agency-button, .nav-cta", "BENGALOOP");
+  await checkTactileButtons(desktop, "button, .agency-button, .nav-cta, .agency-text-link, .agency-member-count", "BENGALOOP homepage");
+  await checkNoArrowGlyphs(desktop, "BENGALOOP homepage");
   assert.ok((await desktop.locator(".agency-member-count").innerText()).includes("18"));
   assert.equal(await desktop.locator("#businessEnquiryForm").getAttribute("data-form-endpoint"), "");
   await noOverflow(desktop, "desktop homepage");
@@ -100,7 +113,8 @@ try {
   assert.equal(await desktop.locator(".team-level-cofounders .team-card").count(), 0);
   assert.equal(await desktop.locator(".team-level-members .team-card").count(), 18);
   assert.equal(await desktop.locator(".team-level-members .team-status").count(), 18);
-  await checkTactileButtons(desktop, ".team-linkedin", "BENGALOOP team links");
+  await checkTactileButtons(desktop, "button, .agency-button, .nav-cta, .agency-text-link, .team-linkedin, .profile-linkedin", "BENGALOOP team page");
+  await checkNoArrowGlyphs(desktop, "BENGALOOP team page");
   assert.equal(await desktop.locator(".team-level-members .team-card-new").count(), 0);
   assert.equal(await desktop.locator(".team-level-members .team-card").filter({ hasText: "Jenneth Pinto" }).count(), 1);
   const jennethPhoto = desktop.locator(".team-level-members .team-card").filter({ hasText: "Jenneth Pinto" }).locator("img");
@@ -118,13 +132,15 @@ try {
   assert.equal(await vkDesktop.locator(".vk-stage").count(), 3);
   assert.ok((await vkDesktop.locator(".vk-collaboration").innerText()).includes("CUFFLINKSIA"));
   assert.ok((await vkDesktop.locator("#vk-unbiased").innerText()).includes("No insurer preferred by default"));
-  await checkTactileButtons(vkDesktop, ".vk-button", "Vyapar Kavach");
+  await checkTactileButtons(vkDesktop, "button, .vk-button", "Vyapar Kavach");
+  await checkNoArrowGlyphs(vkDesktop, "Vyapar Kavach");
   await noOverflow(vkDesktop, "desktop Vyapar Kavach");
   await vkDesktop.screenshot({ path: path.join(out, "desktop-vyapar-kavach.png"), fullPage: true });
   await vkDesktop.close();
 
   const vkMobile = await openPage("/vyapar-kavach.html", { width: 390, height: 844 }, "mobile Vyapar Kavach 390");
   assert.equal(await vkMobile.locator(".vk-stage").count(), 3);
+  await checkNoArrowGlyphs(vkMobile, "mobile Vyapar Kavach");
   await noOverflow(vkMobile, "mobile Vyapar Kavach 390");
   await vkMobile.screenshot({ path: path.join(out, "mobile-vyapar-kavach-390.png"), fullPage: true });
   await vkMobile.close();
@@ -143,7 +159,8 @@ try {
   assert.equal(await meldDesktop.locator(".meld-support-grid article").count(), 4);
   assert.equal(await meldDesktop.locator(".meld-process-step").count(), 4);
   assert.equal(await meldDesktop.locator(".meld-faq-list details").count(), 5);
-  await checkTactileButtons(meldDesktop, ".meld-button", "MELD");
+  await checkTactileButtons(meldDesktop, "button, .meld-button, .meld-faq-list summary", "MELD");
+  await checkNoArrowGlyphs(meldDesktop, "MELD");
   assert.ok((await meldDesktop.locator(".meld-independent-note").innerText()).includes("independent initiative"));
   assert.ok((await meldDesktop.locator(".meld-network-copy").innerText()).includes("BENGALOOP's network"));
   await meldDesktop.locator(".meld-faq-list details").last().locator("summary").click();
@@ -155,6 +172,7 @@ try {
   const meldMobile = await openPage("/meld.html", { width: 390, height: 844 }, "mobile MELD 390");
   assert.equal(await meldMobile.locator(".meld-audience-card").count(), 2);
   assert.equal(await meldMobile.locator(".meld-process-step").count(), 4);
+  await checkNoArrowGlyphs(meldMobile, "mobile MELD");
   await noOverflow(meldMobile, "mobile MELD 390");
   await meldMobile.screenshot({ path: path.join(out, "mobile-meld-390.png"), fullPage: true });
   await meldMobile.close();
@@ -169,7 +187,8 @@ try {
   assert.equal(await labDesktop.locator(".lab-course-card").count(), 4);
   assert.equal(await labDesktop.locator(".lab-dept-card").count(), 6);
   assert.equal(await labDesktop.locator(".lab-role").count(), 19);
-  await checkTactileButtons(labDesktop, ".agency-button, .join-submit", "Experiment Lab");
+  await checkTactileButtons(labDesktop, "button, .agency-button, .nav-cta, .join-submit", "Experiment Lab");
+  await checkNoArrowGlyphs(labDesktop, "Experiment Lab");
   assert.equal(await labDesktop.locator(".nav-project-link").count(), 1);
   assert.ok((await labDesktop.locator(".lab-independence").innerText()).includes("not an official project"));
   await noOverflow(labDesktop, "desktop Experiment Lab");
@@ -212,6 +231,8 @@ try {
   assert.equal(await labMobile.locator(".lab-course-card").count(), 4);
   assert.equal(await labMobile.locator(".lab-dept-card").count(), 6);
   assert.equal(await labMobile.locator(".lab-role").count(), 19);
+  await checkTactileButtons(labMobile, "button, .agency-button, .nav-cta, .join-submit", "mobile Experiment Lab");
+  await checkNoArrowGlyphs(labMobile, "mobile Experiment Lab");
   await noOverflow(labMobile, "mobile Experiment Lab 390");
   await labMobile.screenshot({ path: path.join(out, "mobile-experiment-lab-390.png"), fullPage: true });
   await checkStudentForm(labMobile, "mobile Experiment Lab");
@@ -220,6 +241,12 @@ try {
   const narrowLab = await openPage("/join-us.html", { width: 360, height: 800 }, "mobile Experiment Lab 360");
   await noOverflow(narrowLab, "mobile Experiment Lab 360");
   await narrowLab.close();
+
+  // The custom not-found page uses the same arrow-free tactile button system.
+  const notFound = await openPage("/404.html", { width: 1440, height: 900 }, "desktop 404");
+  await checkTactileButtons(notFound, "button, .agency-button", "404 page");
+  await checkNoArrowGlyphs(notFound, "404 page");
+  await notFound.close();
 
   // Legacy entry route still lands on the business enquiry section.
   const legacy = await browser.newPage();
