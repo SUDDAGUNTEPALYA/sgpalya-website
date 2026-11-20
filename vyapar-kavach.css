@@ -17,3 +17,38 @@
 @media(max-width:620px){.vk-header-inner{padding:15px 5% 12px}.vk-collaboration{width:100%;gap:12px}.vk-bengaloop img{width:clamp(135px,41vw,205px)}.vk-partner-divider{height:45px}.vk-cufflinksia{gap:7px}.vk-cuff-mark{width:53px;height:45px;padding:3px;border-radius:5px}.vk-cuff-copy{gap:3px}.vk-cuff-copy strong{font-size:12px;letter-spacing:1px}.vk-cuff-copy small{font-size:6px;letter-spacing:.4px}.vk-back-link{font-size:8px}.vk-hero{padding:54px 5% 20px}.vk-hero-inner{grid-template-columns:1fr;min-height:0}.vk-hero-art{margin:25px auto 0;width:min(80%,330px)}.vk-project-label{margin-top:21px;font-size:12px;letter-spacing:7px}.vk-hero h1{font-size:clamp(50px,14vw,78px)}.vk-subtitle{font-size:9px;letter-spacing:1.4px}.vk-gold-rule{font-size:9px;gap:7px;letter-spacing:1px}.vk-hero-description{font-size:12px}.vk-starting-point{font-size:8px;letter-spacing:1px}.vk-hero-actions{gap:13px}.vk-button{min-height:46px;padding:0 14px;font-size:9px;gap:14px}.vk-text-link{font-size:9px}.vk-hero-footer{gap:9px;flex-wrap:wrap;margin-top:25px;padding:15px 0;font-size:7px;letter-spacing:1.1px}.vk-section{padding:59px 5%}.vk-intro,.vk-boundary{grid-template-columns:1fr;gap:20px}.vk-intro-copy{padding:0}.vk-intro-copy .vk-lead{font-size:18px}.vk-intro-copy p{font-size:11px}.vk-section-heading-wide{display:block}.vk-section-heading-wide>p{margin-top:16px;font-size:11px}.vk-risk-section{padding-left:5%;padding-right:5%}.vk-risk-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.vk-risk-card{min-height:170px;padding:15px}.vk-risk-card h3{font-size:16px}.vk-risk-card p{font-size:9px}.vk-stage{grid-template-columns:55px minmax(0,1fr);gap:13px;padding:26px 0}.vk-stage-number strong{font-size:43px}.vk-stage-kicker{font-size:7px;letter-spacing:1px}.vk-stage-main h3{font-size:24px}.vk-stage-main>p,.vk-stage-main li{font-size:10px}.vk-stage-main ul{grid-template-columns:1fr;gap:4px}.vk-stage-aside{grid-column:2;align-items:flex-start}.vk-stage-aside strong{font-size:13px}.vk-stage-aside p{font-size:9px}.vk-unbiased{padding:52px 5%}.vk-unbiased-inner{grid-template-columns:1fr;gap:15px}.vk-unbiased-emblem{width:66px;height:66px}.vk-unbiased-points{grid-column:1}.vk-compare-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.vk-compare-grid article{min-height:145px;padding:15px}.vk-compare-grid strong{font-size:15px}.vk-compare-grid p{font-size:9px}.vk-boundary{padding-top:58px;padding-bottom:58px}.vk-footer{grid-template-columns:1fr;gap:8px;padding:22px 5%}.vk-footer small{grid-column:1}.vk-closing{padding:70px 5%}.vk-closing h2{font-size:clamp(39px,11vw,58px)}}
 @media(max-width:360px){.vk-bengaloop img{width:128px}.vk-cuff-mark{width:45px}.vk-cufflinksia{gap:5px}.vk-cuff-copy strong{font-size:10px}.vk-cuff-copy small{font-size:5px}.vk-hero h1{font-size:47px}.vk-risk-grid,.vk-compare-grid{grid-template-columns:1fr}.vk-risk-card{min-height:auto}.vk-stage{grid-template-columns:43px minmax(0,1fr);gap:10px}.vk-stage-number strong{font-size:36px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+
+/* Tactile neo-brutalist CTA system — Vyapar Kavach identity. */
+.vk-button{
+  justify-content:center;
+  gap:0;
+  border:2px solid #f8e9c4;
+  border-radius:3px;
+  box-shadow:6px 6px 0 #8a6326;
+  transition:transform .16s ease,box-shadow .16s ease,background .16s ease,color .16s ease;
+}
+.vk-button-gold{
+  background:#e3b75e;
+  box-shadow:6px 6px 0 #8a6326;
+}
+.vk-button-outline{box-shadow:6px 6px 0 #e3b75e}
+.vk-button:hover{transform:translate(-2px,-2px)}
+.vk-button-gold:hover{box-shadow:8px 8px 0 #8a6326}
+.vk-button-outline:hover{box-shadow:8px 8px 0 #e3b75e}
+.vk-button-gold:active{
+  transform:translate(3px,3px);
+  box-shadow:2px 2px 0 #8a6326;
+}
+.vk-button-outline:active{
+  transform:translate(3px,3px);
+  box-shadow:2px 2px 0 #e3b75e;
+}
+.vk-button:focus-visible{
+  outline:3px solid #ffe6a5;
+  outline-offset:4px;
+}
+@media(prefers-reduced-motion:reduce){
+  .vk-button{transition:none}
+  .vk-button:hover,.vk-button:active{transform:none}
+}

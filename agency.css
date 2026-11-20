@@ -101,3 +101,44 @@ html{scroll-behavior:smooth;scroll-padding-top:94px;overflow-x:clip}body.agency-
 .agency-home .site-nav.drawer-nav a.nav-meld-link strong span{color:#d9f46a;font-family:Manrope,sans-serif;font-size:19px}
 .agency-home .site-nav.drawer-nav a.nav-meld-link small{font-size:9px;font-weight:600;color:#c3c5d6}
 .agency-home .site-nav.drawer-nav a.nav-meld-link:hover{background:#282b4a;color:#fff}
+
+
+/* Tactile neo-brutalist CTA system — BENGALOOP identity. */
+.agency-home :is(.agency-button,.nav-cta){
+  justify-content:center;
+  gap:0;
+  border:2px solid var(--agf);
+  border-radius:3px;
+  box-shadow:5px 5px 0 var(--agc);
+  transition:transform .16s ease,box-shadow .16s ease,background .16s ease;
+}
+.agency-home .site-nav .nav-cta{
+  min-height:44px;
+  padding:11px 17px;
+  border-radius:3px;
+}
+.agency-home .site-nav.drawer-nav .nav-cta{
+  justify-content:center;
+  gap:0;
+  transition:transform .16s ease,box-shadow .16s ease,background .16s ease!important;
+}
+.agency-home :is(.agency-button,.nav-cta):hover{
+  transform:translate(-2px,-2px);
+  box-shadow:7px 7px 0 var(--agc);
+}
+.agency-home :is(.agency-button,.nav-cta):active{
+  transform:translate(3px,3px);
+  box-shadow:2px 2px 0 var(--agc);
+}
+.agency-home :is(.agency-button,.nav-cta):focus-visible{
+  outline:3px solid var(--agc);
+  outline-offset:4px;
+}
+.agency-home .nav-cta:hover{
+  transform:translate(-2px,-2px)!important;
+  box-shadow:7px 7px 0 var(--agc)!important;
+}
+.agency-home .nav-cta:active{
+  transform:translate(3px,3px)!important;
+  box-shadow:2px 2px 0 var(--agc)!important;
+}

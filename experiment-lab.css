@@ -174,3 +174,30 @@
  .experiment-page .lab-course-card{transition:none}
  .experiment-page .lab-course-card:hover{transform:none}
 }
+
+
+/* Experiment Lab application CTA follows the BENGALOOP tactile button language. */
+.experiment-page .join-submit{
+  justify-content:center;
+  gap:0;
+  border:2px solid var(--lab-forest);
+  border-radius:3px;
+  box-shadow:5px 5px 0 var(--lab-accent);
+  transition:transform .16s ease,box-shadow .16s ease,background .16s ease;
+}
+.experiment-page .join-submit:hover{
+  transform:translate(-2px,-2px);
+  box-shadow:7px 7px 0 var(--lab-accent);
+}
+.experiment-page .join-submit:active{
+  transform:translate(3px,3px);
+  box-shadow:2px 2px 0 var(--lab-accent);
+}
+.experiment-page .join-submit:focus-visible{
+  outline:3px solid var(--lab-accent);
+  outline-offset:4px;
+}
+@media(prefers-reduced-motion:reduce){
+  .experiment-page .join-submit{transition:none}
+  .experiment-page .join-submit:hover,.experiment-page .join-submit:active{transform:none}
+}
