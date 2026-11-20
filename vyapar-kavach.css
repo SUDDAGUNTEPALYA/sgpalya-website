@@ -77,3 +77,19 @@
   .vk-page :is(button,.vk-button){transition:none}
   .vk-page :is(button,.vk-button):hover,.vk-page :is(button,.vk-button):active{transform:none}
 }
+/* Stage activity disclosures: gold, deep-green and tactile, without hiding the stage headline or purpose. */
+.vk-page .vk-stage-details{margin-top:15px}
+.vk-page .vk-stage-details>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:47px;padding:10px 13px;list-style:none;border:2px solid var(--vk-gold);background:#f8edcf;color:var(--vk-ink);box-shadow:5px 5px 0 #9c7434;font-size:9px;font-weight:900;letter-spacing:.8px;line-height:1.4;cursor:pointer;transition:transform .18s,box-shadow .18s,background .18s,color .18s}
+.vk-page .vk-stage-details>summary::-webkit-details-marker{display:none}
+.vk-page .vk-stage-details>summary .vk-expand-close{display:none}
+.vk-page .vk-stage-details[open]>summary .vk-expand-open{display:none}
+.vk-page .vk-stage-details[open]>summary .vk-expand-close{display:inline}
+.vk-page .vk-stage-details>summary>b{display:grid;width:23px;height:23px;flex:0 0 auto;place-items:center;border:1px solid currentColor;font-size:17px;font-weight:500;line-height:1;transition:transform .18s}
+.vk-page .vk-stage-details[open]>summary{background:var(--vk-gold);color:var(--vk-deep)}
+.vk-page .vk-stage-details[open]>summary>b{transform:rotate(45deg)}
+.vk-page .vk-stage-details>summary:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 #d1a247}
+.vk-page .vk-stage-details>summary:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #9c7434}
+.vk-page .vk-stage-details>summary:focus-visible{outline:3px solid #ffe6a5;outline-offset:4px}
+.vk-page .vk-stage-details>ul{margin-top:13px}
+@media(max-width:620px){.vk-page .vk-stage-details>summary{min-height:45px;padding:9px 11px;font-size:8px}}
+@media(prefers-reduced-motion:reduce){.vk-page .vk-stage-details>summary,.vk-page .vk-stage-details>summary>b{transition:none}.vk-page .vk-stage-details>summary:hover,.vk-page .vk-stage-details>summary:active{transform:none}}
