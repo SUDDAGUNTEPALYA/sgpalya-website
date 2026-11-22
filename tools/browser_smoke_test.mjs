@@ -422,10 +422,12 @@ try {
     }
   }
 
-  // Legacy entry route still lands on the business enquiry section.
+  // Legacy URLs must redirect to the canonical host, not a relative path on the old host.
+  // Abort the external request so this local smoke test never depends on live DNS or hosting.
   const legacy = await browser.newPage();
+  await legacy.route("https://bengaloop.in/**", route => route.abort());
   await legacy.goto(base + "/business-registration.html", { waitUntil: "domcontentloaded" });
-  await legacy.waitForURL("**/index.html#business-enquiry");
+  await legacy.waitForURL("https://bengaloop.in/#business-enquiry", { waitUntil: "commit" });
   await legacy.close();
 
   assert.deepEqual(errors, [], "browser errors: " + errors.join(" | "));
