@@ -423,11 +423,16 @@ try {
   }
 
   // Legacy URLs must redirect to the canonical host, not a relative path on the old host.
-  // Abort the external request so this local smoke test never depends on live DNS or hosting.
+  // Fulfil the canonical request locally so the test never depends on public DNS or hosting.
   const legacy = await browser.newPage();
-  await legacy.route("https://bengaloop.in/**", route => route.abort());
+  await legacy.route("https://bengaloop.in/**", route => route.fulfill({
+    status: 200,
+    contentType: "text/html",
+    body: "<!doctype html><html><body><section id=\"business-enquiry\">Redirect target</section></body></html>"
+  }));
   await legacy.goto(base + "/business-registration.html", { waitUntil: "domcontentloaded" });
-  await legacy.waitForURL("https://bengaloop.in/#business-enquiry", { waitUntil: "commit" });
+  await legacy.waitForURL("https://bengaloop.in/#business-enquiry", { waitUntil: "domcontentloaded" });
+  await legacy.locator("#business-enquiry").waitFor();
   await legacy.close();
 
   assert.deepEqual(errors, [], "browser errors: " + errors.join(" | "));
