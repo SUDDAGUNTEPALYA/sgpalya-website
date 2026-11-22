@@ -8,14 +8,14 @@ import re
 
 ROOT = Path(__file__).resolve().parents[1]
 ROUTES = {
-    "explore.html": "index.html#services",
-    "directory.html": "index.html#services",
-    "pg-housing.html": "index.html#services",
-    "for-businesses.html": "index.html#business-enquiry",
-    "business-registration.html": "index.html#business-enquiry",
-    "our-story.html": "index.html",
-    "what-we-do.html": "index.html#services",
-    "departments.html": "our-team.html#team",
+    "explore.html": "https://bengaloop.in/#services",
+    "directory.html": "https://bengaloop.in/#services",
+    "pg-housing.html": "https://bengaloop.in/#services",
+    "for-businesses.html": "https://bengaloop.in/#business-enquiry",
+    "business-registration.html": "https://bengaloop.in/#business-enquiry",
+    "our-story.html": "https://bengaloop.in/",
+    "what-we-do.html": "https://bengaloop.in/#services",
+    "departments.html": "https://bengaloop.in/our-team.html#team",
 }
 EXTERNAL_SCHEMES = {"http", "https", "mailto", "tel", "sms", "data", "javascript"}
 
