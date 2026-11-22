@@ -422,10 +422,17 @@ try {
     }
   }
 
-  // Legacy entry route still lands on the business enquiry section.
+  // Legacy URLs must redirect to the canonical host, not a relative path on the old host.
+  // Fulfil the canonical request locally so the test never depends on public DNS or hosting.
   const legacy = await browser.newPage();
+  await legacy.route("https://bengaloop.in/**", route => route.fulfill({
+    status: 200,
+    contentType: "text/html",
+    body: "<!doctype html><html><body><section id=\"business-enquiry\">Redirect target</section></body></html>"
+  }));
   await legacy.goto(base + "/business-registration.html", { waitUntil: "domcontentloaded" });
-  await legacy.waitForURL("**/index.html#business-enquiry");
+  await legacy.waitForURL("https://bengaloop.in/#business-enquiry", { waitUntil: "domcontentloaded" });
+  await legacy.locator("#business-enquiry").waitFor();
   await legacy.close();
 
   assert.deepEqual(errors, [], "browser errors: " + errors.join(" | "));

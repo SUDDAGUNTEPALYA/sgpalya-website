@@ -61,3 +61,10 @@ GitHub Actions runs structural, link, asset, form-contract, JavaScript and Playw
 - The project explains general business-risk awareness, policy-reading and comparison criteria, its three-stage outreach / learning / workshop model, impartiality safeguards and the boundary between education and regulated insurance distribution.
 - Volunteers must not be represented as insurance agents, brokers, insurers or authorised advisers. Product-specific recommendations, solicitation, quotations and policy placement must be handled by appropriately authorised professionals. Any referral, sponsorship or commercial relationship must be disclosed.
 - `cufflinksia-logo.svg` is a web-ready vector redraw based on the supplied CUFFLINKSIA emblem. The project stylesheet is isolated from the shared BENGALOOP and Experiment Lab styles.
+
+
+## Primary domain and search indexing
+- The primary public origin is `https://bengaloop.in/`; `CNAME` must contain exactly `bengaloop.in`.
+- Every indexable page must use `https://bengaloop.in` for its canonical URL, `og:url` and absolute social-image URLs.
+- `robots.txt` must advertise `https://bengaloop.in/sitemap.xml`, and every URL in `sitemap.xml` must use the same host.
+- `sgpalya.in` is a legacy alias only. It must be configured outside this static site as a permanent host-level redirect to `https://bengaloop.in`, preserving paths and query strings. Do not use it as a canonical or sitemap host.
