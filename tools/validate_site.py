@@ -400,12 +400,16 @@ def main():
           "robots.txt must allow crawling")
     check(errors, "Sitemap: https://bengaloop.in/sitemap.xml" in robots,
           "robots.txt must point to the primary-domain sitemap")
-    check(errors, sitemap.count("<loc>") == 5 and
-          "https://bengaloop.in/our-team.html" in sitemap and
-          "https://bengaloop.in/join-us.html" in sitemap and
-          "https://bengaloop.in/vyapar-kavach.html" in sitemap and
-          "https://bengaloop.in/meld.html" in sitemap,
-          "sitemap should list homepage, team, Experiment Lab and Vyapar Kavach")
+    sitemap_urls = re.findall(r"<loc>(.*?)</loc>", sitemap)
+    expected_sitemap_urls = {
+        "https://bengaloop.in/",
+        "https://bengaloop.in/our-team.html",
+        "https://bengaloop.in/join-us.html",
+        "https://bengaloop.in/vyapar-kavach.html",
+        "https://bengaloop.in/meld.html",
+    }
+    check(errors, set(sitemap_urls) == expected_sitemap_urls and len(sitemap_urls) == 5,
+          "sitemap must contain exactly the five public URLs on bengaloop.in and no legacy host")
     check(errors, (ROOT / "CNAME").read_text(encoding="utf-8").strip() == "bengaloop.in",
           "custom domain mapping changed")
     check(errors, not (ROOT / "SITE_SUSPENDED").exists(), "suspension marker must be absent")
