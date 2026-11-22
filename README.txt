@@ -49,4 +49,4 @@ CHECKS:
   node --check relaunch.js
   node tools/browser_smoke_test.mjs
 
-Custom domain mapping remains sgpalya.in (CNAME).
+Primary custom domain: bengaloop.in (CNAME). The former sgpalya.in domain is a legacy alias and must permanently redirect to https://bengaloop.in; do not use it in canonical tags, social metadata, robots.txt or the sitemap.
