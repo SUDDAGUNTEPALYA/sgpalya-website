@@ -90,12 +90,20 @@ def main():
     vk_doc.feed(vk)
     meld_doc.feed(meld)
 
+    # Primary-domain migration: all indexable pages must identify bengaloop.in, never the retired alias.
+    for label, page in (("homepage", home), ("team", team), ("Experiment Lab", lab),
+                        ("Vyapar Kavach", vk), ("MELD", meld)):
+        check(errors, "https://bengaloop.in" in page,
+              label + " is missing primary-domain SEO metadata")
+        check(errors, "sgpalya.in" not in page.lower(),
+              label + " still references the retired domain")
+
     # Homepage: indexability, central message, two-beneficiary model and current offer.
     check(errors, home_doc.tags["h1"] == 1, "homepage needs exactly one H1")
     check(errors, not home_doc.duplicates, "duplicate homepage IDs")
     check(errors, 'name="robots" content="index,follow,max-image-preview:large"' in home,
           "homepage must be indexable")
-    check(errors, 'rel="canonical" href="https://sgpalya.in/"' in home, "homepage canonical missing")
+    check(errors, 'rel="canonical" href="https://bengaloop.in/"' in home, "homepage canonical missing")
     check(errors, "Student-Powered Business Growth Ecosystem" in home,
           "homepage title/positioning is not updated")
     check(errors, "Growing businesses." in home and "Developing people." in home,
@@ -178,7 +186,7 @@ def main():
           "team page Experiment Lab link or independence note missing")
 
     # Experiment Lab: four courses, six departments, nineteen role pathways.
-    check(errors, 'rel="canonical" href="https://sgpalya.in/join-us.html"' in lab,
+    check(errors, 'rel="canonical" href="https://bengaloop.in/join-us.html"' in lab,
           "Experiment Lab canonical missing")
     check(errors, '<meta name="twitter:card" content="summary_large_image">' in lab,
           "Experiment Lab Twitter metadata missing")
@@ -242,7 +250,7 @@ def main():
     # Standalone collaborative microsite. On the three core pages, the project appears only in the menu.
     check(errors, vk_doc.tags["h1"] == 1 and not vk_doc.duplicates,
           "Vyapar Kavach needs exactly one H1 and unique IDs")
-    check(errors, 'rel="canonical" href="https://sgpalya.in/vyapar-kavach.html"' in vk,
+    check(errors, 'rel="canonical" href="https://bengaloop.in/vyapar-kavach.html"' in vk,
           "Vyapar Kavach canonical missing")
     check(errors, "INSURANCE AWARENESS &amp; BUSINESS PROTECTION INITIATIVE" in vk,
           "Vyapar Kavach purpose statement missing")
@@ -270,7 +278,7 @@ def main():
     # Standalone MELD sponsorship and collaboration microsite.
     check(errors, meld_doc.tags["h1"] == 1 and not meld_doc.duplicates,
           "MELD needs exactly one H1 and unique IDs")
-    check(errors, 'rel="canonical" href="https://sgpalya.in/meld.html"' in meld,
+    check(errors, 'rel="canonical" href="https://bengaloop.in/meld.html"' in meld,
           "MELD canonical missing")
     check(errors, "Sponsorship &amp; Collaboration for Campus Events" in meld,
           "MELD title or purpose missing")
@@ -390,13 +398,15 @@ def main():
     sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8")
     check(errors, "Allow: /" in robots and "Disallow: /" not in robots,
           "robots.txt must allow crawling")
+    check(errors, "Sitemap: https://bengaloop.in/sitemap.xml" in robots,
+          "robots.txt must point to the primary-domain sitemap")
     check(errors, sitemap.count("<loc>") == 5 and
-          "https://sgpalya.in/our-team.html" in sitemap and
-          "https://sgpalya.in/join-us.html" in sitemap and
-          "https://sgpalya.in/vyapar-kavach.html" in sitemap and
-          "https://sgpalya.in/meld.html" in sitemap,
+          "https://bengaloop.in/our-team.html" in sitemap and
+          "https://bengaloop.in/join-us.html" in sitemap and
+          "https://bengaloop.in/vyapar-kavach.html" in sitemap and
+          "https://bengaloop.in/meld.html" in sitemap,
           "sitemap should list homepage, team, Experiment Lab and Vyapar Kavach")
-    check(errors, (ROOT / "CNAME").read_text(encoding="utf-8").strip() == "sgpalya.in",
+    check(errors, (ROOT / "CNAME").read_text(encoding="utf-8").strip() == "bengaloop.in",
           "custom domain mapping changed")
     check(errors, not (ROOT / "SITE_SUSPENDED").exists(), "suspension marker must be absent")
 
