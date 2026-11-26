@@ -49,4 +49,18 @@ CHECKS:
   node --check relaunch.js
   node tools/browser_smoke_test.mjs
 
-Primary custom domain: bengaloop.in (CNAME). The former sgpalya.in domain is a legacy alias and must permanently redirect to https://bengaloop.in; do not use it in canonical tags, social metadata, robots.txt or the sitemap.
+DOMAIN OWNERSHIP:
+  bengaloop.in is the primary and canonical host for this repository. CNAME
+  must remain bengaloop.in. sgpalya.in currently redirects to bengaloop.in
+  through separate domain/hosting configuration outside this repository.
+  This is a current arrangement, not a permanent merger: keep sgpalya.in
+  independently controllable so it can host a separate website in future.
+  Never place sgpalya.in in this repository's CNAME, canonical URLs, social
+  metadata, robots.txt or sitemap. Change its redirect only when its separate
+  destination and hosting are ready.
+
+MOBILE-FIRST:
+  Mobile visitors are the primary audience. Preserve the existing 320, 360,
+  375, 390 and 430 pixel browser coverage. Treat phone-sized layouts, touch
+  controls, readable form fields, navigation and zero horizontal overflow as
+  release requirements—not optional responsive polish.
