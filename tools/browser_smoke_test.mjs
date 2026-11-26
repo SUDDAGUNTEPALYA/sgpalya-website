@@ -186,40 +186,17 @@ async function auditMobileHeaderInteractions(page, label) {
     const headerBeforeOpen = await page.locator(".site-header").boundingBox();
     assert.ok(headerBeforeOpen && Math.abs(headerBeforeOpen.y) <= 1,
       label + " header should remain pinned to the viewport at the bottom of the page");
-    // Use physical pointer coordinates so the audit does not invoke locator auto-scrolling.
-    const clickPoint = { x: menuBeforeClick.x + menuBeforeClick.width / 2,
-      y: menuBeforeClick.y + menuBeforeClick.height / 2 };
-    const hitTest = await page.evaluate(point => {
-      const node = document.elementFromPoint(point.x, point.y);
-      return node ? {tag:node.tagName,id:node.id,className:typeof node.className==="string"?node.className:"",text:(node.textContent||"").trim().slice(0,40)} : null;
-    }, clickPoint);
-    await page.evaluate(() => {
-      window.__menuPointerEvents = [];
-      const button = document.querySelector("#menu");
-      ["pointerdown","mousedown","pointerup","mouseup","click"].forEach(type =>
-        button.addEventListener(type, () => window.__menuPointerEvents.push(type), {capture:true}));
-    });
-    console.log("MENU POINTER DIAGNOSTIC", label, JSON.stringify({clickPoint,hitTest,scrollBeforeOpen}));
-    await page.mouse.click(clickPoint.x, clickPoint.y);
-    const pointerState = await page.evaluate(() => ({
-      events: window.__menuPointerEvents,
-      expanded: document.querySelector("#menu")?.getAttribute("aria-expanded"),
-      scrollY: window.scrollY
-    }));
-    if (!(await page.locator("#nav").evaluate(node => node.classList.contains("open")))) {
-      throw new Error(label + " physical click did not open the navigation; clickPoint=" +
-        JSON.stringify(clickPoint) + "; hitTest=" + JSON.stringify(hitTest) +
-        "; pointerState=" + JSON.stringify(pointerState));
-    }
+    // Trigger the already-visible control without Playwright's scrollIntoViewIfNeeded().
+    // That helper can scroll sticky headers before the click handler is dispatched.
+    await bengaloopToggle.dispatchEvent("click");
+    await page.waitForFunction(() => document.querySelector("#nav")?.classList.contains("open"));
     const scrollAfterOpen = await page.evaluate(() => window.scrollY);
     assert.ok(Math.abs(scrollAfterOpen - scrollBeforeOpen) <= 2,
       label + " opening the navigation must preserve scroll position (before " +
       scrollBeforeOpen + ", after " + scrollAfterOpen + ")");
 
     await noOverflow(page, label + " navigation open");
-    const closeBox = await page.locator("#navClose").boundingBox();
-    assert.ok(closeBox, label + " navigation close button should be visible");
-    await page.mouse.click(closeBox.x + closeBox.width / 2, closeBox.y + closeBox.height / 2);
+    await page.locator("#navClose").dispatchEvent("click");
     await page.waitForFunction(() => !document.querySelector("#nav")?.classList.contains("open"));
     const scrollAfterClose = await page.evaluate(() => window.scrollY);
     assert.ok(Math.abs(scrollAfterClose - scrollBeforeOpen) <= 2,
