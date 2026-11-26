@@ -179,6 +179,19 @@ async function auditMobileHeaderInteractions(page, label) {
     await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
     await page.waitForTimeout(100);
     const scrollBeforeOpen = await page.evaluate(() => window.scrollY);
+    const beforeOpenLayout = await page.evaluate(() => {
+      const rect = selector => {
+        const node = document.querySelector(selector);
+        if (!node) return null;
+        const r = node.getBoundingClientRect();
+        const s = getComputedStyle(node);
+        return {x:r.x,y:r.y,width:r.width,height:r.height,position:s.position,overflow:s.overflow,transform:s.transform};
+      };
+      return {scrollY:window.scrollY,htmlHeight:document.documentElement.scrollHeight,
+        bodyHeight:document.body.scrollHeight,bodyOffsetHeight:document.body.offsetHeight,
+        bodyRect:rect("body"),shellRect:rect(".site-shell"),headerRect:rect(".site-header"),
+        navRect:rect("#nav"),backdropRect:rect("#navBackdrop")};
+    });
     const menuBeforeClick = await bengaloopToggle.evaluate(node => {
       const r = node.getBoundingClientRect();
       const s = getComputedStyle(node);
@@ -204,8 +217,14 @@ async function auditMobileHeaderInteractions(page, label) {
       navOpen: document.querySelector("#nav")?.classList.contains("open"),
       viewportHeight: window.innerHeight,
       documentHeight: document.documentElement.scrollHeight,
-      menuRectBeforeClick: menuRect
-    }), menuBeforeClick);
+      bodyHeight: document.body.scrollHeight,
+      bodyOffsetHeight: document.body.offsetHeight,
+      bodyRect: (() => { const r=document.body.getBoundingClientRect(); return {y:r.y,height:r.height}; })(),
+      headerRect: (() => { const r=document.querySelector(".site-header").getBoundingClientRect(); return {y:r.y,height:r.height}; })(),
+      navRect: (() => { const r=document.querySelector("#nav").getBoundingClientRect(); return {x:r.x,y:r.y,width:r.width,height:r.height}; })(),
+      menuRectBeforeClick: menuRect,
+      beforeOpenLayout
+    }), { menuRect: menuBeforeClick, beforeOpenLayout });
     assert.ok(Math.abs(scrollAfterOpen - scrollBeforeOpen) <= 2,
       label + " opening the navigation changed scroll from " + scrollBeforeOpen +
       " to " + scrollAfterOpen + "; diagnostics=" + JSON.stringify(scrollDiagnostics) +
