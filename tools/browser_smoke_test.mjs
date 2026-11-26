@@ -205,7 +205,7 @@ async function auditMobileHeaderInteractions(page, label) {
     await bengaloopToggle.click();
     await page.waitForFunction(() => document.querySelector("#nav")?.classList.contains("open"));
     const scrollAfterOpen = await page.evaluate(() => window.scrollY);
-    const scrollDiagnostics = await page.evaluate(menuRect => ({
+    const scrollDiagnostics = await page.evaluate(({ menuRect, beforeOpenLayout }) => ({
       scrollY: window.scrollY,
       documentScrollTop: document.documentElement.scrollTop,
       bodyScrollTop: document.body.scrollTop,
