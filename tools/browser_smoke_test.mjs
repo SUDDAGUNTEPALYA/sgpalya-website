@@ -10,8 +10,8 @@ fs.mkdirSync(out, { recursive: true });
 const browser = await chromium.launch({ headless: true, args: ["--no-sandbox"] });
 const errors = [];
 
-async function openPage(route, viewport, label) {
-  const page = await browser.newPage({ viewport, reducedMotion: "reduce" });
+async function openPage(route, viewport, label, contextOptions = {}) {
+  const page = await browser.newPage({ viewport, reducedMotion: "reduce", ...contextOptions });
   page.on("pageerror", error => errors.push(label + ": " + error.message));
   await page.goto(base + route, { waitUntil: "domcontentloaded" });
   return page;
@@ -169,7 +169,7 @@ async function checkMobileAlignment(page, width, label) {
   }
 }
 
-async function auditMobileHeaderInteractions(page, label) {
+async function auditMobileHeaderInteractions(page, label, { touch = false } = {}) {
   const bengaloopToggle = page.locator("#menu");
   if (await bengaloopToggle.count()) {
     assert.ok(await bengaloopToggle.isVisible(), label + " BENGALOOP menu toggle should be visible");
@@ -188,7 +188,9 @@ async function auditMobileHeaderInteractions(page, label) {
       label + " header should remain pinned to the viewport at the bottom of the page");
     // Trigger the already-visible control without Playwright's scrollIntoViewIfNeeded().
     // That helper can scroll sticky headers before the click handler is dispatched.
-    await bengaloopToggle.dispatchEvent("click");
+    if (touch) await page.touchscreen.tap(menuBeforeClick.x + menuBeforeClick.width / 2,
+      menuBeforeClick.y + menuBeforeClick.height / 2);
+    else await bengaloopToggle.dispatchEvent("click");
     await page.waitForFunction(() => document.querySelector("#nav")?.classList.contains("open"));
     const scrollAfterOpen = await page.evaluate(() => window.scrollY);
     assert.ok(Math.abs(scrollAfterOpen - scrollBeforeOpen) <= 2,
@@ -196,7 +198,8 @@ async function auditMobileHeaderInteractions(page, label) {
       scrollBeforeOpen + ", after " + scrollAfterOpen + ")");
 
     await noOverflow(page, label + " navigation open");
-    await page.locator("#navClose").dispatchEvent("click");
+    if (touch) await page.touchscreen.tap(closeBox.x + closeBox.width / 2, closeBox.y + closeBox.height / 2);
+    else await page.locator("#navClose").dispatchEvent("click");
     await page.waitForFunction(() => !document.querySelector("#nav")?.classList.contains("open"));
     const scrollAfterClose = await page.evaluate(() => window.scrollY);
     assert.ok(Math.abs(scrollAfterClose - scrollBeforeOpen) <= 2,
@@ -442,6 +445,13 @@ try {
       await page.close();
     }
   }
+
+  // Reproduce the bottom-of-page drawer interaction with a real mobile touch input.
+  const touchHome = await openPage("/index.html", { width: 390, height: 844 }, "touch homepage", {
+    isMobile: true, hasTouch: true
+  });
+  await auditMobileHeaderInteractions(touchHome, "BENGALOOP homepage touch", { touch: true });
+  await touchHome.close();
 
   // Legacy URLs must redirect to the canonical host, not a relative path on the old host.
   // Fulfil the canonical request locally so the test never depends on public DNS or hosting.
