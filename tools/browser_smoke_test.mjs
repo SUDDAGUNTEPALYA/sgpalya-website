@@ -306,7 +306,7 @@ try {
   assert.ok((await desktop.locator(".agency-final-cta").innerText()).includes("Register your business"));
   assert.equal(await desktop.locator("#leadership").evaluate(el => !!(el.compareDocumentPosition(document.querySelector("#social")) & Node.DOCUMENT_POSITION_FOLLOWING)), true);
   assert.equal(await desktop.locator("#social").evaluate(el => !!(el.compareDocumentPosition(document.querySelector(".agency-final-cta")) & Node.DOCUMENT_POSITION_FOLLOWING)), true);
-  await checkTactileButtons(desktop, "button, .agency-button, .nav-cta, .agency-text-link, .agency-member-count, .agency-service-details>summary", "BENGALOOP homepage");
+  await checkTactileButtons(desktop, "button, .agency-button, .nav-cta, .agency-text-link, .agency-member-count, .agency-social-link, .agency-service-details>summary", "BENGALOOP homepage");
   await checkNoArrowGlyphs(desktop, "BENGALOOP homepage");
   assert.ok((await desktop.locator(".agency-member-count").innerText()).includes("18"));
   assert.equal(await desktop.locator("#businessEnquiryForm").getAttribute("data-form-endpoint"), "");
@@ -428,7 +428,7 @@ try {
   await mobile.screenshot({ path: path.join(out, "mobile-ecosystem-home-390.png"), fullPage: true });
   await checkDisclosure(mobile, ".agency-service-details", 6, 4, "mobile BENGALOOP service details");
   assert.equal(await mobile.locator("#social .agency-social-link").count(), 3);
-  await checkTactileButtons(mobile, "button, .agency-button, .nav-cta, .agency-text-link, .agency-member-count, .agency-service-details>summary", "mobile BENGALOOP homepage");
+  await checkTactileButtons(mobile, "button, .agency-button, .nav-cta, .agency-text-link, .agency-member-count, .agency-social-link, .agency-service-details>summary", "mobile BENGALOOP homepage");
   await checkNoArrowGlyphs(mobile, "mobile BENGALOOP homepage");
   await mobile.locator("#menu").click();
   await mobile.waitForFunction(() => document.querySelector("#nav").classList.contains("open"));
