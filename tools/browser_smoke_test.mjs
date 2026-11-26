@@ -215,6 +215,7 @@ async function auditMobileHeaderInteractions(page, label) {
       htmlOverflow: getComputedStyle(document.documentElement).overflow,
       activeElement: document.activeElement?.id || document.activeElement?.tagName || null,
       navOpen: document.querySelector("#nav")?.classList.contains("open"),
+      navScrollTrace: window.__bengaloopNavScrollTrace || null,
       viewportHeight: window.innerHeight,
       documentHeight: document.documentElement.scrollHeight,
       bodyHeight: document.body.scrollHeight,
