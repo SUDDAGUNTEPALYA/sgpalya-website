@@ -192,7 +192,7 @@ async function auditMobileHeaderInteractions(page, label) {
     await bengaloopToggle.click();
     await page.waitForFunction(() => document.querySelector("#nav")?.classList.contains("open"));
     const scrollAfterOpen = await page.evaluate(() => window.scrollY);
-    const scrollDiagnostics = await page.evaluate(() => ({
+    const scrollDiagnostics = await page.evaluate(menuRect => ({
       scrollY: window.scrollY,
       documentScrollTop: document.documentElement.scrollTop,
       bodyScrollTop: document.body.scrollTop,
@@ -204,8 +204,8 @@ async function auditMobileHeaderInteractions(page, label) {
       navOpen: document.querySelector("#nav")?.classList.contains("open"),
       viewportHeight: window.innerHeight,
       documentHeight: document.documentElement.scrollHeight,
-      menuRectBeforeClick: menuBeforeClick
-    }));
+      menuRectBeforeClick: menuRect
+    }), menuBeforeClick);
     assert.ok(Math.abs(scrollAfterOpen - scrollBeforeOpen) <= 2,
       label + " opening the navigation changed scroll from " + scrollBeforeOpen +
       " to " + scrollAfterOpen + "; diagnostics=" + JSON.stringify(scrollDiagnostics) +
