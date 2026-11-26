@@ -433,3 +433,6 @@ body.agency-home{
     max-height:calc(100vh - 84px)!important;
   }
 }
+
+/* Do not turn the homepage body into a scroll container while its sticky header is in use. */
+body.agency-home.nav-open{overflow:visible!important}
