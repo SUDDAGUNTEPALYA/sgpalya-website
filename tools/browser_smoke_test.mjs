@@ -193,8 +193,9 @@ async function auditMobileHeaderInteractions(page, label) {
       const node = document.elementFromPoint(point.x, point.y);
       return node ? {tag:node.tagName,id:node.id,className:typeof node.className==="string"?node.className:"",text:(node.textContent||"").trim().slice(0,40)} : null;
     }, clickPoint);
+    console.log("MENU POINTER DIAGNOSTIC", label, JSON.stringify({clickPoint,hitTest,scrollBeforeOpen}));
     await page.mouse.click(clickPoint.x, clickPoint.y);
-    await page.waitForFunction(() => document.querySelector("#nav")?.classList.contains("open"), { timeout: 5000 }).catch(async () => {
+    await page.waitForFunction(() => document.querySelector("#nav")?.classList.contains("open"), null, { timeout: 5000 }).catch(async () => {
       throw new Error(label + " physical click did not open the navigation; clickPoint=" +
         JSON.stringify(clickPoint) + "; hitTest=" + JSON.stringify(hitTest));
     });
