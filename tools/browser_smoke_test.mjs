@@ -175,11 +175,24 @@ async function auditMobileHeaderInteractions(page, label) {
     assert.ok(await bengaloopToggle.isVisible(), label + " BENGALOOP menu toggle should be visible");
     const box = await bengaloopToggle.boundingBox();
     assert.ok(box && box.width >= 40 && box.height >= 40, label + " menu toggle should be easy to tap");
+    // Exercise the drawer from the bottom of the page, not just at scroll position zero.
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await page.waitForTimeout(100);
+    const scrollBeforeOpen = await page.evaluate(() => window.scrollY);
+    const headerBeforeOpen = await page.locator(".site-header").boundingBox();
+    assert.ok(headerBeforeOpen && Math.abs(headerBeforeOpen.y) <= 1,
+      label + " header should remain pinned to the viewport at the bottom of the page");
     await bengaloopToggle.click();
     await page.waitForFunction(() => document.querySelector("#nav")?.classList.contains("open"));
+    const scrollAfterOpen = await page.evaluate(() => window.scrollY);
+    assert.ok(Math.abs(scrollAfterOpen - scrollBeforeOpen) <= 2,
+      label + " opening the navigation must not jump the page to another scroll position");
     await noOverflow(page, label + " navigation open");
     await page.locator("#navClose").click();
     await page.waitForFunction(() => !document.querySelector("#nav")?.classList.contains("open"));
+    const scrollAfterClose = await page.evaluate(() => window.scrollY);
+    assert.ok(Math.abs(scrollAfterClose - scrollBeforeOpen) <= 2,
+      label + " closing the navigation must preserve the current scroll position");
   }
   const meldMenu = page.locator(".meld-mobile-menu");
   if (await meldMenu.count()) {
