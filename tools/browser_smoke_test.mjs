@@ -452,6 +452,24 @@ try {
     isMobile: true, hasTouch: true
   });
   await auditMobileHeaderInteractions(touchHome, "BENGALOOP homepage touch", { touch: true });
+  // Repeat at mid-page because the reported jump occurred both mid-scroll and near the footer.
+  await touchHome.evaluate(() => window.scrollTo(0, Math.floor(document.documentElement.scrollHeight / 2)));
+  await touchHome.waitForTimeout(100);
+  const midScrollBeforeOpen = await touchHome.evaluate(() => window.scrollY);
+  const midMenuBox = await touchHome.locator("#menu").boundingBox();
+  assert.ok(midMenuBox && midMenuBox.y >= 0 && midMenuBox.y + midMenuBox.height <= 844,
+    "BENGALOOP homepage mid-scroll menu must remain in the viewport");
+  await touchHome.touchscreen.tap(midMenuBox.x + midMenuBox.width / 2, midMenuBox.y + midMenuBox.height / 2);
+  await touchHome.waitForFunction(() => document.querySelector("#nav")?.classList.contains("open"));
+  const midScrollAfterOpen = await touchHome.evaluate(() => window.scrollY);
+  assert.ok(Math.abs(midScrollAfterOpen - midScrollBeforeOpen) <= 2,
+    "BENGALOOP homepage opening the navigation mid-scroll must preserve scroll position (before " +
+    midScrollBeforeOpen + ", after " + midScrollAfterOpen + ")");
+  await touchHome.locator("#navClose").dispatchEvent("click");
+  await touchHome.waitForFunction(() => !document.querySelector("#nav")?.classList.contains("open"));
+  const midScrollAfterClose = await touchHome.evaluate(() => window.scrollY);
+  assert.ok(Math.abs(midScrollAfterClose - midScrollBeforeOpen) <= 2,
+    "BENGALOOP homepage closing the navigation mid-scroll must preserve scroll position");
   await touchHome.close();
 
   // Legacy URLs must redirect to the canonical host, not a relative path on the old host.
