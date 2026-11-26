@@ -150,7 +150,7 @@ def main():
         if 'id="leadership"' in home and 'id="social"' in home else ""
     )
     check(errors, leadership_preview.count('class="agency-leader-card') == 1 and
-          'class="agency-founder-card"' in leadership_preview and "Naval Aggarwal" in leadership_preview and
+          'class="agency-leader-card agency-founder-card"' in leadership_preview and "Naval Aggarwal" in leadership_preview and
           "Rhythm Mehrotra" not in leadership_preview,
           "homepage leadership preview must feature Naval only and leave Rhythm on the full team page")
     expected_social_urls = (
