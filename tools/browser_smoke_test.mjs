@@ -169,6 +169,39 @@ async function checkMobileAlignment(page, width, label) {
   }
 }
 
+async function assertHomepageDrawerAnchored(page, label) {
+  const geometry = await page.locator("#nav").evaluate(nav => {
+    const rect = nav.getBoundingClientRect();
+    const header = document.querySelector(".site-header").getBoundingClientRect();
+    const style = getComputedStyle(nav);
+    const probeX = Math.min(window.innerWidth - 1, Math.max(0, rect.left + rect.width / 2));
+    const probeY = Math.min(window.innerHeight - 1, Math.max(0, rect.top + 12));
+    const hit = document.elementFromPoint(probeX, probeY);
+    return {
+      position: style.position,
+      visibility: style.visibility,
+      display: style.display,
+      opacity: Number(style.opacity),
+      top: rect.top,
+      bottom: rect.bottom,
+      headerBottom: header.bottom,
+      viewportHeight: window.innerHeight,
+      scrollY: window.scrollY,
+      hitInsideDrawer: !!hit && (hit === nav || nav.contains(hit))
+    };
+  });
+  assert.equal(geometry.position, "absolute",
+    label + " drawer must be anchored to the sticky header like MELD's menu: " + JSON.stringify(geometry));
+  assert.ok(geometry.visibility === "visible" && geometry.display !== "none" && geometry.opacity > 0,
+    label + " drawer must be visibly open: " + JSON.stringify(geometry));
+  assert.ok(geometry.top >= geometry.headerBottom - 1,
+    label + " drawer must begin below the sticky header: " + JSON.stringify(geometry));
+  assert.ok(geometry.bottom <= geometry.viewportHeight + 1,
+    label + " drawer must fit inside the current viewport: " + JSON.stringify(geometry));
+  assert.ok(geometry.hitInsideDrawer,
+    label + " drawer must be in front of the page and receive pointer hits: " + JSON.stringify(geometry));
+}
+
 async function auditMobileHeaderInteractions(page, label, { touch = false } = {}) {
   const bengaloopToggle = page.locator("#menu");
   if (await bengaloopToggle.count()) {
@@ -192,6 +225,7 @@ async function auditMobileHeaderInteractions(page, label, { touch = false } = {}
       menuBeforeClick.y + menuBeforeClick.height / 2);
     else await bengaloopToggle.dispatchEvent("click");
     await page.waitForFunction(() => document.querySelector("#nav")?.classList.contains("open"));
+    if (label.startsWith("BENGALOOP homepage")) await assertHomepageDrawerAnchored(page, label);
     const scrollAfterOpen = await page.evaluate(() => window.scrollY);
     assert.ok(Math.abs(scrollAfterOpen - scrollBeforeOpen) <= 2,
       label + " opening the navigation must preserve scroll position (before " +
@@ -461,6 +495,7 @@ try {
     "BENGALOOP homepage mid-scroll menu must remain in the viewport");
   await touchHome.touchscreen.tap(midMenuBox.x + midMenuBox.width / 2, midMenuBox.y + midMenuBox.height / 2);
   await touchHome.waitForFunction(() => document.querySelector("#nav")?.classList.contains("open"));
+  await assertHomepageDrawerAnchored(touchHome, "BENGALOOP homepage mid-scroll");
   const midScrollAfterOpen = await touchHome.evaluate(() => window.scrollY);
   assert.ok(Math.abs(midScrollAfterOpen - midScrollBeforeOpen) <= 2,
     "BENGALOOP homepage opening the navigation mid-scroll must preserve scroll position (before " +
