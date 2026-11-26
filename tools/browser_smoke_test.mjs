@@ -185,8 +185,22 @@ async function auditMobileHeaderInteractions(page, label) {
     await bengaloopToggle.click();
     await page.waitForFunction(() => document.querySelector("#nav")?.classList.contains("open"));
     const scrollAfterOpen = await page.evaluate(() => window.scrollY);
+    const scrollDiagnostics = await page.evaluate(() => ({
+      scrollY: window.scrollY,
+      documentScrollTop: document.documentElement.scrollTop,
+      bodyScrollTop: document.body.scrollTop,
+      bodyPosition: getComputedStyle(document.body).position,
+      bodyTop: getComputedStyle(document.body).top,
+      bodyOverflow: getComputedStyle(document.body).overflow,
+      htmlOverflow: getComputedStyle(document.documentElement).overflow,
+      activeElement: document.activeElement?.id || document.activeElement?.tagName || null,
+      navOpen: document.querySelector("#nav")?.classList.contains("open"),
+      viewportHeight: window.innerHeight,
+      documentHeight: document.documentElement.scrollHeight
+    }));
     assert.ok(Math.abs(scrollAfterOpen - scrollBeforeOpen) <= 2,
-      label + " opening the navigation must not jump the page to another scroll position");
+      label + " opening the navigation changed scroll from " + scrollBeforeOpen +
+      " to " + scrollAfterOpen + "; diagnostics=" + JSON.stringify(scrollDiagnostics));
     await noOverflow(page, label + " navigation open");
     await page.locator("#navClose").click();
     await page.waitForFunction(() => !document.querySelector("#nav")?.classList.contains("open"));
