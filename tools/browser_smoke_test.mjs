@@ -17,6 +17,21 @@ async function openPage(route, viewport, label, contextOptions = {}) {
   return page;
 }
 
+async function checkBrandImage(page, selector, expectedSrc, label) {
+  const image = page.locator(selector).first();
+  await image.waitFor({ state: "visible" });
+  await image.evaluate(img => img.decode());
+  assert.ok(await image.evaluate(img => img.naturalWidth > 0 && img.naturalHeight > 0), label + " must decode successfully");
+  const src = await image.getAttribute("src");
+  assert.ok(src && src.includes(expectedSrc), label + " must reference " + expectedSrc + "; got " + src);
+}
+
+async function checkCoreBrandIcons(page, label) {
+  const expected = "bengaloop-avatar.png?v=20261127-logo-v1";
+  assert.equal(await page.locator('link[rel="icon"]').getAttribute("href"), expected, label + " favicon");
+  assert.equal(await page.locator('link[rel="apple-touch-icon"]').getAttribute("href"), expected, label + " Apple touch icon");
+}
+
 async function noOverflow(page, label) {
   const dimensions = await page.evaluate(() => ({
     viewport: document.documentElement.clientWidth,
@@ -276,6 +291,11 @@ try {
   const desktop = await openPage("/index.html", { width: 1440, height: 960 }, "desktop homepage");
   assert.equal(await desktop.locator("h1").count(), 1);
   assert.ok((await desktop.title()).includes("Business Growth Ecosystem"));
+  await checkBrandImage(desktop, ".site-header .brand img", "bengaloop-header-logo.webp?v=20261127-logo-v1", "BENGALOOP homepage header logo");
+  await checkBrandImage(desktop, ".agency-footer-brand img", "bengaloop-logo-dark.webp?v=20261127-logo-v1", "BENGALOOP homepage footer logo");
+  await checkCoreBrandIcons(desktop, "BENGALOOP homepage");
+  assert.equal(await desktop.locator('meta[property="og:image"]').getAttribute("content"), "https://bengaloop.in/bengaloop-avatar.png?v=20261127-logo-v1");
+  assert.equal(await desktop.locator('meta[name="twitter:card"]').getAttribute("content"), "summary");
   assert.equal(await desktop.locator(".eco-model-card").count(), 2);
   assert.equal(await desktop.locator(".eco-journey-step").count(), 3);
   assert.equal(await desktop.locator(".agency-service-card").count(), 6);
@@ -328,6 +348,9 @@ try {
   await desktop.waitForURL("**/our-team.html");
 
   // Team hierarchy remains unchanged.
+  await checkBrandImage(desktop, ".site-header .brand img", "bengaloop-header-logo.webp?v=20261127-logo-v1", "BENGALOOP team header logo");
+  await checkBrandImage(desktop, ".agency-footer-brand img", "bengaloop-logo-dark.webp?v=20261127-logo-v1", "BENGALOOP team footer logo");
+  await checkCoreBrandIcons(desktop, "BENGALOOP team");
   assert.equal(await desktop.locator(".team-level-cofounders .team-card").count(), 0);
   assert.equal(await desktop.locator(".team-level-members .team-card").count(), 18);
   assert.equal(await desktop.locator(".team-level-members .team-card").filter({ hasText: "Rhythm Mehrotra" }).count(), 1);
@@ -347,6 +370,9 @@ try {
   // Standalone Vyapar Kavach collaboration microsite.
   const vkDesktop = await openPage("/vyapar-kavach.html", { width: 1440, height: 960 }, "desktop Vyapar Kavach");
   assert.ok((await vkDesktop.title()).includes("Vyapar Kavach"));
+  await checkBrandImage(vkDesktop, ".vk-bengaloop img", "bengaloop-logo-dark.webp?v=20261127-logo-v1", "Vyapar Kavach upper-header BENGALOOP logo");
+  assert.equal(await vkDesktop.locator('link[rel="icon"]').getAttribute("href"), "favicon.svg", "Vyapar Kavach favicon must stay unchanged");
+  assert.equal(await vkDesktop.locator('meta[property="og:image"]').getAttribute("content"), "https://bengaloop.in/bengaloop-social.jpg", "Vyapar Kavach social metadata must stay unchanged");
   assert.equal(await vkDesktop.locator("h1").count(), 1);
   assert.equal(await vkDesktop.locator(".vk-stage").count(), 3);
   await checkDisclosure(vkDesktop, ".vk-stage-details", 3, 4, "Vyapar Kavach stage activities");
@@ -375,6 +401,9 @@ try {
   // Standalone MELD sponsorship and collaboration microsite.
   const meldDesktop = await openPage("/meld.html", { width: 1440, height: 960 }, "desktop MELD");
   assert.ok((await meldDesktop.title()).includes("MELD"));
+  assert.equal(await meldDesktop.locator('link[rel="icon"]').getAttribute("href"), "favicon.svg", "MELD favicon must stay unchanged");
+  assert.equal(await meldDesktop.locator('meta[property="og:image"]').getAttribute("content"), "https://bengaloop.in/bengaloop-social.jpg", "MELD social metadata must stay unchanged");
+  assert.equal(await meldDesktop.locator('img[src*="bengaloop-header-logo"], img[src*="bengaloop-logo-dark"]').count(), 0, "MELD must not acquire BENGALOOP logo imagery");
   assert.equal(await meldDesktop.locator("h1").count(), 1);
   assert.equal(await meldDesktop.locator(".meld-audience-card").count(), 2);
   assert.equal(await meldDesktop.locator(".meld-fit-row").count(), 3);
@@ -409,6 +438,9 @@ try {
   // Experiment Lab at desktop: all programme/department/role data and form contract.
   const labDesktop = await openPage("/join-us.html", { width: 1440, height: 960 }, "desktop Experiment Lab");
   assert.ok((await labDesktop.title()).includes("Experiment Lab"));
+  await checkBrandImage(labDesktop, ".site-header .brand img", "bengaloop-header-logo.webp?v=20261127-logo-v1", "Experiment Lab header logo");
+  await checkBrandImage(labDesktop, ".agency-footer-brand img", "bengaloop-logo-dark.webp?v=20261127-logo-v1", "Experiment Lab footer logo");
+  await checkCoreBrandIcons(labDesktop, "Experiment Lab");
   assert.equal(await labDesktop.locator(".lab-course-card").count(), 4);
   const expectedAcademicPathways = [
     {
@@ -516,6 +548,8 @@ try {
 
   // The custom not-found page uses the same arrow-free tactile button system.
   const notFound = await openPage("/404.html", { width: 1440, height: 900 }, "desktop 404");
+  await checkBrandImage(notFound, ".site-header .brand img", "bengaloop-header-logo.webp?v=20261127-logo-v1", "404 header logo");
+  await checkCoreBrandIcons(notFound, "404 page");
   await checkTactileButtons(notFound, "button, .agency-button", "404 page");
   await checkNoArrowGlyphs(notFound, "404 page");
   await notFound.close();
@@ -534,6 +568,12 @@ try {
       const page = await openPage(item.route, { width, height: 844 }, item.label + " mobile audit");
       await checkMobileAlignment(page, width, item.label);
       if (width === 320) {
+        if (["home","team","experiment-lab","404"].includes(item.file)) {
+          await checkBrandImage(page, ".site-header .brand img", "bengaloop-header-logo.webp?v=20261127-logo-v1", item.label + " mobile header logo");
+          await checkCoreBrandIcons(page, item.label + " mobile");
+          if (item.file !== "404") await checkBrandImage(page, ".agency-footer-brand img", "bengaloop-logo-dark.webp?v=20261127-logo-v1", item.label + " mobile footer logo");
+        }
+        if (item.file === "vyapar-kavach") await checkBrandImage(page, ".vk-bengaloop img", "bengaloop-logo-dark.webp?v=20261127-logo-v1", "Vyapar Kavach mobile upper-header logo");
         await page.screenshot({ path: path.join(out, "mobile-audit-320-" + item.file + ".png") });
         await auditMobileHeaderInteractions(page, item.label);
       }

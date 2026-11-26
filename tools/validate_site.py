@@ -71,6 +71,7 @@ def main():
         "lab": ROOT / "join-us.html",
         "vk": ROOT / "vyapar-kavach.html",
         "meld": ROOT / "meld.html",
+        "not_found": ROOT / "404.html",
     }
     for label, path in paths.items():
         check(errors, path.is_file(), f"{label} page missing: {path.name}")
@@ -83,12 +84,40 @@ def main():
     lab = paths["lab"].read_text(encoding="utf-8")
     vk = paths["vk"].read_text(encoding="utf-8")
     meld = paths["meld"].read_text(encoding="utf-8")
-    home_doc, team_doc, lab_doc, vk_doc, meld_doc = Inspector(), Inspector(), Inspector(), Inspector(), Inspector()
+    not_found = paths["not_found"].read_text(encoding="utf-8")
+    home_doc, team_doc, lab_doc, vk_doc, meld_doc, not_found_doc = Inspector(), Inspector(), Inspector(), Inspector(), Inspector(), Inspector()
     home_doc.feed(home)
     team_doc.feed(team)
     lab_doc.feed(lab)
     vk_doc.feed(vk)
     meld_doc.feed(meld)
+    not_found_doc.feed(not_found)
+
+    # BENGALOOP logo migration: verify new marks and protect the microsite boundaries.
+    logo_version = "20261127-logo-v1"
+    header_logo = f'src="bengaloop-header-logo.webp?v={logo_version}"'
+    white_logo = f'src="bengaloop-logo-dark.webp?v={logo_version}"'
+    brand_icon = f'bengaloop-avatar.png?v={logo_version}'
+    brand_social = f'https://bengaloop.in/{brand_icon}'
+    for asset in ("bengaloop-header-logo.webp", "bengaloop-logo-dark.webp", "bengaloop-avatar.png"):
+        check(errors, (ROOT / asset).is_file(), "new BENGALOOP brand asset missing: " + asset)
+    for label, source in (("homepage", home), ("team", team), ("Experiment Lab", lab), ("404", not_found)):
+        check(errors, source.count(header_logo) == 1, label + " must use the new classic header logo exactly once")
+        check(errors, source.count(f'href="{brand_icon}"') == 2, label + " must use the new pictorial favicon and Apple touch icon")
+        check(errors, "favicon.svg" not in source, label + " still references the previous BENGALOOP favicon")
+    for label, source in (("homepage", home), ("team", team), ("Experiment Lab", lab)):
+        check(errors, source.count(white_logo) == 1, label + " must use the new white footer lockup exactly once")
+        check(errors, source.count(brand_social) == 2, label + " must use the new pictorial mark for Open Graph and Twitter previews")
+        check(errors, "bengaloop-social.jpg" not in source, label + " still references the previous BENGALOOP social preview")
+    check(errors, white_logo in vk, "Vyapar Kavach upper header must use the new white BENGALOOP lockup")
+    check(errors, "favicon.svg" in vk and "https://bengaloop.in/bengaloop-social.jpg" in vk, "Vyapar Kavach non-header logo metadata must remain unchanged")
+    check(errors, "favicon.svg" in meld and "https://bengaloop.in/bengaloop-social.jpg" in meld, "MELD favicon and social metadata must remain unchanged")
+    check(errors, "bengaloop-header-logo.webp" not in meld and "bengaloop-logo-dark.webp" not in meld, "MELD must not acquire BENGALOOP logo imagery")
+    manifest_path = ROOT / "site.webmanifest"
+    check(errors, manifest_path.is_file(), "site.webmanifest missing")
+    if manifest_path.is_file():
+        manifest = manifest_path.read_text(encoding="utf-8")
+        check(errors, f'"src": "{brand_icon}"' in manifest and '"sizes": "512x512"' in manifest, "manifest must reference the new 512×512 pictorial mark")
 
     # Primary-domain migration: all indexable pages must identify bengaloop.in, never the retired alias.
     for label, page in (("homepage", home), ("team", team), ("Experiment Lab", lab),
@@ -178,7 +207,7 @@ def main():
     # Team page: one founder plus eighteen ordinary members.
     check(errors, 'name="robots" content="index,follow"' in team, "team page must be indexable")
     check(errors, '<meta property="og:title" content="Our Team | BENGALOOP">' in team and
-          '<meta name="twitter:card" content="summary_large_image">' in team,
+          '<meta name="twitter:card" content="summary">' in team,
           "team page social metadata missing")
     for person in (
         "Naval Aggarwal", "Yuval Ostwal", "Rhythm Mehrotra", "Ripunjay Raj", "Su Mayur",
@@ -207,7 +236,7 @@ def main():
     # Experiment Lab: four courses, six departments, nineteen role pathways.
     check(errors, 'rel="canonical" href="https://bengaloop.in/join-us.html"' in lab,
           "Experiment Lab canonical missing")
-    check(errors, '<meta name="twitter:card" content="summary_large_image">' in lab,
+    check(errors, '<meta name="twitter:card" content="summary">' in lab,
           "Experiment Lab Twitter metadata missing")
     check(errors, lab_doc.tags["h1"] == 1 and not lab_doc.duplicates,
           "Experiment Lab needs exactly one H1 and unique IDs")
@@ -363,6 +392,7 @@ def main():
         (lab, lab_doc, "Experiment Lab"),
         (vk, vk_doc, "Vyapar Kavach"),
         (meld, meld_doc, "MELD"),
+        (not_found, not_found_doc, "404"),
     ):
         for raw in doc.links:
             if raw.startswith("#"):

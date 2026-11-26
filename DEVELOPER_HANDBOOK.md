@@ -157,11 +157,11 @@ The primary public origin is `https://bengaloop.in/`.
 - Keep legacy redirect pages `noindex,follow`.
 - Preserve the favicon, Apple touch icon, manifest and social image references when changing brand assets.
 
-The homepage currently uses `favicon.svg`, `bengaloop-avatar.png` for Apple/manifest icon references, and `bengaloop-social.jpg` for social sharing. Verify that a replacement asset exists at the exact referenced path and has the right format/dimensions.
+The BENGALOOP core pages use `bengaloop-avatar.png` (512×512) for the favicon, Apple touch icon, manifest and social-preview image; `bengaloop-header-logo.webp` for the full classic lockup on light headers; and `bengaloop-logo-dark.webp` for the white full lockup on the dark shared footer and Vyapar Kavach's upper header. Keep `favicon.svg` and `bengaloop-social.jpg` unchanged because MELD and Vyapar Kavach still reference those legacy metadata assets. MELD must not use the new BENGALOOP logo, and only Vyapar Kavach's upper-header BENGALOOP image may be changed. Preserve the supplied masters' colours and aspect ratios; never recolour, crop or stretch them. Check all page, stylesheet, manifest and metadata references before replacing an asset shared with another experience.
 
 ## 8. Assets and naming
 
-The inspected repository stores current image and SVG assets in the repository root rather than a dedicated `assets/` directory. Current page assets include the BENGALOOP header and logo images, avatar, hero/social images, active team portraits, `cufflinksia-logo.svg` for Vyapar Kavach and the favicon. Unused historical portrait and superseded standalone logo exports are removed; do not restore them unless a page explicitly needs them.
+The inspected repository stores current image and SVG assets in the repository root rather than a dedicated `assets/` directory. Current page assets include the BENGALOOP classic header lockup, white lockup, 512×512 pictorial icon, hero images, active team portraits, `cufflinksia-logo.svg` for Vyapar Kavach, and microsite-only legacy favicon/social metadata assets. Unused historical portrait and superseded standalone logo exports are removed; do not restore them unless a page explicitly needs them.
 
 When adding/replacing an asset:
 
