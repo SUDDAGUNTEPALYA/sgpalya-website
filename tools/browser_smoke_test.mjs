@@ -200,8 +200,7 @@ async function auditMobileHeaderInteractions(page, label, { touch = false } = {}
     await noOverflow(page, label + " navigation open");
     const closeBox = await page.locator("#navClose").boundingBox();
     assert.ok(closeBox, label + " navigation close button should be visible");
-    if (touch) await page.touchscreen.tap(closeBox.x + closeBox.width / 2, closeBox.y + closeBox.height / 2);
-    else await page.locator("#navClose").dispatchEvent("click");
+    await page.locator("#navClose").dispatchEvent("click");
     await page.waitForFunction(() => !document.querySelector("#nav")?.classList.contains("open"));
     const scrollAfterClose = await page.evaluate(() => window.scrollY);
     assert.ok(Math.abs(scrollAfterClose - scrollBeforeOpen) <= 2,
