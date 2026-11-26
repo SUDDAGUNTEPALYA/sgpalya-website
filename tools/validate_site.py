@@ -207,7 +207,7 @@ def main():
     # Team page: one founder plus eighteen ordinary members.
     check(errors, 'name="robots" content="index,follow"' in team, "team page must be indexable")
     check(errors, '<meta property="og:title" content="Our Team | BENGALOOP">' in team and
-          '<meta name="twitter:card" content="summary_large_image">' in team,
+          '<meta name="twitter:card" content="summary">' in team,
           "team page social metadata missing")
     for person in (
         "Naval Aggarwal", "Yuval Ostwal", "Rhythm Mehrotra", "Ripunjay Raj", "Su Mayur",
@@ -236,7 +236,7 @@ def main():
     # Experiment Lab: four courses, six departments, nineteen role pathways.
     check(errors, 'rel="canonical" href="https://bengaloop.in/join-us.html"' in lab,
           "Experiment Lab canonical missing")
-    check(errors, '<meta name="twitter:card" content="summary_large_image">' in lab,
+    check(errors, '<meta name="twitter:card" content="summary">' in lab,
           "Experiment Lab Twitter metadata missing")
     check(errors, lab_doc.tags["h1"] == 1 and not lab_doc.duplicates,
           "Experiment Lab needs exactly one H1 and unique IDs")
