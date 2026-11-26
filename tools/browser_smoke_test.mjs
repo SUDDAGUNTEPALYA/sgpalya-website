@@ -179,59 +179,27 @@ async function auditMobileHeaderInteractions(page, label) {
     await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
     await page.waitForTimeout(100);
     const scrollBeforeOpen = await page.evaluate(() => window.scrollY);
-    const beforeOpenLayout = await page.evaluate(() => {
-      const rect = selector => {
-        const node = document.querySelector(selector);
-        if (!node) return null;
-        const r = node.getBoundingClientRect();
-        const s = getComputedStyle(node);
-        return {x:r.x,y:r.y,width:r.width,height:r.height,position:s.position,overflow:s.overflow,transform:s.transform};
-      };
-      return {scrollY:window.scrollY,htmlHeight:document.documentElement.scrollHeight,
-        bodyHeight:document.body.scrollHeight,bodyOffsetHeight:document.body.offsetHeight,
-        bodyRect:rect("body"),shellRect:rect(".site-shell"),headerRect:rect(".site-header"),
-        navRect:rect("#nav"),backdropRect:rect("#navBackdrop")};
-    });
-    const menuBeforeClick = await bengaloopToggle.evaluate(node => {
-      const r = node.getBoundingClientRect();
-      const s = getComputedStyle(node);
-      return { x:r.x, y:r.y, top:r.top, bottom:r.bottom, width:r.width, height:r.height,
-        position:s.position, visibility:s.visibility, display:s.display,
-        headerPosition:getComputedStyle(node.closest(".site-header")).position };
-    });
+    const menuBeforeClick = await bengaloopToggle.boundingBox();
+    const viewportHeight = await page.evaluate(() => window.innerHeight);
+    assert.ok(menuBeforeClick && menuBeforeClick.y >= 0 && menuBeforeClick.y + menuBeforeClick.height <= viewportHeight,
+      label + " menu toggle must be inside the viewport before a real pointer click");
     const headerBeforeOpen = await page.locator(".site-header").boundingBox();
     assert.ok(headerBeforeOpen && Math.abs(headerBeforeOpen.y) <= 1,
       label + " header should remain pinned to the viewport at the bottom of the page");
-    await bengaloopToggle.click();
+    // Use physical pointer coordinates: locator.click() runs scrollIntoViewIfNeeded(),
+    // which can move a sticky target before dispatching the click in Chromium.
+    await page.mouse.click(menuBeforeClick.x + menuBeforeClick.width / 2,
+      menuBeforeClick.y + menuBeforeClick.height / 2);
     await page.waitForFunction(() => document.querySelector("#nav")?.classList.contains("open"));
     const scrollAfterOpen = await page.evaluate(() => window.scrollY);
-    const scrollDiagnostics = await page.evaluate(({ menuRect, beforeOpenLayout }) => ({
-      scrollY: window.scrollY,
-      documentScrollTop: document.documentElement.scrollTop,
-      bodyScrollTop: document.body.scrollTop,
-      bodyPosition: getComputedStyle(document.body).position,
-      bodyTop: getComputedStyle(document.body).top,
-      bodyOverflow: getComputedStyle(document.body).overflow,
-      htmlOverflow: getComputedStyle(document.documentElement).overflow,
-      activeElement: document.activeElement?.id || document.activeElement?.tagName || null,
-      navOpen: document.querySelector("#nav")?.classList.contains("open"),
-      navScrollTrace: window.__bengaloopNavScrollTrace || null,
-      viewportHeight: window.innerHeight,
-      documentHeight: document.documentElement.scrollHeight,
-      bodyHeight: document.body.scrollHeight,
-      bodyOffsetHeight: document.body.offsetHeight,
-      bodyRect: (() => { const r=document.body.getBoundingClientRect(); return {y:r.y,height:r.height}; })(),
-      headerRect: (() => { const r=document.querySelector(".site-header").getBoundingClientRect(); return {y:r.y,height:r.height}; })(),
-      navRect: (() => { const r=document.querySelector("#nav").getBoundingClientRect(); return {x:r.x,y:r.y,width:r.width,height:r.height}; })(),
-      menuRectBeforeClick: menuRect,
-      beforeOpenLayout
-    }), { menuRect: menuBeforeClick, beforeOpenLayout });
     assert.ok(Math.abs(scrollAfterOpen - scrollBeforeOpen) <= 2,
-      label + " opening the navigation changed scroll from " + scrollBeforeOpen +
-      " to " + scrollAfterOpen + "; diagnostics=" + JSON.stringify(scrollDiagnostics) +
-      "; menuBeforeClick=" + JSON.stringify(menuBeforeClick));
+      label + " opening the navigation must preserve scroll position (before " +
+      scrollBeforeOpen + ", after " + scrollAfterOpen + ")");
+
     await noOverflow(page, label + " navigation open");
-    await page.locator("#navClose").click();
+    const closeBox = await page.locator("#navClose").boundingBox();
+    assert.ok(closeBox, label + " navigation close button should be visible");
+    await page.mouse.click(closeBox.x + closeBox.width / 2, closeBox.y + closeBox.height / 2);
     await page.waitForFunction(() => !document.querySelector("#nav")?.classList.contains("open"));
     const scrollAfterClose = await page.evaluate(() => window.scrollY);
     assert.ok(Math.abs(scrollAfterClose - scrollBeforeOpen) <= 2,
