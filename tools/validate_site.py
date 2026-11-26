@@ -223,13 +223,38 @@ def main():
           "Experiment Lab must show six departments")
     check(errors, lab.count('class="lab-role"') == 19,
           "Experiment Lab must describe nineteen role pathways")
-    for pathway in (
-        "B.Com Global Management Accounting &amp; Strategy", "Integrated with CIMA UK",
-        "B.Com International Accountancy &amp; Finance", "Integrated with ACCA",
-        "B.Com Branding &amp; Entrepreneurship", "B.Com Accountancy &amp; Finance",
-        "Integrated with CA – ICAI",
-    ):
+    expected_pathway_content = (
+        "B.Com Global Management Accounting &amp; Strategy",
+        "Professional focus: CIMA UK",
+        "B.Com International Accountancy &amp; Finance",
+        "Professional focus: ACCA + CA (ICAI)",
+        "B.Com Branding &amp; Entrepreneurship",
+        "Programme focus: Brand building &amp; enterprise",
+        "B.Com International Finance",
+        "Professional focus: CFA",
+        "Equity and company research",
+        "Financial market research",
+        "Investment analysis",
+        "Business and asset valuation research",
+        "Portfolio and risk analysis",
+        "Accounting and record organisation",
+        "Financial management and working-capital analysis",
+    )
+    for pathway in expected_pathway_content:
         check(errors, pathway in lab, "missing academic pathway detail: " + pathway)
+    check(errors, "B.Com Accountancy &amp; Finance" not in lab and
+          "Integrated with ACCA" not in lab and "Integrated with CA – ICAI" not in lab,
+          "Experiment Lab still presents the former separate accountancy pathways")
+    course_cards = re.findall(r'<article class="lab-course-card">([\s\S]*?)</article>', lab)
+    check(errors, len(course_cards) == 4, "Experiment Lab must contain exactly four course cards")
+    for index, card in enumerate(course_cards, start=1):
+        contribution_items = re.findall(r'<li>(.*?)</li>', card)
+        check(errors, len(contribution_items) == 5,
+              f"academic pathway card {index} must retain exactly five contribution areas")
+    check(errors, "IAF / ACCA + CA (ICAI)" in lab and
+          "INTERNATIONAL FINANCE / CFA" in lab and
+          "ACCOUNTANCY &amp; FINANCE / CA" not in lab,
+          "illustrative business challenge must reflect the four updated academic pathways")
     for department in (
         "Business Strategy &amp; Research", "Finance &amp; Business Analysis",
         "Brand, Marketing &amp; Creative", "Business Development &amp; Client Partnerships",
