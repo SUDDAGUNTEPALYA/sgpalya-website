@@ -39,7 +39,7 @@ Do not assume a local build command, npm project or framework exists. The CI wor
 
 | Page / route | Purpose | Main files |
 |---|---|---|
-| Homepage | Positioning, two-sided value model, six workstreams, project examples, business enquiry | `index.html`, `agency.css`, `ecosystem-home.css`, shared `style.css` |
+| Homepage | Positioning, two-sided value model, six workstreams, project examples, business enquiry, founder preview, official social channels and final CTA | `index.html`, `agency.css`, `ecosystem-home.css`, shared `style.css` |
 | Team | Founder and member profiles, hierarchy, team information | `our-team.html`, `agency.css`, `style.css` |
 | Experiment Lab | Four academic pathways, six departments, nineteen role pathways, student application preview | `join-us.html`, `experiment-lab.css`, `agency.css`, `style.css` |
 | MELD | Independent campus sponsorship and collaboration initiative | `meld.html`, `meld.css` |
@@ -234,6 +234,14 @@ The browser suite covers desktop and mobile interactions, form states, disclosur
 3. Use `agency.css` only when the component is shared with the team page.
 4. Use `style.css` only for truly foundational/shared behaviour.
 5. Test desktop and all mobile widths in the browser suite.
+
+### Change homepage founder preview and social channels
+
+1. The homepage leadership preview intentionally features Naval Aggarwal as Founder only; keep the separate “18 Members” link pointed to `our-team.html`.
+2. All member profiles, including Rhythm Mehrotra, remain on `our-team.html`. Removing someone from the homepage preview does not mean removing their full team profile.
+3. Keep the three homepage social cards and footer destinations aligned with the official BENGALOOP accounts: LinkedIn `https://www.linkedin.com/company/bengaloop/`, Instagram `https://www.instagram.com/bengaloop/`, and Facebook `https://www.facebook.com/profile.php?id=61595860486907`.
+4. Preserve the homepage sequence: business enquiry, founder preview and 18-member link, social channels, then the final “Let's start with a conversation / Register your business” CTA.
+5. Update structural and browser assertions whenever this approved sequence or its official links change, and test the phone layouts.
 
 ### Change team members
 1. Edit the relevant profile/card in `our-team.html`.

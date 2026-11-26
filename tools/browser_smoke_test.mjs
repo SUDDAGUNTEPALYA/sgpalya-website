@@ -284,7 +284,28 @@ try {
   assert.equal(await desktop.locator('#businessEnquiryForm input[name="services"]').count(), 6);
   assert.ok((await desktop.locator("#services").innerText()).includes("Business strategy & research"));
   assert.ok((await desktop.locator("#services").innerText()).includes("Operations, projects & people"));
-  assert.equal(await desktop.locator(".agency-leader-card").count(), 2);
+  assert.equal(await desktop.locator(".agency-leader-card").count(), 1);
+  const homepageLeadership = await desktop.locator("#leadership").innerText();
+  assert.ok(homepageLeadership.includes("Naval Aggarwal"));
+  assert.equal(homepageLeadership.includes("Rhythm Mehrotra"), false);
+  const homepageSocials = desktop.locator("#social .agency-social-link");
+  assert.equal(await homepageSocials.count(), 3);
+  const expectedSocialUrls = [
+    "https://www.linkedin.com/company/bengaloop/",
+    "https://www.instagram.com/bengaloop/",
+    "https://www.facebook.com/profile.php?id=61595860486907"
+  ];
+  for (let i = 0; i < expectedSocialUrls.length; i++) {
+    const link = homepageSocials.nth(i);
+    assert.equal(await link.getAttribute("href"), expectedSocialUrls[i]);
+    assert.equal(await link.getAttribute("target"), "_blank");
+    assert.ok((await link.getAttribute("rel")).includes("noopener"));
+    assert.ok(await link.isVisible());
+  }
+  assert.ok((await desktop.locator(".agency-final-cta").innerText()).includes("LET'S START WITH A CONVERSATION"));
+  assert.ok((await desktop.locator(".agency-final-cta").innerText()).includes("Register your business"));
+  assert.equal(await desktop.locator("#leadership").evaluate(el => !!(el.compareDocumentPosition(document.querySelector("#social")) & Node.DOCUMENT_POSITION_FOLLOWING)), true);
+  assert.equal(await desktop.locator("#social").evaluate(el => !!(el.compareDocumentPosition(document.querySelector(".agency-final-cta")) & Node.DOCUMENT_POSITION_FOLLOWING)), true);
   await checkTactileButtons(desktop, "button, .agency-button, .nav-cta, .agency-text-link, .agency-member-count, .agency-service-details>summary", "BENGALOOP homepage");
   await checkNoArrowGlyphs(desktop, "BENGALOOP homepage");
   assert.ok((await desktop.locator(".agency-member-count").innerText()).includes("18"));
@@ -309,6 +330,7 @@ try {
   // Team hierarchy remains unchanged.
   assert.equal(await desktop.locator(".team-level-cofounders .team-card").count(), 0);
   assert.equal(await desktop.locator(".team-level-members .team-card").count(), 18);
+  assert.equal(await desktop.locator(".team-level-members .team-card").filter({ hasText: "Rhythm Mehrotra" }).count(), 1);
   assert.equal(await desktop.locator(".team-level-members .team-status").count(), 18);
   await checkTactileButtons(desktop, "button, .agency-button, .nav-cta, .agency-text-link, .team-linkedin, .profile-linkedin", "BENGALOOP team page");
   await checkNoArrowGlyphs(desktop, "BENGALOOP team page");
@@ -405,6 +427,7 @@ try {
   const mobile = await openPage("/index.html", { width: 390, height: 844 }, "mobile homepage 390");
   await mobile.screenshot({ path: path.join(out, "mobile-ecosystem-home-390.png"), fullPage: true });
   await checkDisclosure(mobile, ".agency-service-details", 6, 4, "mobile BENGALOOP service details");
+  assert.equal(await mobile.locator("#social .agency-social-link").count(), 3);
   await checkTactileButtons(mobile, "button, .agency-button, .nav-cta, .agency-text-link, .agency-member-count, .agency-service-details>summary", "mobile BENGALOOP homepage");
   await checkNoArrowGlyphs(mobile, "mobile BENGALOOP homepage");
   await mobile.locator("#menu").click();

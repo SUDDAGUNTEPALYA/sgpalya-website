@@ -11,3 +11,20 @@
 .eco-journey-step p{margin:6px 0 0;color:#68786d;font-size:10px;line-height:1.65}.eco-journey-note{margin:11px 0 0;color:#879184;font-size:9px;line-height:1.6}
 @media(max-width:820px){.eco-model-head{display:block}.eco-model-head>p{margin-top:14px}.eco-model-journey{grid-template-columns:1fr}}
 @media(max-width:600px){.eco-model-section{padding:52px 5%}.eco-model-grid{grid-template-columns:1fr}.eco-model-card{min-height:0;padding:22px}.eco-model-card h3{font-size:21px}}
+/* Homepage social links: follows the founder preview and precedes the final business CTA. */
+.agency-social-section{background:#f7f7f1}
+.agency-social-shell{max-width:1320px;margin:0 auto}
+.agency-social-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.agency-social-link{display:flex;min-width:0;min-height:112px;align-items:center;gap:14px;padding:18px 16px;border:2px solid #dce3d9;background:#fffefa;color:#173a2e;text-decoration:none;box-shadow:6px 6px 0 #173a2e;transition:transform .18s,box-shadow .18s,background .18s}
+.agency-social-link:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 #173a2e;background:#fff}
+.agency-social-link:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #173a2e}
+.agency-social-link:focus-visible{outline:3px solid #b76e4d;outline-offset:4px}
+.agency-social-icon{display:grid;width:48px;height:48px;flex:0 0 48px;place-items:center;border:1px solid #dce3d9;border-radius:50%;background:#edf2e9;color:#173a2e}
+.agency-social-icon svg{display:block;width:23px;height:23px}
+.agency-social-copy{display:flex;min-width:0;flex:1;flex-direction:column;gap:5px}
+.agency-social-copy strong{color:#173a2e;font-size:16px;font-weight:800;line-height:1.2}
+.agency-social-copy small{color:#68786d;font-size:11px;line-height:1.5}
+.agency-social-action{align-self:center;color:#8a694d;font-size:8px;font-weight:800;letter-spacing:1px;white-space:nowrap}
+.agency-home .agency-leader-grid{grid-template-columns:minmax(0,680px);justify-content:center}
+@media(max-width:820px){.agency-social-grid{grid-template-columns:1fr;max-width:560px;margin:0 auto}}
+@media(max-width:600px){.agency-social-section{padding:50px 5%}.agency-social-grid{gap:12px}.agency-social-link{min-height:88px;padding:15px 13px;gap:12px}.agency-social-icon{width:44px;height:44px;flex-basis:44px}.agency-social-action{font-size:7px;letter-spacing:.7px}}

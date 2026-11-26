@@ -145,8 +145,27 @@ def main():
           "business categories must reflect the current growth-ecosystem audience, not the retired directory model")
     check(errors, '<span class="member-count-number">18</span>' in home and 'href="our-team.html"' in home,
           "homepage team count/link must show eighteen members")
-    check(errors, home.count('class="agency-leader-card') == 2,
-          "homepage should retain two leadership/team preview cards")
+    leadership_preview = (
+        home.split('id="leadership"', 1)[1].split('id="social"', 1)[0]
+        if 'id="leadership"' in home and 'id="social"' in home else ""
+    )
+    check(errors, leadership_preview.count('class="agency-leader-card') == 1 and
+          'class="agency-founder-card"' in leadership_preview and "Naval Aggarwal" in leadership_preview and
+          "Rhythm Mehrotra" not in leadership_preview,
+          "homepage leadership preview must feature Naval only and leave Rhythm on the full team page")
+    expected_social_urls = (
+        "https://www.linkedin.com/company/bengaloop/",
+        "https://www.instagram.com/bengaloop/",
+        "https://www.facebook.com/profile.php?id=61595860486907",
+    )
+    check(errors, home.count('class="agency-social-link"') == 3 and
+          all(url in home for url in expected_social_urls),
+          "homepage must show exactly the three official BENGALOOP social links")
+    check(errors, home.index('id="leadership"') < home.index('id="social"') < home.index('class="agency-final-cta"'),
+          "homepage order must be enquiry, founder preview, social channels and final business CTA")
+    check(errors, 'https://www.instagram.com/bengaloop_sgpalya' not in home and
+          'https://www.linkedin.com/company/bengaloop-sgpalya/' not in home,
+          "homepage footer must not retain superseded social profile URLs")
     check(errors, "Experiment Lab" in home and 'href="join-us.html"' in home,
           "homepage Experiment Lab link missing")
     check(errors, "Not affiliated with or endorsed by CHRIST University." in home,
