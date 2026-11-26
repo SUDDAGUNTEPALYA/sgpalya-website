@@ -179,6 +179,13 @@ async function auditMobileHeaderInteractions(page, label) {
     await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
     await page.waitForTimeout(100);
     const scrollBeforeOpen = await page.evaluate(() => window.scrollY);
+    const menuBeforeClick = await bengaloopToggle.evaluate(node => {
+      const r = node.getBoundingClientRect();
+      const s = getComputedStyle(node);
+      return { x:r.x, y:r.y, top:r.top, bottom:r.bottom, width:r.width, height:r.height,
+        position:s.position, visibility:s.visibility, display:s.display,
+        headerPosition:getComputedStyle(node.closest(".site-header")).position };
+    });
     const headerBeforeOpen = await page.locator(".site-header").boundingBox();
     assert.ok(headerBeforeOpen && Math.abs(headerBeforeOpen.y) <= 1,
       label + " header should remain pinned to the viewport at the bottom of the page");
@@ -196,11 +203,13 @@ async function auditMobileHeaderInteractions(page, label) {
       activeElement: document.activeElement?.id || document.activeElement?.tagName || null,
       navOpen: document.querySelector("#nav")?.classList.contains("open"),
       viewportHeight: window.innerHeight,
-      documentHeight: document.documentElement.scrollHeight
+      documentHeight: document.documentElement.scrollHeight,
+      menuRectBeforeClick: menuBeforeClick
     }));
     assert.ok(Math.abs(scrollAfterOpen - scrollBeforeOpen) <= 2,
       label + " opening the navigation changed scroll from " + scrollBeforeOpen +
-      " to " + scrollAfterOpen + "; diagnostics=" + JSON.stringify(scrollDiagnostics));
+      " to " + scrollAfterOpen + "; diagnostics=" + JSON.stringify(scrollDiagnostics) +
+      "; menuBeforeClick=" + JSON.stringify(menuBeforeClick));
     await noOverflow(page, label + " navigation open");
     await page.locator("#navClose").click();
     await page.waitForFunction(() => !document.querySelector("#nav")?.classList.contains("open"));
