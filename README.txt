@@ -24,10 +24,10 @@ EXPERIMENT LAB AS THE BUSINESS CAPABILITY FOUNDATION:
   Operations, Projects & People
 
 Academic pathways:
-  B.Com Global Management Accounting & Strategy — CIMA UK integrated
-  B.Com International Accountancy & Finance — ACCA integrated
-  B.Com Branding & Entrepreneurship
-  B.Com Accountancy & Finance — CA (ICAI) integrated
+  B.Com Global Management Accounting & Strategy — professional focus: CIMA UK
+  B.Com International Accountancy & Finance — professional focus: ACCA + CA (ICAI)
+  B.Com Branding & Entrepreneurship — programme focus: brand building & enterprise
+  B.Com International Finance — professional focus: CFA
 
 The six workstreams are capability areas, not guarantees of availability.
 Project acceptance depends on skills, suitable oversight, team capacity and

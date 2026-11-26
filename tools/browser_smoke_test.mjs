@@ -410,6 +410,43 @@ try {
   const labDesktop = await openPage("/join-us.html", { width: 1440, height: 960 }, "desktop Experiment Lab");
   assert.ok((await labDesktop.title()).includes("Experiment Lab"));
   assert.equal(await labDesktop.locator(".lab-course-card").count(), 4);
+  const expectedAcademicPathways = [
+    {
+      code: "GMAS",
+      title: "B.Com Global Management Accounting & Strategy",
+      focus: "Professional focus: CIMA UK",
+      areas: ["Cost and expense analysis", "Budgeting support", "Business performance tracking", "Pricing and margin research", "Operational efficiency ideas"]
+    },
+    {
+      code: "IAF",
+      title: "B.Com International Accountancy & Finance",
+      focus: "Professional focus: ACCA + CA (ICAI)",
+      areas: ["Financial reporting support", "Accounting and record organisation", "Taxation research support", "Audit and documentation support", "Financial management and working-capital analysis"]
+    },
+    {
+      code: "B&E",
+      title: "B.Com Branding & Entrepreneurship",
+      focus: "Programme focus: Brand building & enterprise",
+      areas: ["Brand positioning", "Customer and market research", "Digital marketing ideas", "Customer acquisition plans", "New business opportunities"]
+    },
+    {
+      code: "IF",
+      title: "B.Com International Finance",
+      focus: "Professional focus: CFA",
+      areas: ["Equity and company research", "Financial market research", "Investment analysis", "Business and asset valuation research", "Portfolio and risk analysis"]
+    }
+  ];
+  for (let i = 0; i < expectedAcademicPathways.length; i++) {
+    const expected = expectedAcademicPathways[i];
+    const card = labDesktop.locator(".lab-course-card").nth(i);
+    assert.equal(await card.locator(".lab-course-code").innerText(), expected.code);
+    assert.equal(await card.locator("h3").innerText(), expected.title);
+    assert.equal(await card.locator(".lab-course-integration").innerText(), expected.focus);
+    assert.deepEqual(await card.locator(".lab-course-list li").allTextContents(), expected.areas);
+  }
+  assert.ok((await labDesktop.locator(".lab-case-section").innerText()).includes("IAF / ACCA + CA (ICAI)"));
+  assert.ok((await labDesktop.locator(".lab-case-section").innerText()).includes("INTERNATIONAL FINANCE / CFA"));
+  assert.equal((await labDesktop.locator(".lab-course-grid").innerText()).includes("B.Com Accountancy & Finance"), false);
   assert.equal(await labDesktop.locator(".lab-dept-card").count(), 6);
   assert.equal(await labDesktop.locator(".lab-role").count(), 19);
   await checkDisclosure(labDesktop, ".lab-course-details", 4, 5, "Experiment Lab course contributions");
