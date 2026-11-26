@@ -186,11 +186,18 @@ async function auditMobileHeaderInteractions(page, label) {
     const headerBeforeOpen = await page.locator(".site-header").boundingBox();
     assert.ok(headerBeforeOpen && Math.abs(headerBeforeOpen.y) <= 1,
       label + " header should remain pinned to the viewport at the bottom of the page");
-    // Use physical pointer coordinates: locator.click() runs scrollIntoViewIfNeeded(),
-    // which can move a sticky target before dispatching the click in Chromium.
-    await page.mouse.click(menuBeforeClick.x + menuBeforeClick.width / 2,
-      menuBeforeClick.y + menuBeforeClick.height / 2);
-    await page.waitForFunction(() => document.querySelector("#nav")?.classList.contains("open"));
+    // Use physical pointer coordinates so the audit does not invoke locator auto-scrolling.
+    const clickPoint = { x: menuBeforeClick.x + menuBeforeClick.width / 2,
+      y: menuBeforeClick.y + menuBeforeClick.height / 2 };
+    const hitTest = await page.evaluate(point => {
+      const node = document.elementFromPoint(point.x, point.y);
+      return node ? {tag:node.tagName,id:node.id,className:typeof node.className==="string"?node.className:"",text:(node.textContent||"").trim().slice(0,40)} : null;
+    }, clickPoint);
+    await page.mouse.click(clickPoint.x, clickPoint.y);
+    await page.waitForFunction(() => document.querySelector("#nav")?.classList.contains("open"), { timeout: 5000 }).catch(async () => {
+      throw new Error(label + " physical click did not open the navigation; clickPoint=" +
+        JSON.stringify(clickPoint) + "; hitTest=" + JSON.stringify(hitTest));
+    });
     const scrollAfterOpen = await page.evaluate(() => window.scrollY);
     assert.ok(Math.abs(scrollAfterOpen - scrollBeforeOpen) <= 2,
       label + " opening the navigation must preserve scroll position (before " +
