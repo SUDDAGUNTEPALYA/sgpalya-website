@@ -23,11 +23,11 @@ The homepage workstreams map to the six Experiment Lab departments:
 5. Technology & Digital Solutions
 6. Operations, Projects & People
 
-The four academic pathways remain:
-- B.Com Global Management Accounting & Strategy — integrated with CIMA UK.
-- B.Com International Accountancy & Finance — integrated with ACCA.
-- B.Com Branding & Entrepreneurship.
-- B.Com Accountancy & Finance — integrated with CA (ICAI).
+The four academic pathways are:
+- B.Com Global Management Accounting & Strategy — professional focus: CIMA UK.
+- B.Com International Accountancy & Finance — professional focus: ACCA + CA (ICAI).
+- B.Com Branding & Entrepreneurship — programme focus: brand building and enterprise.
+- B.Com International Finance — professional focus: CFA.
 
 The nineteen role pathways are functional learning opportunities, not rigid course-to-role mappings or a promise to recruit exactly nineteen people. Allocation must consider interest, aptitude, demonstrated readiness, appropriate oversight and actual project needs.
 
