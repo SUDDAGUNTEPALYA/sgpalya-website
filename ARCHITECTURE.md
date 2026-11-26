@@ -67,4 +67,6 @@ GitHub Actions runs structural, link, asset, form-contract, JavaScript and Playw
 - The primary public origin is `https://bengaloop.in/`; `CNAME` must contain exactly `bengaloop.in`.
 - Every indexable page must use `https://bengaloop.in` for its canonical URL, `og:url` and absolute social-image URLs.
 - `robots.txt` must advertise `https://bengaloop.in/sitemap.xml`, and every URL in `sitemap.xml` must use the same host.
-- `sgpalya.in` is a legacy alias only. It must be configured outside this static site as a permanent host-level redirect to `https://bengaloop.in`, preserving paths and query strings. Do not use it as a canonical or sitemap host.
+- `bengaloop.in` is this repository's sole production and canonical host; `CNAME` must contain only `bengaloop.in`.
+- `sgpalya.in` currently redirects to `https://bengaloop.in` through separate domain/hosting configuration outside this repository. This is a current arrangement, not a permanent merger. Keep `sgpalya.in` independently controllable because it may host a separate website in future.
+- Never add `sgpalya.in` to this repository's `CNAME`, canonical URLs, `og:url`, robots or sitemap. Change its redirect only after its separate destination and hosting are ready; preserve path/query behaviour until then.

@@ -151,7 +151,9 @@ The primary public origin is `https://bengaloop.in/`.
 - Keep `robots.txt` sitemap reference as `https://bengaloop.in/sitemap.xml`.
 - Keep sitemap URLs on the primary host.
 - The sitemap currently contains exactly five indexable pages: homepage, team, Experiment Lab, Vyapar Kavach and MELD.
-- `sgpalya.in` is a legacy alias and must not appear in canonical tags, social metadata, robots or sitemap. Its permanent redirect must be configured at the domain/hosting level, preserving paths and query strings.
+- `bengaloop.in` is the sole production and canonical host for this repository; `CNAME` must contain only `bengaloop.in`.
+- `sgpalya.in` currently redirects to `bengaloop.in` through separate domain/hosting configuration outside this repository. This is a current arrangement, not a permanent merger. Keep `sgpalya.in` independently controllable because it may host a separate website in future.
+- Never place `sgpalya.in` in BENGALOOP canonical URLs, `og:url`, social metadata, robots or sitemap. Do not change or remove its current redirect until a separate destination and hosting are ready; preserve paths/query behaviour until then.
 - Keep legacy redirect pages `noindex,follow`.
 - Preserve the favicon, Apple touch icon, manifest and social image references when changing brand assets.
 
@@ -159,7 +161,7 @@ The homepage currently uses `favicon.svg`, `bengaloop-avatar.png` for Apple/mani
 
 ## 8. Assets and naming
 
-The inspected repository stores image and SVG assets in the repository root rather than a dedicated `assets/` directory. Examples include the BENGALOOP logos, hero/social images, team portraits, `brand-mark.svg`, `cufflinksia-logo.svg` and favicon.
+The inspected repository stores current image and SVG assets in the repository root rather than a dedicated `assets/` directory. Current page assets include the BENGALOOP header and logo images, avatar, hero/social images, active team portraits, `cufflinksia-logo.svg` for Vyapar Kavach and the favicon. Unused historical portrait and superseded standalone logo exports are removed; do not restore them unless a page explicitly needs them.
 
 When adding/replacing an asset:
 
@@ -213,6 +215,8 @@ The test writes screenshots to `artifacts/`. It can be configured with:
 7. Uploads visual QA screenshots as an artifact.
 
 The browser suite covers desktop and mobile interactions, form states, disclosures, navigation, touch targets, heading wrapping, overflow and legacy redirects. Its mobile-first sweep checks 320, 360, 375, 390 and 430 pixel widths across the six primary page experiences (including 404).
+
+**Mobile-first release requirement:** mobile visitors are the primary audience. Treat the five phone widths above as release coverage, not optional polish. Any layout, navigation, typography, image or control change must preserve readable text, tappable controls, keyboard/focus access, no horizontal overflow and correct drawer behaviour. Do not trade phone usability for desktop-only visual improvements.
 
 **Audit baseline:** at the inspected commit `b5f3a12411f84176cfb00ba810052aa3b71ed274`, the latest visible Site quality checks run and GitHub Pages deployment both completed successfully on 22 November 2026. This is evidence for that commit only, not a guarantee that future changes pass.
 
