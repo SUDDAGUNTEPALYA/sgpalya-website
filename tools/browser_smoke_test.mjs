@@ -163,7 +163,12 @@ async function checkMobileAlignment(page, width, label) {
   assert.deepEqual(report.smallFormLabels, [], label + " mobile form labels should remain readable: " + JSON.stringify(report.smallFormLabels));
   assert.deepEqual(report.undersizedFields, [], label + " form controls should be at least 44px tall with 16px text: " + JSON.stringify(report.undersizedFields));
   assert.deepEqual(report.smallTargets, [], label + " primary controls need usable touch targets: " + JSON.stringify(report.smallTargets));
-  assert.ok(report.headerTop <= 1, label + " header should begin at the top edge, not leave a blank strip");
+  if (label === "BENGALOOP homepage") {
+    assert.ok(report.headerTop >= 8 && report.headerTop <= 15,
+      label + " floating homepage header should keep its intentional top inset: " + JSON.stringify(report));
+  } else {
+    assert.ok(report.headerTop <= 1, label + " header should begin at the top edge, not leave a blank strip");
+  }
   if (label.startsWith("BENGALOOP") || label === "Experiment Lab") {
     assert.equal(report.bodyPaddingTop, "0px", label + " should not use legacy fixed-header body padding");
   }
@@ -217,8 +222,9 @@ async function auditMobileHeaderInteractions(page, label, { touch = false } = {}
     assert.ok(menuBeforeClick && menuBeforeClick.y >= 0 && menuBeforeClick.y + menuBeforeClick.height <= viewportHeight,
       label + " menu toggle must be inside the viewport before a real pointer click");
     const headerBeforeOpen = await page.locator(".site-header").boundingBox();
-    assert.ok(headerBeforeOpen && Math.abs(headerBeforeOpen.y) <= 1,
-      label + " header should remain pinned to the viewport at the bottom of the page");
+    const stickyTop = await page.locator(".site-header").evaluate(node => parseFloat(getComputedStyle(node).top) || 0);
+    assert.ok(headerBeforeOpen && Math.abs(headerBeforeOpen.y - stickyTop) <= 1,
+      label + " header should remain pinned at its configured sticky offset at the bottom of the page");
     // Trigger the already-visible control without Playwright's scrollIntoViewIfNeeded().
     // That helper can scroll sticky headers before the click handler is dispatched.
     if (touch) await page.touchscreen.tap(menuBeforeClick.x + menuBeforeClick.width / 2,
