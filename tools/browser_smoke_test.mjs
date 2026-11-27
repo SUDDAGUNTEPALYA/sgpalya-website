@@ -174,6 +174,56 @@ async function checkMobileAlignment(page, width, label) {
   }
 }
 
+
+async function checkHomepageHeroComposition(page, width) {
+  const report = await page.evaluate(() => {
+    const rect = selector => {
+      const node = document.querySelector(selector);
+      if (!node) return null;
+      const box = node.getBoundingClientRect();
+      return { top: box.top, right: box.right, bottom: box.bottom, left: box.left, width: box.width, height: box.height };
+    };
+    const intersects = (a, b) => a && b && a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+    return {
+      hero: rect(".agency-hero-fullbleed"),
+      copy: rect(".agency-hero-copy"),
+      art: rect(".agency-hero-art"),
+      label: rect(".agency-image-label"),
+      callout: rect(".agency-floating-bottom"),
+      rail: rect(".agency-hero-bottom"),
+      proof: rect(".agency-hero-proof"),
+      buttons: Array.from(document.querySelectorAll(".agency-hero-actions > a")).map(node => {
+        const box = node.getBoundingClientRect();
+        return {left:box.left,right:box.right,top:box.top,bottom:box.bottom,width:box.width,height:box.height};
+      }),
+      captionCalloutOverlap: intersects(rect(".agency-image-label"), rect(".agency-floating-bottom")),
+      headingOverflow: (() => {
+        const h = document.querySelector(".agency-hero-fullbleed h1");
+        return h ? h.scrollWidth > h.clientWidth + 2 : true;
+      })()
+    };
+  });
+  assert.ok(report.hero && report.copy && report.art && report.rail, "homepage hero composition elements must exist");
+  assert.ok(report.copy.bottom <= report.art.top + 2,
+    "homepage hero copy must finish before the photo-caption row at " + width + "px: " + JSON.stringify(report));
+  assert.ok(report.art.bottom <= report.rail.top + 2,
+    "homepage photo-caption row must finish before the value rail at " + width + "px: " + JSON.stringify(report));
+  assert.ok(report.label && report.callout && report.label.top >= report.art.top - 1 &&
+    report.label.bottom <= report.art.bottom + 1 && report.callout.top >= report.art.top - 1 &&
+    report.callout.bottom <= report.art.bottom + 1,
+    "homepage photo labels must remain inside their own row at " + width + "px: " + JSON.stringify(report));
+  assert.equal(report.captionCalloutOverlap, false,
+    "homepage location caption and challenge callout must not overlap at " + width + "px");
+  assert.equal(report.headingOverflow, false,
+    "homepage hero heading must wrap without clipping at " + width + "px");
+  assert.equal(report.buttons.length, 2, "homepage must retain both hero calls to action");
+  assert.ok(report.buttons.every(button => button.width >= 110 && button.height >= 44),
+    "homepage hero calls to action must remain comfortably tappable at " + width + "px: " + JSON.stringify(report.buttons));
+  assert.ok(report.buttons[0].right <= report.buttons[1].left + 2 &&
+    Math.abs(report.buttons[0].top - report.buttons[1].top) < 3,
+    "homepage calls to action must sit side-by-side without collision at " + width + "px: " + JSON.stringify(report.buttons));
+}
+
 async function assertHomepageDrawerAnchored(page, label) {
   const geometry = await page.locator("#nav").evaluate(nav => {
     const rect = nav.getBoundingClientRect();
@@ -539,6 +589,7 @@ try {
     for (const item of mobileRoutes) {
       const page = await openPage(item.route, { width, height: 844 }, item.label + " mobile audit");
       await checkMobileAlignment(page, width, item.label);
+      if (item.label === "BENGALOOP homepage") await checkHomepageHeroComposition(page, width);
       if (width === 320) {
         await page.screenshot({ path: path.join(out, "mobile-audit-320-" + item.file + ".png") });
         await auditMobileHeaderInteractions(page, item.label);
