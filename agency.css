@@ -739,7 +739,7 @@ body.homepage .agency-hero{
 }
 
 /* Reference-matched, full-bleed homepage hero. Scoped to the homepage only. */
-.agency-home .site-header{position:absolute;top:18px;left:4%;right:4%;width:auto;background:rgba(255,254,250,.76);border:1px solid rgba(255,255,255,.72);border-radius:999px;box-shadow:0 10px 34px rgba(20,42,30,.10);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.agency-home .site-header{position:sticky;top:18px;left:auto;right:auto;width:92%;margin:18px auto -84px;background:rgba(255,254,250,.76);border:1px solid rgba(255,255,255,.72);border-radius:999px;box-shadow:0 10px 34px rgba(20,42,30,.10);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
 .agency-home .header-inner{width:100%;max-width:1480px;min-height:66px;padding:0 22px}
 .agency-home .brand img{width:min(250px,calc(100vw - 150px))}
 .agency-home .menu-toggle{width:46px;height:46px;border-color:#173a2e;background:rgba(255,255,255,.92);box-shadow:3px 3px 0 #b76e4d}
@@ -756,9 +756,9 @@ body.homepage .agency-hero{
 .agency-hero-fullbleed h1 em{font-weight:500}
 .agency-hero-fullbleed .agency-hero-intro{max-width:670px;color:#586b5f;font-size:clamp(13px,1.08vw,16px);line-height:1.8}
 .agency-hero-fullbleed .agency-hero-actions{align-items:center;gap:22px;margin-top:28px}
-.agency-hero-fullbleed .agency-button{min-height:54px;padding:0 20px;border:1px solid #173a2e;border-radius:4px;box-shadow:5px 5px 0 #b76e4d;font-size:11px}
+.agency-hero-fullbleed .agency-button{min-height:54px;padding:0 20px;border:2px solid #173a2e;border-radius:4px;box-shadow:5px 5px 0 #b76e4d;font-size:11px}
 .agency-hero-fullbleed .agency-button-dark:after{content:"›";font-size:23px;font-weight:400;line-height:1}
-.agency-hero-fullbleed .agency-text-link{min-height:54px;padding:0 15px;border:1px solid #173a2e;border-radius:4px;background:rgba(255,254,250,.9);box-shadow:5px 5px 0 #b76e4d}
+.agency-hero-fullbleed .agency-text-link{min-height:54px;padding:0 15px;border:2px solid #173a2e;border-radius:4px;background:rgba(255,254,250,.9);box-shadow:5px 5px 0 #b76e4d}
 .agency-hero-fullbleed .agency-text-link:after{content:"›";margin-left:2px;color:#173a2e;font-size:23px;font-weight:400;line-height:1}
 .agency-hero-fullbleed .agency-hero-proof{margin-top:30px;color:#53685c;font-size:11px}
 .agency-hero-fullbleed .proof-dot{width:8px;height:8px;flex:0 0 auto}
@@ -783,7 +783,7 @@ body.homepage .agency-hero{
  .agency-hero-fullbleed .agency-floating-bottom{right:1%;max-width:255px}
 }
 @media(max-width:820px){
- .agency-home .site-header{top:14px;left:4%;right:4%;border-radius:999px}
+ .agency-home .site-header{top:14px;width:92%;margin:14px auto -72px;left:auto;right:auto;border-radius:999px}
  .agency-home .header-inner{min-height:58px;padding:0 12px}
  .agency-home .brand img{width:min(205px,calc(100vw - 120px))}
  .agency-home .menu-toggle{width:41px;height:41px}
