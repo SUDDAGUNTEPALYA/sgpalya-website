@@ -443,7 +443,7 @@ body.agency-home.nav-open{overflow:visible!important}
    The logo keeps its natural proportions and uses the full available vertical space. */
 .agency-home .site-header{
   position:sticky!important;
-  top:12px!important;
+  top:0!important;
   width:91%;
   max-width:1440px;
   margin:0 auto;
