@@ -972,7 +972,7 @@ body.agency-home.homepage {
     linear-gradient(0deg, rgba(8,31,23,.62) 0%, rgba(8,31,23,0) 31%);
 }
 .agency-hero-fullbleed .agency-hero-inner {
-  position: relative;
+  position: static;
   z-index: 2;
   display: block;
   width: 100%;
