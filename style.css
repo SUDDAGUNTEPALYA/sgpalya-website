@@ -1821,8 +1821,8 @@ body { padding-top: 112px; }
 
 
 /* Approved BENGALOOP primary logo: preserve its native 3:2 proportions. */
-/* Homepage header logo increased to 150% of the previous approved dimensions. */
-.site-header .header-inner{min-height:186px}
-.site-header .brand img{display:block;width:255px;height:170px;max-width:255px;object-fit:contain}
-@media(max-width:900px){.site-header .header-inner{min-height:168px}.site-header .brand img{width:233px;height:155px;max-width:233px}}
-@media(max-width:600px){.site-header .header-inner{min-height:144px}.site-header .brand img{width:198px;height:132px;max-width:198px}}
+/* Homepage primary logo: larger, clearly legible, and kept at its native 3:2 ratio. */
+.site-header .header-inner{min-height:112px}
+.site-header .brand img{display:block;width:150px;height:100px;max-width:150px;object-fit:contain}
+@media(max-width:900px){.site-header .header-inner{min-height:100px}.site-header .brand img{width:138px;height:92px;max-width:138px}}
+@media(max-width:600px){.site-header .header-inner{min-height:88px}.site-header .brand img{width:120px;height:80px;max-width:120px}}
