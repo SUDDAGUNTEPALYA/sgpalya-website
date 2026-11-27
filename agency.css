@@ -686,22 +686,10 @@ body.homepage .agency-hero{
   .agency-home .agency-image-label{
     left:20px;
     right:auto;
-    bottom:88px;
+    bottom:24px;
     max-width:260px;
   }
-  .agency-home .agency-floating-top{
-    top:62%;
-    right:auto;
-    bottom:auto;
-    left:10px;
-    transform:rotate(-1deg);
-  }
-  .agency-home .agency-floating-bottom{
-    right:0;
-    bottom:8px;
-    max-width:min(255px,68%);
-    transform:rotate(1deg);
-  }
+  .agency-home .agency-floating-note{display:none}
   .agency-home .agency-hero-bottom{
     margin-top:18px;
   }
@@ -727,7 +715,7 @@ body.homepage .agency-hero{
   .agency-home .agency-button{width:100%;min-height:51px;padding:0 17px}
   .agency-home .agency-hero-proof{margin-top:22px;font-size:9px}
   .agency-home .agency-hero-image{border-top-right-radius:45px}
-  .agency-home .agency-image-label{left:16px;bottom:85px}
+  .agency-home .agency-image-label{left:16px;bottom:24px}
   .agency-home .agency-image-label strong{font-size:25px}
   .agency-home .agency-floating-top{left:4px;bottom:15px;padding:9px 11px}
   .agency-home .agency-floating-bottom{right:-2px;bottom:7px;max-width:65%;padding:10px 12px}
