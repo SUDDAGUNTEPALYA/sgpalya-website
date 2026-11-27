@@ -438,6 +438,13 @@ body.agency-home{
 body.agency-home.nav-open{overflow:visible!important}
 
 
-/* Approved BENGALOOP primary logo: keep the taller 3:2 artwork contained in the existing header. */
-.agency-home .site-header .brand img{width:auto;max-width:112px;height:64px;object-fit:contain}
-@media(max-width:600px){.agency-home .site-header .brand img{max-width:96px;height:58px}}
+/* Homepage header correction: preserve its original compact height and size only the logo. */
+.agency-home .site-header .header-inner{height:auto;min-height:78px}
+.agency-home .site-header .brand img{display:block;width:168px;max-width:min(168px,calc(100vw - 120px));height:112px;object-fit:contain}
+@media(max-width:820px){
+  .agency-home .site-header .header-inner{height:auto;min-height:68px}
+}
+@media(max-width:600px){
+  .agency-home .site-header .header-inner{height:auto;min-height:62px}
+  .agency-home .site-header .brand img{width:min(144px,calc(100vw - 106px));max-width:100%;height:96px}
+}
