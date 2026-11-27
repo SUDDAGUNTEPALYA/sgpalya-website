@@ -187,3 +187,8 @@
   .vk-page .vk-compare-grid article{min-height:0;padding:14px 13px}
   .vk-page .vk-compare-grid p{font-size:12px}
 }
+
+
+/* BENGALOOP partner mark: preserve the approved primary logo aspect ratio. */
+.vk-page .vk-bengaloop img{width:auto;max-width:112px;height:66px;object-fit:contain}
+@media(max-width:620px){.vk-page .vk-bengaloop img{width:auto;max-width:82px;height:48px}}
