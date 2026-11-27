@@ -1347,3 +1347,21 @@ body.agency-home.homepage {
   .agency-hero-fullbleed .agency-button,
   .agency-hero-fullbleed .agency-text-link { transition: none; }
 }
+
+
+/* Narrow-phone caption spacing: preserve a visible gap between the two cards. */
+@media (max-width: 820px) {
+  .agency-hero-fullbleed .agency-image-label { max-width: 45%; }
+  .agency-hero-fullbleed .agency-floating-bottom {
+    width: 46%;
+    min-width: 124px;
+    max-width: 155px;
+  }
+}
+@media (max-width: 380px) {
+  .agency-hero-fullbleed .agency-image-label { max-width: 44%; }
+  .agency-hero-fullbleed .agency-floating-bottom {
+    width: 46%;
+    min-width: 124px;
+  }
+}
