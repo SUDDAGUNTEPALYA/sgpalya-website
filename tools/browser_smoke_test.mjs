@@ -222,8 +222,9 @@ async function auditMobileHeaderInteractions(page, label, { touch = false } = {}
     assert.ok(menuBeforeClick && menuBeforeClick.y >= 0 && menuBeforeClick.y + menuBeforeClick.height <= viewportHeight,
       label + " menu toggle must be inside the viewport before a real pointer click");
     const headerBeforeOpen = await page.locator(".site-header").boundingBox();
-    assert.ok(headerBeforeOpen && Math.abs(headerBeforeOpen.y) <= 1,
-      label + " header should remain pinned to the viewport at the bottom of the page");
+    const stickyTop = await page.locator(".site-header").evaluate(node => parseFloat(getComputedStyle(node).top) || 0);
+    assert.ok(headerBeforeOpen && Math.abs(headerBeforeOpen.y - stickyTop) <= 1,
+      label + " header should remain pinned at its configured sticky offset at the bottom of the page");
     // Trigger the already-visible control without Playwright's scrollIntoViewIfNeeded().
     // That helper can scroll sticky headers before the click handler is dispatched.
     if (touch) await page.touchscreen.tap(menuBeforeClick.x + menuBeforeClick.width / 2,
