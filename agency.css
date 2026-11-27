@@ -864,3 +864,15 @@ body.agency-home.homepage .agency-hero-fullbleed .agency-floating-bottom{display
  .agency-hero-fullbleed h1 em{max-width:285px}
  body.agency-home.homepage .agency-hero-fullbleed .agency-floating-bottom{right:4%;max-width:205px}
 }
+
+/* Keep the challenge callout above the background on narrow screens despite legacy hero rules. */
+@media(max-width:820px){
+ body.agency-home.homepage .agency-hero-fullbleed .agency-hero-art .agency-floating-bottom{
+  display:flex!important;position:absolute!important;right:5%!important;bottom:16%!important;
+  z-index:10!important;visibility:visible!important;opacity:1!important;
+  width:max-content;max-width:210px;background:rgba(255,254,250,.98);
+ }
+}
+@media(max-width:420px){
+ body.agency-home.homepage .agency-hero-fullbleed .agency-hero-art .agency-floating-bottom{right:4%!important;max-width:205px}
+}
