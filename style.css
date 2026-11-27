@@ -1818,3 +1818,8 @@ body { padding-top: 112px; }
   color:inherit;
   font-size:inherit;
 }
+
+
+/* Approved BENGALOOP primary logo: preserve its native 3:2 proportions. */
+.site-header .brand img{width:auto;max-width:112px;height:64px;object-fit:contain}
+@media(max-width:600px){.site-header .brand img{max-width:96px;height:58px}}

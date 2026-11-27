@@ -157,11 +157,11 @@ The primary public origin is `https://bengaloop.in/`.
 - Keep legacy redirect pages `noindex,follow`.
 - Preserve the favicon, Apple touch icon, manifest and social image references when changing brand assets.
 
-The homepage currently uses `favicon.svg`, `bengaloop-avatar.png` for Apple/manifest icon references, and `bengaloop-social.jpg` for social sharing. Verify that a replacement asset exists at the exact referenced path and has the right format/dimensions.
+The site uses `bengaloop-pictorial-mark.png.png` directly for the browser favicon, Apple touch icon and web-app manifest icon. The primary wordmark is `bengaloop-primary-logo.png.png`. `bengaloop-social.jpg` is a separate social-sharing asset; verify its existence and artwork independently before changing it.
 
 ## 8. Assets and naming
 
-The inspected repository stores current image and SVG assets in the repository root rather than a dedicated `assets/` directory. Current page assets include the BENGALOOP header and logo images, avatar, hero/social images, active team portraits, `cufflinksia-logo.svg` for Vyapar Kavach and the favicon. Unused historical portrait and superseded standalone logo exports are removed; do not restore them unless a page explicitly needs them.
+The inspected repository stores current image and SVG assets in the repository root rather than a dedicated `assets/` directory. Current page assets include the approved BENGALOOP primary logo and pictorial mark, hero/social images, active team portraits, `cufflinksia-logo.svg` for Vyapar Kavach and the favicon. Unused historical portrait and superseded standalone logo exports are removed; do not restore them unless a page explicitly needs them.
 
 When adding/replacing an asset:
 
