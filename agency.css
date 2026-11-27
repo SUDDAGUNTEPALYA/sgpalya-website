@@ -577,7 +577,10 @@ body.homepage .agency-hero{
   position:absolute;
   z-index:0;
   inset:0;
+  width:auto;
+  max-width:none;
   min-width:0;
+  margin:0;
   padding:0;
   pointer-events:none;
 }
@@ -687,9 +690,9 @@ body.homepage .agency-hero{
     max-width:260px;
   }
   .agency-home .agency-floating-top{
-    top:auto;
+    top:62%;
     right:auto;
-    bottom:17px;
+    bottom:auto;
     left:10px;
     transform:rotate(-1deg);
   }
