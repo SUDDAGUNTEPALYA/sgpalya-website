@@ -496,7 +496,7 @@ body.agency-home.nav-open{overflow:visible!important}
   height:40px;
   min-height:40px;
   margin-left:auto;
-  border:1px solid #dce3d9;
+  border:2px solid var(--agf);
   border-radius:50%;
   box-shadow:none;
   background:#fffefa;
