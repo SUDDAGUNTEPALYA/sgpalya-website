@@ -163,7 +163,12 @@ async function checkMobileAlignment(page, width, label) {
   assert.deepEqual(report.smallFormLabels, [], label + " mobile form labels should remain readable: " + JSON.stringify(report.smallFormLabels));
   assert.deepEqual(report.undersizedFields, [], label + " form controls should be at least 44px tall with 16px text: " + JSON.stringify(report.undersizedFields));
   assert.deepEqual(report.smallTargets, [], label + " primary controls need usable touch targets: " + JSON.stringify(report.smallTargets));
-  assert.ok(report.headerTop <= 1, label + " header should begin at the top edge, not leave a blank strip");
+  if (label.startsWith("BENGALOOP")) {
+    assert.ok(report.headerTop >= 8 && report.headerTop <= 15,
+      label + " floating homepage header should keep its intentional top inset: " + JSON.stringify(report));
+  } else {
+    assert.ok(report.headerTop <= 1, label + " header should begin at the top edge, not leave a blank strip");
+  }
   if (label.startsWith("BENGALOOP") || label === "Experiment Lab") {
     assert.equal(report.bodyPaddingTop, "0px", label + " should not use legacy fixed-header body padding");
   }
