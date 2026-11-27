@@ -498,7 +498,7 @@ body.agency-home.nav-open{overflow:visible!important}
   margin-left:auto;
   border:2px solid var(--agf);
   border-radius:50%;
-  box-shadow:none;
+  box-shadow:4px 4px 0 var(--agc);
   background:#fffefa;
 }
 @media(max-width:820px){
